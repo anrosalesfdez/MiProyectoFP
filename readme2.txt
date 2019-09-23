@@ -53,6 +53,8 @@ preparamos un poco estas vistas:
 2. creamos el sistema de autenticación en welcome
 para probarlo, hay que crear las migraciones (ojo, error por tipo datos sql, ver provider)
 
+CREAMOS LA VISTA home
+
 MODELOS Y MIGRACIONES
 Crear el modelo ya con la migración
 Nota: el modelo representa las tablas de una bd, sería Modelo = Empleado, BD = empleados
@@ -60,16 +62,40 @@ Al crear el modelo, este referencia a un namespace que simula la ubicación en l
 La estructura de la migración inicial que ofrece laravel, es básica, e importa la clase Schema con la que nos permite crear las tablas, ya trae dos campos por defecto: fecha de creación y actualización.
 para crear campo, $table->seguido del tipo de campo y nombre.
 Importante utilizar soft deletes.
-correr php artisan migrate
 
+Modelo, migración de clientes (con seeders)
 en inicio vamos a trabajar solo con clientes. un crud.
+creamos el modelo con la migración.
+correr php artisan migrate
+En la migración, metemos únicamente campo nombre de prueba, y soft deletes.
+Vamos a crear también unos datos fake para poder trabajar (seeders y factory)
+php artisan make:seeder ClientesTableSeeder
+hay que modificar en databaseseeders la invocación a ClientesTableSeeder
+luego, en ClientesTableSeeder usamos el método factory para crear los fake registros
+creamos un ClienteFactory.php
+ahora migrate:refresh --seed
 
-RUTAS EN LARAVEL
+CONTROLADOR DE CLIENTE
+ahora creamos el controlador como "controlador de recursos" para que nos cree todo el sistema de rutas.
+de estos métodos: solo vamos a usar:
+-index para listar todos los clientes.
+-store para subir nuevo cliente
+-update para actualizar cliente concreto
+-destroy para eliminar cliente concreto
+Vamos a trabajar en inicio con index()
+
+RUTAS
+para que los métodos del controlador se utilicen, tenemos que crear las rutas en web.php
+Rutas en Laravel
 Importantes los verbos get (obtener recurso), post (crear nuevo registro), put (actualizar registros), delete(borrar registro).
 Las rutas se definen con el verbo, la url y el controlador y método a usar.
 Cuando usamos formularios para el envío de datos, estos exigen un token (ver middleware verifycsrftoken).
 Cuando usamos put, hay que pasar parámetro para saber cuál es el registro que queremos modificar, el parámetro se pasa con /{}
 las rutas se ubican en /routes/web
+
+
+Nota: hasta aquí, si porbamos http://127.0.0.1:8000/clientes efectivamente, devuelve los clientes
+
 
 ESTRUCTURA FUNCIONAMIENTO
 1. creamos app.blade.php => vista inicial de la que extenderán el resto. tiene el head y en el body unicamente llama al archivo que carga el javaScript. EN el body también tiene un div que define un yield('content')
