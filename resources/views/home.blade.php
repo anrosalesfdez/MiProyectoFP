@@ -24,7 +24,7 @@
     </ul>
 </nav>
       
-<div class="container-fluid">
+<div class="container-fluid" id="app">
     <div class="row">
         <!--Define la nav lateral-->
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
@@ -34,7 +34,7 @@
                     </h6>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="3">
+                        <a class="nav-link" href="{{ url('seguimiento') }}">
                         <span data-feather="home"></span>
                         Seguimiento
                         <span class="sr-only"></span>
@@ -47,7 +47,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url('clientes') }}">
                         <span data-feather="users"></span>
                         Clientes
                         </a>
@@ -87,25 +87,10 @@
         </nav>
 
         <!--Contenido central que carga por js-->
-        <div class="container" id="app">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">Dashboard</div>
-
-                        <div class="card-body">
-                            @if (session('status'))
-                                <div class="alert alert-success" role="alert">
-                                    {{ session('status') }}
-                                </div>
-                            @endif
-
-                            You are logged in!
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="container">
+            @yield('contenidoDinamico')
         </div>
+
     </div>
 </div>
 @endsection

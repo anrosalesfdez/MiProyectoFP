@@ -8,6 +8,15 @@ use App\Cliente;
 class ClienteController extends Controller
 {
     /**
+     * Muestra vista de clientes
+     * 
+     * @return view
+     */
+    public function vista(){
+        return view('clientes');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -15,7 +24,7 @@ class ClienteController extends Controller
     public function index()
     {
         //recogemos todos los clientes
-        $clientes = Cliente::get();
+        $clientes = Cliente::orderBy('nombre', 'ASC')->get();
         return $clientes;
     }
 

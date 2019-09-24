@@ -20,6 +20,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <!--DEFER When present, it specifies that the script is executed when the page has finished parsing.-->
 
 </body>
 </html>

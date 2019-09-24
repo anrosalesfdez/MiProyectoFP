@@ -91,28 +91,21 @@ Importantes los verbos get (obtener recurso), post (crear nuevo registro), put (
 Las rutas se definen con el verbo, la url y el controlador y método a usar.
 Cuando usamos formularios para el envío de datos, estos exigen un token (ver middleware verifycsrftoken).
 Cuando usamos put, hay que pasar parámetro para saber cuál es el registro que queremos modificar, el parámetro se pasa con /{}
-las rutas se ubican en /routes/web
-
+las rutas se ubican en /routes/web => OJO HTML NO SOPORTA EL MÉTODO PUT
 
 Nota: hasta aquí, si porbamos http://127.0.0.1:8000/clientes efectivamente, devuelve los clientes
 
+TRAER LOS DATOS MEDIANTE AJAX.
+Primero creamos la ruta para una nueva vista clientes.blade.php
+hay que editar la vista home con los enlaces a esas rutas.
 
-ESTRUCTURA FUNCIONAMIENTO
-1. creamos app.blade.php => vista inicial de la que extenderán el resto. tiene el head y en el body unicamente llama al archivo que carga el javaScript. EN el body también tiene un div que define un yield('content')
-2. creamos un sistema de log in/sign up que ya trae laravel por defecto.
-3. si estamos registrados, nos muestra la vista /home que extiende de app. esta página carga desde el servidor
+Vista clientes.blade.php
+esta vista, es el panel de control de clientes.
+de inicio, cuando se llama a esa ruta, usa el verbo get y método index.
+instalar npm install --save
+npm run dev
 
-el proyecto nos proporciona una vista welcome comun a cualquier tipo de usuario. permite log in, sign up.
-una vez log in => vista home que carga desde php
-una vez tenemos esta vista, 
-
-Las rutas se van amos a consumir desde Vue, las vamos a crear en /routes/api.php  
-Cuando laravel mapea las rutas, lo hace de manera diferente para las definidas en web.php y en api.php
-Ver /app/Providers/RouteServiceProvider.php
-para api.php define un prefijo 'api'
-Ojo, para tener acceso a las clases/modelos de Laravel, hay que importar, use App\Empleado;
-
-FRONT END
+Notas para el front end
 la línea de conexión entre front end y back end va a ser la siguiente línea que pondremos en la vista raíz
 <script src="{{ asset('js/app.js') }}"></script>
 /resources/js
