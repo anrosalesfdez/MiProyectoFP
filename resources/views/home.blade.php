@@ -87,8 +87,11 @@
         </nav>
 
         <!--Contenido central que carga por js-->
-        <div class="container">
+        <div class="container col-md-10">
             @yield('contenidoDinamico')
+            @section('contenidoDinamico')
+            <h1>aquí graficos porfi :)</h1>
+            @endsection
         </div>
 
     </div>

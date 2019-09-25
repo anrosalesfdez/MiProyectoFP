@@ -96,12 +96,10 @@ las rutas se ubican en /routes/web => OJO HTML NO SOPORTA EL MÉTODO PUT
 Nota: hasta aquí, si porbamos http://127.0.0.1:8000/clientes efectivamente, devuelve los clientes
 
 TRAER LOS DATOS MEDIANTE AJAX.
-Primero creamos la ruta para una nueva vista clientes.blade.php
-hay que editar la vista home con los enlaces a esas rutas.
+Primero creamos la ruta para una nueva vista clientes.blade.php => ruta en web.php
+A esa vista hay que meterle datos.
+La vista, trabaja con el componente de vue creado "clientes.vue" y ahí, en el front end tiene el ajax que tira del controlador
 
-Vista clientes.blade.php
-esta vista, es el panel de control de clientes.
-de inicio, cuando se llama a esa ruta, usa el verbo get y método index.
 instalar npm install --save
 npm run dev
 

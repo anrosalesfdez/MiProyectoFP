@@ -46,7 +46,9 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //registro
+        $nuevoCliente = Cliente::create($request->all());
+        return $nuevoCliente;
     }
 
     /**
@@ -80,7 +82,11 @@ class ClienteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
+        $clienteEditado = Cliente::findOrFail($id);
+        $clienteEditado->nombre = $request->input('nombre');
+        $clienteEditado->save();
+
     }
 
     /**

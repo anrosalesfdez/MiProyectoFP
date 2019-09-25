@@ -10,12 +10,13 @@
     <title>{{ config('app.name', 'MiProyecto') }}</title>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/app.css" type="text/css">
+
 </head>
 
 <body>
     <div>
-        @yield('content');
+        @yield('content')
     </div>
 
     <!-- Scripts -->
