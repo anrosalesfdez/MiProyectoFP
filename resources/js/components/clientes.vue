@@ -7,26 +7,25 @@
         <button id="abrirModalCliente" class="btn btn-primary pull-right" @click="abrirModalCrear">
             Nuevo cliente
         </button>
-        <!-- <crearClienteModal v-model="modalCrearAbierto"></crearClienteModal> -->
-        <div id="modalCrearCliente" class="modal fade">
+        <!-- Modal con formulario CREAR -->
+        <div id="modalCrearCliente" class="modal fade"> <!--- El id es necesario para el evento en boton js-->
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form method="POST" v-on:submit.prevent="storeCliente">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">
-                                <span>&times;</span>
-                            </button>
-                            <h4>Crear</h4>
-                        </div>
-                        <div class="modal-body">
-                            <label for="cliente">Nuevo cliente</label>      
-                            <input type="text" name="cliente" class="form-control" v-model="nuevoCliente.nombre">
-                            <span v-for="error in errores" v-bind:key="error.id" class="text-danger">{{ error }}</span>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="submit" class="btn btn-primary" value="Guardar">
-                        </div>
-                    </form>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                        <h4>Crear</h4>
+                    </div>
+                    <div class="modal-body">
+                        <label for="cliente">Nuevo cliente</label>      
+                        <input type="text" name="cliente" class="form-control" v-model="nuevoCliente.nombre">
+                        <!-- El input cliente linka con data nuevoCliente -->
+                        <span v-for="error in errores" v-bind:key="error.id" class="text-danger">{{ error }}</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" @click="storeCliente">Guardar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,13 +38,39 @@
                 </tr>
             </thead>
             <tbody>
+                <!-- Tabla listado clientes ***clientes está def en data -->
                 <tr v-for="cliente in clientes" v-bind:key="cliente.id">
+
                     <td>{{ cliente.id }}</td>
+                    
                     <td>{{ cliente.nombre }}</td>
+                    
                     <td width="10px">
                         <button class="btn btn-warning btn-sm" @click="abrirModalEditar(cliente)">Editar</button>
-                        <editarClienteModal :editadoCliente="editadoCliente"></editarClienteModal>
+                        
+                        <!-- Modal con formulario EDITAR -->
+                        <div class="modal fade" id="editar-cliente-modal">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">
+                                            <span>&times;</span>
+                                        </button>
+                                        <h4>Editar</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label for="cliente">Actualizar cliente</label>      
+                                        <input type="text" name="cliente" class="form-control" v-model="editadoCliente.nombre">
+                                        <span v-for="error in errores" v-bind:key="error.id" class="text-danger">@{{ error }}</span>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="button" class="btn btn-primary" value="Actualizar" @click="updateCliente">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </td>
+
                     <td width="10px">
                         <button class="btn btn-danger btn-sm" v-on:click.prevent="deleteCliente(cliente)">Eliminar</button>
                     </td>
@@ -54,70 +79,82 @@
         </table>
     </div>
 </div>
-
 </template>
 
-<script>
-import crearClienteModal from './clientesCreate';   //nombre y ruta
-import editarClienteModal from './clientesEdit';
 
+
+<script>
 
 export default{
-    data: function(){
+    data(){ //datos del componente
         return {
-            clientes:[],
-            nuevoCliente: {
-                nombre: ""
+            clientes:[],    //array de clientes recogidos de db
+            nuevoCliente: { //objeto que recoge datos del request a usuario para nuevo
+                nombre: ''
             },
-            editadoCliente: { //pasa tb para props del modal hijo
+            editadoCliente: {  //objeto que muestra datos del cliente seleccionado
                 id: '',
                 nombre: ''
             },
-            errores:[],
-            modalEditarAbierto: false,
-            // cliente:''  //no entiendo esto... ver clientesCreate v-show!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            errores:[], //array para recoger errores en validación
+            // modalEditarAbierto: false,
         }
     },
-    components: {
-        editarClienteModal //componente modal Editar 
-    },
-    created: function(){
+    created(){  //acciones a realizar en cuanto se crea el componente
         this.getClientes();
     },
     methods:{
-        getClientes: function(){
+        getClientes(){  //conecta con bd y obtiene todos los clientes
             var url = 'clientesData';
             axios.get(url).then(response => {
-                this.clientes = response.data
+                this.clientes = response.data //guarda respuesta en data clientes[]
             });
+            //TODO: paginado!
         },
-        deleteCliente: function(cliente){
+        deleteCliente(cliente){ //conecta con bd y elimina(soft) el cliente seleccionado
             var url='clientesData/' + cliente.id;
             axios.delete(url).then(response => {
-                this.getClientes();
-                toastr.success('Registro eliminado correctamente!');
+                this.getClientes(); //recarga listado
             });
         },
-        storeCliente: function(){
+        storeCliente(){ //conecta con bd y guarda nuevo cliente
+        //TODO: añadir validaciones y notificaciones, mejor desde laravel?
             var url='clientesData';
-            axios.post(url, this.nuevoCliente).then(response => {
-                this.getClientes();
-                this.nuevoCliente = {nombre:''};
-                this.errores=[];
-                $('#modalCrearCliente').modal('hide'); //oculta formulario de creación
-                toastr.success('Registro creado correctamente!');
-            }).catch(error => {
-                this.errores = error.response.data
-            });
+            axios.post(url, this.nuevoCliente) //envía valor nuevoCliente
+                .then(response => {   
+                    this.getClientes(); //recarga listado
+                    this.nuevoCliente = {nombre:''};    //blanquea var
+                    this.errores=[];    //blanquea var
+                    $('#modalCrearCliente').modal('hide'); //oculta formulario de creación
+                })
+                .catch(error => {
+                    this.errores = error.response.data
+                });
         },
-        abrirModalCrear: function(){
+        updateCliente(){ //conecta con bd y actualiza cleinte seleccionado
+        //TODO: añadir validaciones y notificaciones
+            var url='clientesData/' + this.editadoCliente.id;
+            axios.put(url, this.editadoCliente) //envía valor del cliente editado
+                 .then(response => {
+                    this.getClientes();
+                    this.editadoCliente = {id: '', nombre: ''};//blanquea var
+                    this.errores = [];//blanquea var
+                    $('#editar-cliente-modal').modal('hide');   //oculta modal
+                    })
+                 .catch(error => {
+                    this.errores = error.response.data
+                    }
+                );
+        },
+        abrirModalCrear(){  //muestra modal CREAR
             $('#modalCrearCliente').modal('show');
         },
-        abrirModalEditar: function(cliente){
+        abrirModalEditar(cliente){  //muestra modal CREAR ***se le pasa cliente desde html
+                                    //
             $('#editar-cliente-modal').modal('show');
-            console.log(cliente)
+            // console.log(cliente)
             this.editadoCliente = Object.assign({},cliente); //pasa datos para que muestre el modal
-            // $('#editar-cliente-modal').modal('show');  //abre el modal
+                                                            //si hago this.editadoCliente = this.cliente son lo mismo
         }
     }
 }

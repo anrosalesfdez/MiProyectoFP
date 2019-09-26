@@ -27,6 +27,7 @@
 <div class="container-fluid" id="app">
     <div class="row">
         <!--Define la nav lateral-->
+        {{-- //TODO: meter clases active en enlaces --}}
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky">
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -34,7 +35,7 @@
                     </h6>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('seguimiento') }}">
+                        <a class="nav-link" href="{{ url('home') }}">
                         <span data-feather="home"></span>
                         Seguimiento
                         <span class="sr-only"></span>
@@ -89,9 +90,6 @@
         <!--Contenido central que carga por js-->
         <div class="container col-md-10">
             @yield('contenidoDinamico')
-            @section('contenidoDinamico')
-            <h1>aquí graficos porfi :)</h1>
-            @endsection
         </div>
 
     </div>

@@ -19,11 +19,12 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+//muestra vista de home2, una especie de dashboard
 Route::get('/seguimiento', function(){
-    return view('seguimiento');
+    return view('home2');
 });
 
 //gestión de clientes DB
 Route::resource('clientesData', 'ClienteController', ['except' => 'show']);
-//g
+//muestra vista de gestión clientes
 Route::get('/clientes', 'ClienteController@vista');
