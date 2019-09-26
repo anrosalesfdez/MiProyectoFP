@@ -21,8 +21,7 @@ class ClienteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(){
         //recogemos todos los clientes
         $clientes = Cliente::orderBy('nombre', 'ASC')->get();
         return $clientes;
@@ -33,8 +32,7 @@ class ClienteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         //
     }
 
@@ -44,8 +42,7 @@ class ClienteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         //registro
         $nuevoCliente = Cliente::create($request->all());
         return $nuevoCliente;
@@ -57,8 +54,7 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         //
     }
 
@@ -68,8 +64,7 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id) {
         //
     }
 
@@ -80,13 +75,11 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id) {
         
         $clienteEditado = Cliente::findOrFail($id);
         $clienteEditado->nombre = $request->input('nombre');
         $clienteEditado->save();
-
     }
 
     /**
@@ -95,8 +88,7 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id) {
         //buscamos el cliente con el id pasado por parametro y eliminamos
         $cliente = Cliente::findOrFail($id);
         $cliente->delete();
