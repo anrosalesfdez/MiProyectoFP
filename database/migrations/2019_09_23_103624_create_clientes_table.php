@@ -15,12 +15,25 @@ class CreateClientesTable extends Migration
     {
         Schema::create('clientes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nombre');
+            //incluimos los atributos básicos de la tabla producto
+            $table->string('razon_social');
+            $table->string('nif');
+            $table->string('niva');
+            $table->string('direccion')->nullable();
+            $table->string('provincia')->nullable();
+            $table->string('pais');
+            $table->string('cp')->nullable();
+            $table->string('tlfn')->nullable();
+            $table->string('email')->nullable();
+            $table->enum('ambito_cl', ['NACIONAL', 'INTRACOMUNITARIO', 'EXTRACOMUNITARIO']);
+            $table->enum('tipo_cl', ['PERSONA FISICA', 'PERSONA JURIDICA']);
+            $table->enum('forma_pago', ['TRANSFERENCIA', 'PAY PAL', 'CONTADO'])->nullable();
+            $table->enum('dias_pago', ['0', '15', '30', '60'])->nullable();
+            $table->text('observ')->nullable();
+            //fecha de creacion
             $table->timestamps();
-
+            //trabaja con eliminación en vistas, no en tabla
             $table->softDeletes();
-
-
         });
     }
 

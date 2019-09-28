@@ -1,31 +1,5 @@
-@extends('layouts.app')
-
-@section('content')
-<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url('/') }}">
-        <h1>{{ config('app.name', 'MiProyecto') }}</h1>
-    </a>
-    <ul class="navbar-nav px-3">
-        <li class="nav-item dropdown">
-            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                {{ Auth::user()->name }} <span class="caret"></span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ route('logout') }}"
-                    onclick="event.preventDefault();
-                    document.getElementById('logout-form').submit();">
-                    {{ __('Logout') }}
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-            </div>
-        </li>
-    </ul>
-</nav>
-      
-<div class="container-fluid" id="app">
-    <div class="row">
+<template>
+    <div>
         <!--Define la nav lateral-->
         <!--TODO: meter clases active en enlaces-->
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
@@ -86,12 +60,13 @@
                 </ul>
             </div>
         </nav>
-
-        <!--Contenido central que carga por js-->
-        <div class="container col-md-10">
-            @yield('contenidoDinamico')
-        </div>
-
     </div>
-</div>
-@endsection
+</template>
+
+<script>
+export default {
+    data(){
+        return
+    }
+}
+</script>

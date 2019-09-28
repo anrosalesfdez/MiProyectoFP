@@ -8,6 +8,14 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+//registro de directiva personalizada para pasar datos form a upperCase
+Vue.directive( 'touppercase', {
+    update (el) {
+        el.value = el.value.toUpperCase()
+    },
+})
+
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -20,6 +28,8 @@ window.Vue = require('vue');
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('clientes', require('./components/clientes.vue').default);
+Vue.component('clientes_nuevo', require('./components/clientes_nuevo.vue').default);
+Vue.component('clientes_editar', require('./components/clientes_editar.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

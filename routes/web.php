@@ -19,12 +19,39 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-//muestra vista de home2, una especie de dashboard
-Route::get('/seguimiento', function(){
-    return view('home2');
+/**
+ * Dashboar
+ */
+Route::get('/dashboard', function(){
+    return view('dashboard'); //TODO: meter charts
 });
 
-//gestión de clientes DB
-Route::resource('clientesData', 'ClienteController', ['except' => 'show']);
-//muestra vista de gestión clientes
-Route::get('/clientes', 'ClienteController@vista');
+/**
+ * Gestión de clientes vistas
+ */
+Route::get('/clientes', 'ClienteController@listarClientes');
+Route::get('/clientes_nuevo', 'ClienteController@clientesNuevo');
+Route::get('/clientes_editar', 'ClienteController@clientesEditar');
+
+/**
+ * Gestión de clientes DB
+ */
+// Route::resource('clientesData', 'ClienteController', ['except' => 'show']);
+Route::resource('clientesData', 'ClienteController');
+
+
+Route::get('/facturacion', function(){
+    return view('facturacion');
+});
+
+Route::get('/productos', function(){
+    return view('productos');
+});
+
+/**
+ * Gestión de productos DB
+ */
+
+ /**
+ * Gestión de facturas DB
+ */

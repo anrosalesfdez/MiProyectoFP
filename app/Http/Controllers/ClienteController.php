@@ -7,15 +7,44 @@ use App\Cliente;
 
 class ClienteController extends Controller
 {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////     views     //////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Muestra vista de clientes
      * 
      * @return view
      */
-    public function vista(){
+    public function listarClientes(){
         return view('clientes');
     }
 
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return view
+     */
+    public function clientesNuevo() {
+        return view('clientes_nuevo');
+    }
+
+    /**
+     * Muestra vista de detalle
+     * 
+     * @return view
+     */
+    public function clientesEditar($cliente){
+        $clienteEditar = Cliente::findOrFail($cliente.id);
+        return view('clientes_editar')->with(compact('clienteEditar'));
+        //FIXME:--- no trae datos desde clientes.vue
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////     consultas bd      //////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //get
     /**
      * Display a listing of the resource.
      *
@@ -23,19 +52,11 @@ class ClienteController extends Controller
      */
     public function index(){
         //recogemos todos los clientes
-        $clientes = Cliente::orderBy('nombre', 'ASC')->get();
+        $clientes = Cliente::orderBy('razon_social', 'ASC')->get();
         return $clientes;
-    }
+    } 
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() {
-        //
-    }
-
+    //post
     /**
      * Store a newly created resource in storage.
      *
@@ -45,29 +66,10 @@ class ClienteController extends Controller
     public function store(Request $request) {
         //registro
         $nuevoCliente = Cliente::create($request->all());
-        return $nuevoCliente;
+        return;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id) {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id) {
-        //
-    }
-
+    //put
     /**
      * Update the specified resource in storage.
      *
@@ -80,8 +82,10 @@ class ClienteController extends Controller
         $clienteEditado = Cliente::findOrFail($id);
         $clienteEditado->nombre = $request->input('nombre');
         $clienteEditado->save();
+        return;
     }
 
+    //delete
     /**
      * Remove the specified resource from storage.
      *
