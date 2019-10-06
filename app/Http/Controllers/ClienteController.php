@@ -34,10 +34,18 @@ class ClienteController extends Controller
      * 
      * @return view
      */
-    public function clientesEditar($cliente){
-        $clienteEditar = Cliente::findOrFail($cliente.id);
-        return view('clientes_editar')->with(compact('clienteEditar'));
-        //FIXME:--- no trae datos desde clientes.vue
+    public function clientesEditar($id){
+        //  echo $id;
+        $editadoCliente = Cliente::findOrFail($id); //JSON
+        // echo $editadoCliente;
+        // echo gettype($editadoCliente);
+        if($editadoCliente){
+            return view('/clientes_editar', ['id' => $editadoCliente->id, 'editadocliente' => $editadoCliente]);
+            //el helper view() permite enviar variables a blade. Aquí envía el objeto editadocliente
+            // return view('/clientes_editar'); //el helper view() permite enviar variables a blade. Aquí envía el objeto  editadocliente
+            // return view('/clientes_editar')->with('editadoCliente', $editadoCliente); //va con objeto
+        }
+
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +88,20 @@ class ClienteController extends Controller
     public function update(Request $request, $id) {
         
         $clienteEditado = Cliente::findOrFail($id);
-        $clienteEditado->nombre = $request->input('nombre');
+        $clienteEditado->razon_social = $request->input('razon_social');
+        $clienteEditado->nif = $request->input('nif');
+        $clienteEditado->niva = $request->input('niva');
+        $clienteEditado->direccion = $request->input('direccion');
+        $clienteEditado->pais = $request->input('pais');
+        $clienteEditado->provincia = $request->input('provincia');
+        $clienteEditado->cp = $request->input('cp');
+        $clienteEditado->tlfn = $request->input('tlfn');
+        $clienteEditado->email = $request->input('email');
+        $clienteEditado->ambito_cl = $request->input('ambito_cl');
+        $clienteEditado->tipo_cl = $request->input('tipo_cl');
+        $clienteEditado->forma_pago = $request->input('forma_pago');
+        $clienteEditado->dias_pago = $request->input('dias_pago');
+        $clienteEditado->observ = $request->input('observ');
         $clienteEditado->save();
         return;
     }

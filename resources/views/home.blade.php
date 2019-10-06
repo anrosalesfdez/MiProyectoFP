@@ -6,20 +6,16 @@
         <h1>{{ config('app.name', 'MiProyecto') }}</h1>
     </a>
     <ul class="navbar-nav px-3">
-        <li class="nav-item dropdown">
-            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                {{ Auth::user()->name }} <span class="caret"></span>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('home') }}" role="button">
+                {{ "Mi cuenta: ".Auth::user()->name }} <span class="caret"></span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ route('logout') }}"
-                    onclick="event.preventDefault();
-                    document.getElementById('logout-form').submit();">
-                    {{ __('Logout') }}
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-            </div>
+            <a class="nav-link" href="#" role="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                {{ __('Salir') }}
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         </li>
     </ul>
 </nav>
@@ -33,28 +29,28 @@
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                     <span>GESTIÓN GENERAL</span>
                     </h6>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('dashboard') }}">
+                <ul class="nav flex-column nav-pills">
+                    <li class='nav-item'>
+                        <a class="{{ request()->route()->getName() === 'dashboard' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('dashboard') }}">
                         <span data-feather="home"></span>
                         Seguimiento
                         <span class="sr-only"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('facturacion') }}">
+                        <a class="{{ request()->route()->getName() === 'facturacion' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('facturacion') }}">
                         <span data-feather="file"></span>
                         Facturación
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('clientes') }}">
+                        <a class="{{ request()->route()->getName() === 'clientes' || request()->route()->getName() === 'clientes_nuevo' || request()->route()->getName() === 'clientes_editar' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('clientes') }}">
                         <span data-feather="users"></span>
                         Clientes
                         </a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="{{ url('productos') }}">
+                    <a class="{{ request()->route()->getName() === 'productos' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('productos') }}">
                         <span data-feather="list"></span>
                         Productos
                         </a>
@@ -94,4 +90,13 @@
 
     </div>
 </div>
+
+@endsection
+
+@section('pie')
+<footer class="mastfoot mt-auto">
+    <div class="inner">
+    <p>Ángeles Rosales 2019 <a href="{{ url('https://github.com/anrosalesfdez/miproyectoFP')}}">GitHub profile</a></p>
+    </div>
+</footer>
 @endsection

@@ -8,6 +8,7 @@ class Cliente extends Model
 {
     //those fields which can be created/ filled by mass-assignment by use of fillable.
     protected $fillable = [
+        'id',
         'razon_social',
         'nif',
         'niva',

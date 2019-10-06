@@ -9,24 +9,29 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 //registro de directiva personalizada para pasar datos form a upperCase
+//Aplica a toda la aplicación xD
 Vue.directive( 'touppercase', {
     update (el) {
         el.value = el.value.toUpperCase()
     },
 })
 
-
 /**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
+ * Librerias
+ * 
  */
+import VuePaginate from 'vue-paginate';
+Vue.use(VuePaginate);
 
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+import Vuetify from 'vuetify' // Import Vuetify to your project
+Vue.use(Vuetify) // Add Vuetify as a plugin
 
+import Toastr from 'toastr' // Import Vuetify to your project
+Vue.use(Toastr) // Add Vuetify as a plugin
+/**
+ * Componentes
+ *
+ */
 Vue.component('clientes', require('./components/clientes.vue').default);
 Vue.component('clientes_nuevo', require('./components/clientes_nuevo.vue').default);
 Vue.component('clientes_editar', require('./components/clientes_editar.vue').default);

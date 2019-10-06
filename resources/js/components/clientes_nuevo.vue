@@ -2,48 +2,53 @@
 <div class="row" id="clientes_nuevo">
     <div class="col-sm-12">
         <h1>Mantenimiento de Clientes</h1>
+        <p v-if="errores.length">
+            <b>Please correct the following error(s):</b>
+            <ul>
+            <li v-for="error in errores" :key="error">{{ error }}</li>
+            </ul>
+        </p>
     </div>
 
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                Alta nuevo cliente
+                <h2>Alta nuevo cliente</h2>
                 <a class="btn btn-secondary pull-right" href="clientes">Volver</a>
-                //TODO: colocar bien este botón
             </div>
             <div class="card-body">
                 <!--formulario nuevo cliente-->
                 <form>
                     <div class="form-group">
                         <label for="razon_social" class="col-form-label">Razón social</label>      
-                        <input type="text" class="form-control" name="razon_social" id="razon_social" v-model="nuevoCliente.razon_social">
+                        <input type="text" class="form-control" name="razon_social" id="razon_social" v-model="nuevoCliente.razon_social" v-touppercase>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="nif" class="col-form-label">NIF</label>      
-                            <input type="text" class="form-control" nif="cliente" id="nif" v-model="nuevoCliente.nif">
+                            <input type="text" class="form-control" nif="cliente" id="nif" v-model="nuevoCliente.nif" v-touppercase>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="niva" class="col-form-label">NIVA</label>      
-                            <input type="text" class="form-control" name="niva" id="niva" v-model="nuevoCliente.niva">
+                            <input type="text" class="form-control" name="niva" id="niva" v-model="nuevoCliente.niva" v-touppercase>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="direccion" class="col-form-label">Dirección</label>      
-                        <input type="text" class="form-control" name="direccion" id="direccion" v-model="nuevoCliente.direccion">
+                        <label for="direccion" class="col-form-label">Dirección fiscal</label>      
+                        <input type="text" class="form-control" name="direccion" id="direccion" v-model="nuevoCliente.direccion" v-touppercase>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-5">
-                            <label for="provincia" class="col-form-label">Provincia</label>      
-                            <input type="text" class="form-control" name="provincia" id="provincia" v-model="nuevoCliente.provincia">
+                            <label for="pais" class="col-form-label">Pais</label>      
+                            <input type="text" class="form-control" name="pais" id="pais" v-model="nuevoCliente.pais" v-touppercase>
                         </div>
                         <div class="form-group col-md-5">
-                            <label for="pais" class="col-form-label">Pais</label>      
-                            <input type="text" class="form-control" name="pais" id="pais" v-model="nuevoCliente.pais">
+                            <label for="provincia" class="col-form-label">Provincia</label>      
+                            <input type="text" class="form-control" name="provincia" id="provincia" v-model="nuevoCliente.provincia" v-touppercase>
                         </div>
                         <div class="form-group col-md-2">
                             <label for="cp" class="col-form-label">Código Postal</label>      
-                            <input type="text" class="form-control" name="cp" id="cp" v-model="nuevoCliente.cp">
+                            <input type="text" class="form-control" name="cp" id="cp" v-model="nuevoCliente.cp" v-touppercase>
                         </div>
                     </div>
                     <div class="form-row">
@@ -53,7 +58,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email" class="col-form-label">Email</label>      
-                            <input type="email" class="form-control" name="email" id="email" v-model="nuevoCliente.email">
+                            <input type="email" class="form-control" name="email" id="email" v-model="nuevoCliente.email" v-touppercase>
                         </div>
                     </div>
                     <div class="form-row">
@@ -98,14 +103,14 @@
                     </div>
                     <div class="form-group">
                         <label for="observ" class="col-form-label">Observaciones</label>
-                        <textarea class="form-control" name="observ" id="observ"></textarea>
-                        <!--FIXME: no lo lleva a la bd, ni lo blaquea-->
+                        <textarea class="form-control" name="observ" id="observ" v-model="nuevoCliente.observ"></textarea>
                     </div>
 
-                    <span v-for="error in errores" v-bind:key="error.id" class="text-danger">{{ error }}</span>
+                    <p v-for="error in errores" v-bind:key="error" class="text-danger">{{ error }}</p>
                     
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button>
+                        <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button>
+                        <!-- v-show="validacion" // mejor habilitar para que solo se muestre el botón si todo ok-->
                         <a href="clientes" class="btn btn-danger">Cancelar</a>
                     </div>
                 </form>
@@ -142,36 +147,84 @@ export default{
         }
     },
     methods:{
-        storeCliente(){ //conecta con bd y guarda nuevo cliente
-        //TODO: añadir validaciones y notificaciones, mejor desde laravel?
+        storeCliente(){
+        //Validaciones del form en cliente
+        var enviar = this.checkForm();
+        //Si superamos validaciones, envía nuevoCLiente a BD
+        if(enviar){
             var url='clientesData';
-            console.log(this.nuevoCliente);
-            axios.post(url, this.nuevoCliente) //envía valor nuevoCliente
+            // console.log(this.nuevoCliente);
+            axios.post(url, this.nuevoCliente)
                 .then(response => {   
-                    // this.getClientes(); //recarga listado
-                    this.nuevoCliente = {   //blanquea var
-                        razon_social:'',
-                        nif:'',
-                        niva:'',
-                        direccion:'',
-                        provincia:'',
-                        pais:'',
-                        cp:'',
-                        tlfn:'',
-                        email:'',
-                        ambito_cl:'',
-                        tipo_cl:'',
-                        forma_pago:'',
-                        dias_pago:'',
-                        observ:''
-                    };   
-                    this.errores=[];    //blanquea var
-                    //FIXME: regresar a clientes.vue
+                    console.log(this.nuevoCliente);
+                    history.back(); //location.href()
                 })
                 .catch(error => {
                     this.errores = error.response
                 });
+            }
+        },
+        checkForm: function () {
+            this.errores = [];
+
+            //chequeo errores
+            if (!this.nuevoCliente.razon_social) {
+                console.log(this.nuevoCliente.razon_social);
+                this.errores.push("Razón social es campo obligatorio.");
+                // toastr.info('Are you the 6 fingered man?')
+            }
+            if (!this.nuevoCliente.nif) {
+                console.log(this.nuevoCliente.nif);
+                this.errores.push('NIF es campo obligatorio.');
+            } else if (!this.comprobarNif(this.nuevoCliente.nif)) {
+                this.errores.push('Formato NIF no válido.');
+            }
+            if (!this.nuevoCliente.email) {
+                console.log(this.nuevoCliente.email);
+                this.errores.push('Email es campo obligatorio.');
+            } else if (!this.validEmail(this.nuevoCliente.email)) {
+                this.errores.push('Formato email no válido.');
+            }
+            //si no hay errores
+            if (!this.errores.length) {
+                return true;
+            }
+        },
+        validEmail: function (email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+        },
+        comprobarNif: function(dni) {
+            //https://es.stackoverflow.com/questions/194879/validar-un-dni-nif-en-php
+            //https://www.agenciatributaria.es/AEAT.internet/Inicio/La_Agencia_Tributaria/Campanas/Censos__NIF_y_domicilio_fiscal/Empresas_y_profesionales__Declaracion_censal__Modelos_036_y_037/Informacion/NIF_de_personas_juridicas_y_entidades.shtml
+            if (dni.length != 9) {
+                return false;
+            }
+            /* Ajustamos las letras especiales "x", "y" y "z" */
+            // switch(dni.charAt(0).toLowerCase()) {
+            //     case 'x':
+            //         dni = '0' + dni.substr(1);
+            //         break;
+            //     case 'y':
+            //         dni = '1' + dni.substr(1);
+            //         break;
+            //     case 'z':
+            //         dni = '2' + dni.substr(1);
+            //         break;
+            // }
+            if(parseInt(dni.substr(0, dni.length - 1))){  //letra al final determina persona fisica
+                console.log(parseInt(dni.substr(0, dni.length - 1)));
+                console.log(dni.substr(dni.length - 1, 1));
+                var numero = parseInt(dni.substr(0, dni.length - 1)) % 23;
+                var letra = dni.substr(dni.length - 1, 1);
+            }else{//letra al final determina persona juridica
+                console.log(dni.substr(1, dni.length));
+                console.log(dni.substr(0, 1));
+                var numero = (dni.substr(1, dni.length)) % 23;
+                var letra = dni.substr(0, 1);
+            }
+            return letra != 'TRWAGMYFPDXBNJZSQVHLCKET'.substring(numero, numero + 1);
         }
-    }
+    }//end methods
 }
 </script>

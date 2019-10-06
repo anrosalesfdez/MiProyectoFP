@@ -11,6 +11,11 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="/css/app.css" type="text/css">
+    {{-- vuetify --}}
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    @yield('css')
 
 </head>
 
@@ -24,4 +29,5 @@
     <!--DEFER When present, it specifies that the script is executed when the page has finished parsing.-->
 
 </body>
+@yield('pie')
 </html>
