@@ -1918,6 +1918,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
  // https://styde.net/paginacion-en-vue-js-con-vue-paginate/
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -1958,10 +1959,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     getCliente: function getCliente(cliente) {
       var url = "clientes_editar/" + cliente.id; //Envía http request a la url dada. Le pasa el id del cliente seleccionado para que el método del controlador muestre form editar
-
-      axios.get(url).then(function (response) {
-        console.log(response);
-      });
+      // axios.get(url).then(response => {
+      //     console.log(response);
+      // })
     }
   },
   computed: {
@@ -2331,7 +2331,8 @@ __webpack_require__.r(__webpack_exports__);
 
       if (!this.nuevoCliente.razon_social) {
         console.log(this.nuevoCliente.razon_social);
-        this.errores.push("Razón social es campo obligatorio."); // toastr.info('Are you the 6 fingered man?')
+        this.errores.push("Razón social es campo obligatorio.");
+        toastr.info('Are you the 6 fingered man?');
       }
 
       if (!this.nuevoCliente.nif) {
@@ -38887,13 +38888,12 @@ var render = function() {
                 _vm._v(" "),
                 _c("td", { attrs: { width: "10px" } }, [
                   _c(
-                    "button",
+                    "a",
                     {
                       staticClass: "btn btn-outline-primary btn-sm",
-                      on: {
-                        click: function($event) {
-                          return _vm.getCliente(cliente)
-                        }
+                      attrs: {
+                        scope: "row",
+                        href: "/clientes_editar/" + cliente.id
                       }
                     },
                     [_vm._v("Editar")]
@@ -39637,7 +39637,7 @@ var staticRenderFns = [
         "a",
         {
           staticClass: "btn btn-secondary pull-right",
-          attrs: { href: "clientes" }
+          attrs: { href: "/clientes" }
         },
         [_vm._v("Volver")]
       )
@@ -40353,7 +40353,7 @@ var staticRenderFns = [
         "a",
         {
           staticClass: "btn btn-secondary pull-right",
-          attrs: { href: "clientes" }
+          attrs: { href: "/clientes" }
         },
         [_vm._v("Volver")]
       )

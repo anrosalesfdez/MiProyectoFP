@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-header">
                 <h2>Actualizar cliente </h2>
-                <a class="btn btn-secondary pull-right" href="clientes">Volver</a>
+                <a class="btn btn-secondary pull-right" href="/clientes">Volver</a>
             </div>
             <div class="card-body">
                 <!--formulario editado cliente-->

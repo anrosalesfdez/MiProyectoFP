@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-header">
                 <h2>Alta nuevo cliente</h2>
-                <a class="btn btn-secondary pull-right" href="clientes">Volver</a>
+                <a class="btn btn-secondary pull-right" href="/clientes">Volver</a>
             </div>
             <div class="card-body">
                 <!--formulario nuevo cliente-->
@@ -171,7 +171,7 @@ export default{
             if (!this.nuevoCliente.razon_social) {
                 console.log(this.nuevoCliente.razon_social);
                 this.errores.push("Razón social es campo obligatorio.");
-                // toastr.info('Are you the 6 fingered man?')
+                toastr.info('Are you the 6 fingered man?');
             }
             if (!this.nuevoCliente.nif) {
                 console.log(this.nuevoCliente.nif);

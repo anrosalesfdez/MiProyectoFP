@@ -103,7 +103,11 @@ class ClienteController extends Controller
         $clienteEditado->dias_pago = $request->input('dias_pago');
         $clienteEditado->observ = $request->input('observ');
         $clienteEditado->save();
-        return;
+
+        return
+        ClienteController::index();
+
+        // redirect()->action('ClienteController@listarClientes');
     }
 
     //delete

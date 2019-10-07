@@ -53,7 +53,8 @@
                     <!-- <td>{{ cliente.observ }}</td> -->
                     
                     <td width="10px">
-                        <button class="btn btn-outline-primary btn-sm" v-on:click="getCliente(cliente)">Editar</button>
+                        <!-- <button class="btn btn-outline-primary btn-sm" v-on:click="getCliente(cliente)">Editar</button> -->
+                        <a scope="row" v-bind:href="'/clientes_editar/'+cliente.id" class="btn btn-outline-primary btn-sm">Editar</a>
                     </td>
 
                     <td width="10px">
@@ -107,9 +108,10 @@ export default{
         },
         getCliente(cliente){
             var url="clientes_editar/" + cliente.id;  //Envía http request a la url dada. Le pasa el id del cliente seleccionado para que el método del controlador muestre form editar
-            axios.get(url).then(response => {
-                console.log(response);
-            })
+            // axios.get(url).then(response => {
+            //     console.log(response);
+
+            // })
         }
     },
     computed:{  //propiedad computada
