@@ -40,10 +40,8 @@ class ClienteController extends Controller
         // echo $editadoCliente;
         // echo gettype($editadoCliente);
         if($editadoCliente){
-            return view('/clientes_editar', ['id' => $editadoCliente->id, 'editadocliente' => $editadoCliente]);
+            return view('/clientes_editar', ['editadocliente' => $editadoCliente, 'token' => csrf_field()]);
             //el helper view() permite enviar variables a blade. Aquí envía el objeto editadocliente
-            // return view('/clientes_editar'); //el helper view() permite enviar variables a blade. Aquí envía el objeto  editadocliente
-            // return view('/clientes_editar')->with('editadoCliente', $editadoCliente); //va con objeto
         }
 
     }
@@ -104,10 +102,10 @@ class ClienteController extends Controller
         $clienteEditado->observ = $request->input('observ');
         $clienteEditado->save();
 
-        return
-        ClienteController::index();
+        //UPDATE() DE TODO EL REQUEST
+        //REDIRECT()
+        return;
 
-        // redirect()->action('ClienteController@listarClientes');
     }
 
     //delete

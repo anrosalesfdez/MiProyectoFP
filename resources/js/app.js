@@ -20,14 +20,27 @@ Vue.directive( 'touppercase', {
  * Librerias
  * 
  */
+//1
 import VuePaginate from 'vue-paginate';
 Vue.use(VuePaginate);
 
-import Vuetify from 'vuetify' // Import Vuetify to your project
-Vue.use(Vuetify) // Add Vuetify as a plugin
+// import Vuetify from 'vuetify' // Import Vuetify to your project
+// Vue.use(Vuetify) // Add Vuetify as a plugin
+//NOTA. SACAR LA DEPENDENCIA DE TOASTR
+//sacar la dependencia de vue-notifications
 
-import Toastr from 'toastr' // Import Vuetify to your project
-Vue.use(Toastr) // Add Vuetify as a plugin
+//2
+import VueNotification from "@kugatsu/vuenotification";
+
+Vue.use(VueNotification, {
+  timer: 20,
+  error: {
+    background: "red",
+    color: "white"
+  }
+});
+
+
 /**
  * Componentes
  *

@@ -145,18 +145,16 @@ body {
         </header>
     
         <main role="main" class="inner cover">
-            <a href="{{ url('/') }}">
-                <h1 class="cover-heading">{{ config('app.name', 'MiProyecto') }}</h1>
-            </a>
+            <h1 class="cover-heading">{{ config('app.name', 'MiProyecto') }}</h1>
             <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
             <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
-            <a href="{{ url('proyecto') }}" class="btn btn-lg btn-secondary">Sobre el proyecto</a>
+            <a target="_blank" href="{{ url('proyecto') }}" class="btn btn-lg btn-secondary">Sobre el proyecto</a>
             </p>
         </main>
       
         <footer class="mastfoot mt-auto">
             <div class="inner">
-            <p>Ángeles Rosales 2019 <a href="{{ url('https://github.com/anrosalesfdez/miproyectoFP')}}">GitHub profile</a></p>
+            <p>Ángeles Rosales 2019 <a target="_blank" href="{{ url('https://github.com/anrosalesfdez/miproyectoFP')}}">GitHub profile</a></p>
             </div>
         </footer>
     </div>

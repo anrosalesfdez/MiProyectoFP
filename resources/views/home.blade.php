@@ -7,10 +7,10 @@
     </a>
     <ul class="navbar-nav px-3">
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('home') }}" role="button">
+            <a style="display: inline" class="nav-link" href="{{ route('home') }}" role="button">
                 {{ "Mi cuenta: ".Auth::user()->name }} <span class="caret"></span>
             </a>
-            <a class="nav-link" href="#" role="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a style="display: inline" class="nav-link" href="#" role="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 {{ __('Salir') }}
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

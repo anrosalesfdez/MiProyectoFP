@@ -1,7 +1,7 @@
 <template>
 <div class="row" id="clientes_nuevo">
-<!-- <span>------ {{editadocliente}}-----</span>
-<span>------ {{clEditar}}-----</span> -->
+<!-- <span>------ {{token}}-----</span> -->
+<!-- <span>------ {{clEditar}}-----</span> -->
 
     <div class="col-sm-12">
         <h1>Mantenimiento de Clientes</h1>
@@ -13,48 +13,54 @@
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h2>Actualizar cliente </h2>
-                <a class="btn btn-secondary pull-right" href="/clientes">Volver</a>
+                <h2 style="display: inline">Actualizar cliente </h2>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <a class="btn btn-danger pull-right" href="/clientes">Volver</a>
             </div>
             <div class="card-body">
                 <!--formulario editado cliente-->
-                <form>
+                <form method="post" v-bind:action="'/clientesData/'+clEditar.id">
+
+                    <!-- html no acepta el verbo patch, lo pasamos con campo hidden -->
+                    <input type="hidden" name="_method" value="PATCH">
+                    <input type="hidden" name="_token" value="csrf">
+
                     <div class="form-group">
                         <label for="razon_social" class="col-form-label">Razón social</label>      
-                        <input type="text" class="form-control" name="razon_social" id="razon_social" v-model="clEditar.razon_social">
+                        <input type="text" class="form-control" name="razon_social" id="razon_social" v-model="clEditar.razon_social" v-touppercase>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="nif" class="col-form-label">NIF</label>      
-                            <input type="text" class="form-control" disabled nif="nif" id="nif" v-model="clEditar.nif">
+                            <input type="text" class="form-control" disabled nif="nif" id="nif" v-model="clEditar.nif" v-touppercase> 
                         </div>
                         <div class="form-group col-md-6">
                             <label for="niva" class="col-form-label">NIVA</label>      
-                            <input type="text" class="form-control" disabled name="clienteEditar.niva" id="niva" v-model="clEditar.niva">
+                            <input type="text" class="form-control" disabled name="niva" id="niva" v-model="clEditar.niva" v-touppercase>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="direccion" class="col-form-label">Dirección</label>      
-                        <input type="text" class="form-control" name="direccion" id="direccion" v-model="clEditar.direccion">
+                        <input type="text" class="form-control" name="direccion" id="direccion" v-model="clEditar.direccion" v-touppercase>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-5">
                             <label for="provincia" class="col-form-label">Provincia</label>      
-                            <input type="text" class="form-control" name="provincia" id="provincia" v-model="clEditar.provincia">
+                            <input type="text" class="form-control" name="provincia" id="provincia" v-model="clEditar.provincia" v-touppercase>
                         </div>
                         <div class="form-group col-md-5">
                             <label for="pais" class="col-form-label">Pais</label>      
-                            <input type="text" class="form-control" name="pais" id="pais" v-model="clEditar.pais">
+                            <input type="text" class="form-control" name="pais" id="pais" v-model="clEditar.pais" v-touppercase>
                         </div>
                         <div class="form-group col-md-2">
                             <label for="cp" class="col-form-label">Código Postal</label>      
-                            <input type="text" class="form-control" name="cp" id="cp" v-model="clEditar.cp">
+                            <input type="text" class="form-control" name="cp" id="cp" v-model="clEditar.cp" v-touppercase>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="tlfn" class="col-form-label">Teléfono</label>      
-                            <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="clEditar.tlfn">
+                            <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="clEditar.tlfn"> 
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email" class="col-form-label">Email</label>      
@@ -109,8 +115,8 @@
                     <span v-for="error in errores" v-bind:key="error.id" class="text-danger">{{ error }}</span>
                     
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" @click="updateCliente">Actualizar</button>
-                        <a href="clientes" class="btn btn-danger">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                        <a href="/clientes" class="btn btn-danger">Cancelar</a>
                     </div>
                 </form>
             </div>
@@ -128,17 +134,19 @@ export default{
         return {
             clEditar: this.editadocliente, //se le asigna el valor que nos da blade
             errores:[], //array para recoger errores en validación
+            csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     },
     props:[
-        'editadocliente' //prop que envía clientes_editar.blade
+        'editadocliente', //prop que envía clientes_editar.blade
     ],
     created() {
         console.log('hola');
         console.log(this.clEditar);
     },
     methods:{
-        updateCliente(){ //conecta con bd y actualiza cleinte seleccionado
+        updateCliente(e){ //conecta con bd y actualiza cleinte seleccionado
+        
         //TODO: añadir validaciones y notificaciones
             var url='/clientesData/'+this.clEditar.id;
             axios.put(url, this.clEditar) //envía valor del cliente editado
@@ -151,6 +159,13 @@ export default{
                 }
             );
         }
+    },
+    notifications: {
+      showLoginError: { // You can have any name you want instead of 'showLoginError'
+        title: 'Login Failed',
+        message: 'Failed to authenticate',
+        type: 'error' // You also can use 'VueNotifications.types.error' instead of 'error'
+      }
     }
 }
 </script>

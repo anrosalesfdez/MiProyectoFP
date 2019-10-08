@@ -57,6 +57,9 @@ Route::get('/clientes_editar/{id}', 'ClienteController@clientesEditar')->name('c
 
 /**
  * Gestión de clientes DB
+ * DELETE = destroy($id)
+ * UPDATE = update($id)
+ * POST = store(Request $request)
  */
 // Route::resource('clientesData', 'ClienteController', ['except' => 'show']);
 Route::resource('clientesData', 'ClienteController');

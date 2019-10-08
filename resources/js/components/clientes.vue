@@ -7,7 +7,7 @@
     <div class="col-sm-12">
         <div class="espacios">
             <!-- link a crear nuevo cliente -->
-            <a class="btn btn-primary pull-right" role="button" href="clientes_nuevo">Nuevo cliente</a>
+            <a class="btn btn-success pull-right" role="button" href="/clientes_nuevo">Nuevo cliente</a>
         </div>
         
         <div class="espacios">
@@ -34,7 +34,7 @@
             <!-- <tbody> -->
             <paginate name="misClientes" :list="buscarCliente" :per="5" tag="tbody"> <!--busca en la propiedad computada-->
                 <!-- Partiendo del data buscarCliente, se recorren los elementos y se muestran sus atributos -->
-                <tr v-for="cliente in paginated('misClientes') " v-bind:key="cliente.id">
+                <tr v-for="cliente in paginated('misClientes')" v-bind:key="cliente.id">
 
                     <td scope="row">{{ cliente.id }}</td>
                     <td>{{ cliente.razon_social }}</td>
@@ -105,13 +105,6 @@ export default{
             axios.delete(url).then(response => {
                 this.getClientes(); //recarga listado
             });
-        },
-        getCliente(cliente){
-            var url="clientes_editar/" + cliente.id;  //Envía http request a la url dada. Le pasa el id del cliente seleccionado para que el método del controlador muestre form editar
-            // axios.get(url).then(response => {
-            //     console.log(response);
-
-            // })
         }
     },
     computed:{  //propiedad computada
