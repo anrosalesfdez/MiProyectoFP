@@ -1,28 +1,20 @@
 <template>
 <div class="row" id="clientes_nuevo">
     <div class="col-sm-12">
-        <h1>Mantenimiento de Clientes</h1>
+        <h3>Mantenimiento de Clientes</h3>
     </div>
 
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h2 style="display: inline; float: left">Alta nuevo cliente</h2>
-                <button @click="info" class="btn btn-default">
-                    <i class="mdi mdi-information-outline" aria-hidden="true"></i>                 
+                <h4 style="display: inline; float: left">Alta nuevo cliente</h4>
+                <button @click="info" class="btn btn-default" title="reglas para crear cliente">
+                    <i class="mdi mdi-information-outline" aria-hidden="true"></i>  
+                    <!-- https://materialdesignicons.com/cdn/2.0.46/                -->
                 </button>
-                <div class="popuptext popup" id="myPopup">
-                    <ul>Consideraciones
-                        <li>El campo NIF debe ser validado en la web de AEAT</li>
-                        <li>Una vez creado un cliente nuevo, el campo NIF no podrá ser modificado</li>
-                        <li>Blablabla</li>
-                    </ul>
-                    A Simple Popup!</span>
-                </div>
-
                 <div style="display: inline; float: right">
                     <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button>
-                    <a href="clientes" class="btn btn-danger">Cancelar</a>
+                    <a href="/clientes/clientes" class="btn btn-danger">Cancelar</a>
                 </div>
                 
             </div>
@@ -31,16 +23,16 @@
                 <form>
                     <div class="form-group">
                         <label for="razon_social" class="col-form-label">Razón social</label>      
-                        <input type="text" class="form-control" name="razon_social" id="razon_social" required v-model="nuevoCliente.razon_social" v-touppercase>
+                        <input type="text" class="form-control" name="razon_social" id="razon_social" ref="focus" required v-model="nuevoCliente.razon_social" v-touppercase>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="nif" class="col-form-label">NIF</label>      
-                            <input type="text" class="form-control" nif="cliente" id="nif" required placeholder="Ejemplo: 12345678N" v-model="nuevoCliente.nif" v-touppercase>
+                            <input type="text" class="form-control" name="nif" id="nif" required placeholder="Ejemplo: 12345678N" v-model="nuevoCliente.nif" v-touppercase>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="niva" class="col-form-label">NIVA</label>      
-                            <input type="text" class="form-control" name="niva" id="niva" required v-model="nuevoCliente.niva" v-touppercase>
+                            <input type="text" class="form-control" name="niva" id="niva" v-model="nuevoCliente.niva" v-touppercase>
                         </div>
                     </div>
                     <div class="form-group">
@@ -64,7 +56,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="tlfn" class="col-form-label">Teléfono</label>      
-                            <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="nuevoCliente.tlfn">
+                            <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="nuevoCliente.tlfn" placeholder="+xx-xxx xx xx xx">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email" class="col-form-label">Email</label>      
@@ -116,11 +108,9 @@
                         <textarea class="form-control" name="observ" id="observ" v-model="nuevoCliente.observ"></textarea>
                     </div>
 
-                    <!-- <p v-for="error in errores" v-bind:key="error" class="text-danger">{{ error }}</p> -->
-                    
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button>
-                        <a href="clientes" class="btn btn-danger">Cancelar</a>
+                        <a href="/clientes/clientes" class="btn btn-danger">Cancelar</a>
                     </div>
                 </form>
             </div>
@@ -155,43 +145,140 @@ export default{
             validado: false
         }
     },
+    created() {
+        console.log(this.nuevoCliente == null ? 'created nuevoCliente: true' : 'created nuevoCliente: false');
+        console.log('created validado: '+this.validado);
+        this.info();
+    },
     methods:{
-        storeCliente(){
-            //Validaciones del form en cliente
-            console.log(this.checkForm());
-            if(this.checkForm()){
-                var url='clientesData';
-                // console.log(this.nuevoCliente);
-                axios.post(url, this.nuevoCliente)
-                    .then(response => {   
-                        console.log(this.nuevoCliente);
-                        history.back(); //location.href()
-                    });
-                this.$notification.success("Cliente guardado correctamente!", {  timer: 10, position:'topRigth' });
+        validarForm(){
+            if(this.nuevoCliente.razon_social == '' && this.nuevoCliente.nif == '' && this.nuevoCliente.niva == '' && this.nuevoCliente.direccion == '' && 
+                this.nuevoCliente.provincia == '' && this.nuevoCliente.pais == '' && this.nuevoCliente.cp == '' && this.nuevoCliente.tlfn == '' && 
+                this.nuevoCliente.email == '' && this.nuevoCliente.ambito_cl == '' && this.nuevoCliente.tipo_cl == '' && this.nuevoCliente.forma_pago == '' && 
+                this.nuevoCliente.dias_pago == '' && this.nuevoCliente.observ == ''){
+                    
+                    this.$notification.error("Debes rellenar los campos", {  timer: 10, position:'topRigth' });
+                    this.$refs.focus.focus();
+                    console.log('todo blanco. form no validado');
+
+            }else{
+                if(this.controlRazonSocial(this.nuevoCliente.razon_social) && this.controlNif(this.nuevoCliente.nif) && this.controlNiva(this.nuevoCliente.niva) && this.controlPais(this.nuevoCliente.pais)
+                    && this.controlAmbito(this.nuevoCliente.ambito_cl) && this.controlTipo(this.nuevoCliente.tipo_cl)){
+                    TODO://INCLUIR MÁS CONTROLES...
+                    this.validado = true;
+                    console.log('validarForm: '+this.validado);
+                }
             }
         },
-        checkForm: function () {
-            if(this.controlRazonSocial(this.nuevoCliente.razon_social) &&
-               this.controlNif(this.nuevoCliente.nif) &&
-               this.controlEmail(this.nuevoCliente.email)){
-                
-                // this.validado = true;
+        storeCliente(){
+            //Validaciones del form en cliente
+            this.validarForm();
+            //si validado
+            if(this.validado == true){
+                var url='/clientes/clientes_nuevo';
+                console.log(this.nuevoCliente);
+                axios.post(url, this.nuevoCliente)
+                .then(response => {   
+                    console.log(response.data);
+                    this.nuevoCliente = response.data;
+                    this.$notification.success("Cliente guardado correctamente!", {  timer: 10, position:'topRigth' }); //FIXME: incluir id creado
+                    history.back(); //location.href()
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
+            
+        },
+        controlTipo(tipo_cl){
+            if(!tipo_cl){
+                console.log('tipo_cl es obligatorio');
+                $('#tipo_cl').focus();
+                this.$notification.error("Campo tipo cliente obligatorio", {  timer: 10, position:'topRigth' });
+                return false;
+            }
+            else{
+                console.log('tipo_cl ok: '+pais)
                 return true;
+            }
+        },
+        controlAmbito(ambito_cl){
+            if(!ambito_cl){
+                console.log('ambito_cl es obligatorio')
+                $('#ambito_cl').focus();
+                this.$notification.error("Campo ámbito obligatorio", {  timer: 10, position:'topRigth' });
+                return false;
+            }
+            else{
+                console.log('ambito_cl ok: '+pais)
+                return true;
+            }
+        },
+        controlPais: function(pais){
+            if(!pais){
+                console.log('pais es obligatorio');
+                $('#pais').focus();
+                this.$notification.error("Campo pais obligatorio", {  timer: 10, position:'topRigth' });
+                return false;
+            }
+            else{
+                console.log('pais ok: '+pais)
+                return true;
+            }
+        },
+        controlTlfn: function (tlfn){
+            if(tlfn){
+                let patronTlfn = /^\+?([0-9]{2})\)?[-]?([0-9]{3})[ ]?([0-9]{2})[ ]?([0-9]{2})[ ]?([0-9]{2})$/;
+                
+                if(!patronTlfn.test(tlfn)){
+                    console.log('tlfn mal: '+tlfn);
+                    $('#tlfn').focus();
+                    this.$notification.error("Campo telefono incorrecto", {  timer: 10, position:'topRigth' });
+                    return false;
+
+                }else{
+                    console.log('tlfn ok: '+tlfn);
+                    return true;
+                }
             }
         },
         controlEmail: function (email) {
-            let emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             
-            if(!email){
-                this.$notification.error("Campo email es obligatorio", {  timer: 10, position:'topRigth' });
+            if(this.nuevoCliente.email){
+               let emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+                if(!emailPatron.test(email)){
+                    console.log('email formato invalido');
+                    $('#email').focus();
+                    this.$notification.error("Formato email inválido", {  timer: 10, position:'topRigth' });
+                    return false;
+
+                }else{
+                    console.log('email oK: '+ email);
+                    return true;
+                }
+            }
+        },
+        controlNiva: function(niva){
+            // console.log(this.nuevoCliente.niva);
+            // console.log(this.nuevoCliente.niva.substr(2, (this.nuevoCliente.niva.length- 2)));
+            // console.log(this.nuevoCliente.nif);
+            if(!this.nuevoCliente.niva){
+                console.log('niva necesario...');
+                $('#niva').focus();
+                this.$notification.error("NIVA es campo obligatorio", {  timer: 10, position:'topRigth' });
                 return false;
 
-            }else if(!emailPatron.test(email)){
-                this.$notification.error("Formato email inválido", {  timer: 10, position:'topRigth' });
+            }else if(this.nuevoCliente.niva.substr(2, (this.nuevoCliente.niva.length- 2)).toString() !== this.nuevoCliente.nif.toString()){
+                console.log('niva no valido... '+niva+' '+nif);
+                $('#niva').focus();
+                this.$notification.error("Formato NIVA inválido", {  timer: 10, position:'topRigth' });
                 return false;
             }else{
+                console.log('niva validado... '+niva);
                 return true;
             }
+            
         },
         controlNif: function(dni) {
             /**
@@ -226,17 +313,25 @@ export default{
             let letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
 
             if(!dni){
+                console.log('nif es campo oblig');
+                $('#nif').focus();
                 this.$notification.error("Campo NIF es obligatorio", {  timer: 10, position:'topRigth' });
                 return false;
 
             }else if(dniPatron1.test(dni)){ // pfisicas
                 let numero = parseInt(dni.substr(0, dni.length - 1)) % 23;
+                console.log(numero);
                 let letraTeorica = letras.substring(numero, numero +1);
+                console.log(letraTeorica);
                 let letra = dni.substr(dni.length - 1, 1);
-                if(letra != letraTeorica){
-                    this.$notification.error("Formato NIF persona física inválido", {  timer: 10, position:'topRigth' });
-                    return false;
-                }
+                console.log(letra);
+                // if(letra != letraTeorica){
+                //     console.log("Formato NIF persona física inválido");
+                //     this.$notification.error("Formato NIF persona física inválido", {  timer: 10, position:'topRigth' });
+                //     return false;
+                // }
+                //53117466R 53183401H
+                console.log('nif persona fisica ok');
                 return true;
 
             }else if(dniPatron2.test(dni)){ //residentes extranjeros
@@ -260,29 +355,38 @@ export default{
                 letraTeorica = letras.substring(numero, numero +1);
                 letra = dni.substr(dni.length - 1, 1);
                 if(letra != letraTeorica){
+                    console.log("Formato NIF residente extranjero inválido");
+                    $('#nif').focus();
                     this.$notification.error("Formato NIF residente extranjero inválido", {  timer: 10, position:'topRigth' });
                     return false;
                 }
+                console.log('nif persona residente extranjero ok');
+                return true;
             }else{
-                this.$notification.warning("Imposible validar. Compruebe en AEAT", {  timer: 10, position:'topRigth' }); //FIXME: meter link a la web de aeat¿?
+                console.log('no errores en nif, pero no se puede validar: '+dni);
+                this.$notification.warning("Imposible validar NIF. Compruebe en AEAT", {  timer: 10, position:'topRigth' }); //FIXME: meter link a la web de aeat¿?
                 return true;
             }
         },
         controlRazonSocial: function(razon_social){
             if(!razon_social){
+                console.log('Campo razón social es obligatorio');
+                $('#razon_social').focus();
                 this.$notification.error("Campo razón social es obligatorio", {  timer: 10, position:'topRigth' });
                 return false;
             }else if (razon_social.length == 0 || razon_social.length > 50){
+                console.log('Campo razón social máximo de caracteres: 50');
                 this.$notification.error("Campo razón social máximo de caracteres: 50", {  timer: 10, position:'topRigth' });
                 return false;
             }else{
+                console.log('razon social ok: '+razon_social);
                 return true;
             }
-            console.log('dentro');
         },
         info: function () {
             console.log('info');
-            $('#myPopup').toggleClass("show");
+            let infoCrear = "Debes tener en cuenta que estos datos deben ser fiables!"
+            alert(infoCrear);
         }
     } //end methods
 }

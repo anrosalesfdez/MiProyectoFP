@@ -9,7 +9,7 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 //registro de directiva personalizada para pasar datos form a upperCase
-//Aplica a toda la aplicación xD
+//Aplica a toda la aplicación
 Vue.directive( 'touppercase', {
     update (el) {
         el.value = el.value.toUpperCase()
@@ -48,6 +48,7 @@ Vue.use(VueNotification, {
 Vue.component('clientes', require('./components/clientes.vue').default);
 Vue.component('clientes_nuevo', require('./components/clientes_nuevo.vue').default);
 Vue.component('clientes_editar', require('./components/clientes_editar.vue').default);
+Vue.component('clientes_detalle', require('./components/clientes_detalle.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

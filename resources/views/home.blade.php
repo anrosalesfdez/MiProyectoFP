@@ -44,7 +44,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="{{ request()->route()->getName() === 'clientes' || request()->route()->getName() === 'clientes_nuevo' || request()->route()->getName() === 'clientes_editar' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('clientes') }}">
+                        <a class="{{ request()->route()->getName() === 'clientes' || request()->route()->getName() === 'clientes_detalle' || request()->route()->getName() === 'clientes_nuevo' || request()->route()->getName() === 'clientes_editar' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('/clientes/clientes') }}">
                         <span data-feather="users"></span>
                         Clientes
                         </a>

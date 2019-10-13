@@ -1,13 +1,13 @@
 <template>
 <div class="row" id="clientes">
     <div class="col-sm-12">
-        <h1>Mantenimiento de Clientes</h1>
+        <h3>Mantenimiento de Clientes</h3>
     </div>
 
     <div class="col-sm-12">
         <div class="espacios">
             <!-- link a crear nuevo cliente -->
-            <a class="btn btn-success pull-right" role="button" href="/clientes_nuevo">Nuevo cliente</a>
+            <a class="btn btn-success pull-right" role="button" href="/clientes/clientes_nuevo">Nuevo cliente</a>
         </div>
         
         <div class="espacios">
@@ -37,7 +37,7 @@
                 <tr v-for="cliente in paginated('misClientes')" v-bind:key="cliente.id">
 
                     <td scope="row">{{ cliente.id }}</td>
-                    <td>{{ cliente.razon_social }}</td>
+                    <td><a v-bind:href="'/clientes/clientes_detalle/'+cliente.id">{{ cliente.razon_social }}</a></td>
                     <!-- <td>{{ cliente.nif }}</td> -->
                     <td>{{ cliente.niva }}</td>
                     <!-- <td>{{ cliente.direccion }}</td> -->
@@ -54,7 +54,7 @@
                     
                     <td width="10px">
                         <!-- <button class="btn btn-outline-primary btn-sm" v-on:click="getCliente(cliente)">Editar</button> -->
-                        <a scope="row" v-bind:href="'/clientes_editar/'+cliente.id" class="btn btn-outline-primary btn-sm">Editar</a>
+                        <a scope="row" v-bind:href="'/clientes/clientes_editar/'+cliente.id" class="btn btn-outline-primary btn-sm">Editar</a>
                     </td>
 
                     <td width="10px">
@@ -66,10 +66,12 @@
             <paginate-links 
                 for="misClientes"
                 :show-step-links="true"
+                :hide-single-page="true"
                 :simple="{
                     prev: 'Anterior',
                     next: 'Siguiente'  
                 }">
+                <!--FIXME: inhabilitar cuando no hay más páginas-->
             </paginate-links>
         </table>
     </div>
@@ -85,24 +87,26 @@ import clientes_nuevoVue from './clientes_nuevo.vue';
 export default{
     data(){ //datos del componente
         return {
-            clientes:[],    //array de clientes recogidos de db
+            clientes:[],    //array de clientes recogidos de db. Coge el valor que le pasa blade
             clienteBuscado:'',  //recoge el cliente que se usa para buscador
             paginate: ['misClientes']  //para paginar resultados de clientes obtenido
         }
     },
-    created(){  //acciones a realizar en cuanto se crea el componente
-        this.getClientes();
+    created() {
+        this.getClientes(); //carga datos BD
     },
     methods:{
         getClientes(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-            var url = 'clientesData';
+            var url = '/clientes/clientesData';
             axios.get(url).then(response => {
-                this.clientes = response.data
+                this.clientes = response.data;
+                console.log(this.clientes);
             });
         },
         deleteCliente(cliente){   //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
-            var url='clientesData/' + cliente.id;
+            var url='/clientes/clientes_delete/' + cliente.id;
             axios.delete(url).then(response => {
+                console.log('eliminando cliente');
                 this.getClientes(); //recarga listado
             });
         }

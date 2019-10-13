@@ -5345,6 +5345,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
  // https://styde.net/paginacion-en-vue-js-con-vue-paginate/
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -5352,7 +5354,7 @@ __webpack_require__.r(__webpack_exports__);
     //datos del componente
     return {
       clientes: [],
-      //array de clientes recogidos de db
+      //array de clientes recogidos de db. Coge el valor que le pasa blade
       clienteBuscado: '',
       //recoge el cliente que se usa para buscador
       paginate: ['misClientes'] //para paginar resultados de clientes obtenido
@@ -5360,25 +5362,27 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    //acciones a realizar en cuanto se crea el componente
-    this.getClientes();
+    this.getClientes(); //carga datos BD
   },
   methods: {
     getClientes: function getClientes() {
       var _this = this;
 
       //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-      var url = 'clientesData';
+      var url = '/clientes/clientesData';
       axios.get(url).then(function (response) {
         _this.clientes = response.data;
+        console.log(_this.clientes);
       });
     },
     deleteCliente: function deleteCliente(cliente) {
       var _this2 = this;
 
       //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
-      var url = 'clientesData/' + cliente.id;
+      var url = '/clientes/clientes_delete/' + cliente.id;
       axios["delete"](url).then(function (response) {
+        console.log('eliminando cliente');
+
         _this2.getClientes(); //recarga listado
 
       });
@@ -5397,6 +5401,160 @@ __webpack_require__.r(__webpack_exports__);
       }); //a la data clientes [] se le aplica filtro
       //el filtro aplica a los clientes que coincidan con el data clienteBuscado.
     }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/clientes_detalle.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/clientes_detalle.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    //datos del componente
+    return {
+      clMostrar: this.cliente //se le asigna el valor que nos da blade
+
+    };
+  },
+  props: ['cliente' //prop que envía clientes_editar.blade
+  ],
+  created: function created() {
+    console.log(this.clMostrar);
   }
 });
 
@@ -5540,6 +5698,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     //datos del componente
@@ -5548,38 +5707,141 @@ __webpack_require__.r(__webpack_exports__);
       //se le asigna el valor que nos da blade
       errores: [],
       //array para recoger errores en validación
-      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      validado: false
     };
   },
   props: ['editadocliente' //prop que envía clientes_editar.blade
   ],
   created: function created() {
-    console.log('hola');
     console.log(this.clEditar);
   },
   methods: {
-    updateCliente: function updateCliente(e) {
+    updateCliente: function updateCliente() {
       var _this = this;
 
       //conecta con bd y actualiza cleinte seleccionado
-      //TODO: añadir validaciones y notificaciones
-      var url = '/clientesData/' + this.clEditar.id;
-      axios.put(url, this.clEditar) //envía valor del cliente editado
-      .then(function (response) {
-        console.log(response);
-        location.back();
-      })["catch"](function (error) {
-        _this.errores = error.response.data;
-      });
-    }
-  },
-  notifications: {
-    showLoginError: {
-      // You can have any name you want instead of 'showLoginError'
-      title: 'Login Failed',
-      message: 'Failed to authenticate',
-      type: 'error' // You also can use 'VueNotifications.types.error' instead of 'error'
+      //Validaciones del form en cliente
+      this.validarForm();
+      console.log(this.validado); //si validado
 
+      if (this.validado == true) {
+        var url = '/clientes/clientesData/' + this.clEditar.id;
+        axios.post(url, this.clEditar) //envía valor del cliente editado
+        .then(function (response) {
+          console.log(response);
+          history.back(); // location.href() = '/clientes';
+        })["catch"](function (error) {
+          _this.errores = error.response.data;
+        });
+      }
+    },
+    validarForm: function validarForm() {
+      if (this.controlRazonSocial(this.clEditar.razon_social) && this.controlPais(this.clEditar.pais) && this.controlAmbito(this.clEditar.ambito_cl) && this.controlTipo(this.clEditar.tipo_cl)) {
+        TODO: //INCLUIR MÁS CONTROLES...
+        this.validado = true;
+
+        console.log('validarForm: ' + this.validado);
+      }
+    },
+    controlRazonSocial: function controlRazonSocial(razon_social) {
+      if (!razon_social) {
+        console.log('Campo razón social es obligatorio');
+        $('#razon_social').focus();
+        this.$notification.error("Campo razón social es obligatorio", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else if (razon_social.length == 0 || razon_social.length > 50) {
+        console.log('Campo razón social máximo de caracteres: 50');
+        this.$notification.error("Campo razón social máximo de caracteres: 50", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        console.log('razon social ok: ' + razon_social);
+        return true;
+      }
+    },
+    controlTipo: function controlTipo(tipo_cl) {
+      if (!tipo_cl) {
+        console.log('tipo_cl es obligatorio');
+        $('#tipo_cl').focus();
+        this.$notification.error("Campo tipo cliente obligatorio", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        console.log('tipo_cl ok: ' + pais);
+        return true;
+      }
+    },
+    controlAmbito: function controlAmbito(ambito_cl) {
+      if (!ambito_cl) {
+        console.log('ambito_cl es obligatorio');
+        $('#ambito_cl').focus();
+        this.$notification.error("Campo ámbito obligatorio", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        console.log('ambito_cl ok: ' + pais);
+        return true;
+      }
+    },
+    controlPais: function controlPais(pais) {
+      if (!pais) {
+        console.log('pais es obligatorio');
+        $('#pais').focus();
+        this.$notification.error("Campo pais obligatorio", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        console.log('pais ok: ' + pais);
+        return true;
+      }
+    },
+    controlTlfn: function controlTlfn(tlfn) {
+      if (tlfn) {
+        var patronTlfn = /^\+?([0-9]{2})\)?[-]?([0-9]{3})[ ]?([0-9]{2})[ ]?([0-9]{2})[ ]?([0-9]{2})$/;
+
+        if (!patronTlfn.test(tlfn)) {
+          console.log('tlfn mal: ' + tlfn);
+          $('#tlfn').focus();
+          this.$notification.error("Campo telefono incorrecto", {
+            timer: 10,
+            position: 'topRigth'
+          });
+          return false;
+        } else {
+          console.log('tlfn ok: ' + tlfn);
+          return true;
+        }
+      }
+    },
+    controlEmail: function controlEmail(email) {
+      if (this.nuevoCliente.email) {
+        var emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!emailPatron.test(email)) {
+          console.log('email formato invalido');
+          $('#email').focus();
+          this.$notification.error("Formato email inválido", {
+            timer: 10,
+            position: 'topRigth'
+          });
+          return false;
+        } else {
+          console.log('email oK: ' + email);
+          return true;
+        }
+      }
     }
   }
 });
@@ -5595,16 +5857,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -5752,48 +6004,154 @@ __webpack_require__.r(__webpack_exports__);
       validado: false
     };
   },
+  created: function created() {
+    console.log(this.nuevoCliente == null ? 'created nuevoCliente: true' : 'created nuevoCliente: false');
+    console.log('created validado: ' + this.validado);
+    this.info();
+  },
   methods: {
+    validarForm: function validarForm() {
+      if (this.nuevoCliente.razon_social == '' && this.nuevoCliente.nif == '' && this.nuevoCliente.niva == '' && this.nuevoCliente.direccion == '' && this.nuevoCliente.provincia == '' && this.nuevoCliente.pais == '' && this.nuevoCliente.cp == '' && this.nuevoCliente.tlfn == '' && this.nuevoCliente.email == '' && this.nuevoCliente.ambito_cl == '' && this.nuevoCliente.tipo_cl == '' && this.nuevoCliente.forma_pago == '' && this.nuevoCliente.dias_pago == '' && this.nuevoCliente.observ == '') {
+        this.$notification.error("Debes rellenar los campos", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        this.$refs.focus.focus();
+        console.log('todo blanco. form no validado');
+      } else {
+        if (this.controlRazonSocial(this.nuevoCliente.razon_social) && this.controlNif(this.nuevoCliente.nif) && this.controlNiva(this.nuevoCliente.niva) && this.controlPais(this.nuevoCliente.pais) && this.controlAmbito(this.nuevoCliente.ambito_cl) && this.controlTipo(this.nuevoCliente.tipo_cl)) {
+          TODO: //INCLUIR MÁS CONTROLES...
+          this.validado = true;
+
+          console.log('validarForm: ' + this.validado);
+        }
+      }
+    },
     storeCliente: function storeCliente() {
       var _this = this;
 
       //Validaciones del form en cliente
-      console.log(this.checkForm());
+      this.validarForm(); //si validado
 
-      if (this.checkForm()) {
-        var url = 'clientesData'; // console.log(this.nuevoCliente);
-
+      if (this.validado == true) {
+        var url = '/clientes/clientes_nuevo';
+        console.log(this.nuevoCliente);
         axios.post(url, this.nuevoCliente).then(function (response) {
-          console.log(_this.nuevoCliente);
-          history.back(); //location.href()
-        });
-        this.$notification.success("Cliente guardado correctamente!", {
-          timer: 10,
-          position: 'topRigth'
-        });
-      }
-    },
-    checkForm: function checkForm() {
-      if (this.controlRazonSocial(this.nuevoCliente.razon_social) && this.controlNif(this.nuevoCliente.nif) && this.controlEmail(this.nuevoCliente.email)) {
-        // this.validado = true;
-        return true;
-      }
-    },
-    controlEmail: function controlEmail(email) {
-      var emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          console.log(response.data);
+          _this.nuevoCliente = response.data;
 
-      if (!email) {
-        this.$notification.error("Campo email es obligatorio", {
-          timer: 10,
-          position: 'topRigth'
+          _this.$notification.success("Cliente guardado correctamente!", {
+            timer: 10,
+            position: 'topRigth'
+          }); //FIXME: incluir id creado
+
+
+          history.back(); //location.href()
+        })["catch"](function (error) {
+          console.log(error);
         });
-        return false;
-      } else if (!emailPatron.test(email)) {
-        this.$notification.error("Formato email inválido", {
+      }
+    },
+    controlTipo: function controlTipo(tipo_cl) {
+      if (!tipo_cl) {
+        console.log('tipo_cl es obligatorio');
+        $('#tipo_cl').focus();
+        this.$notification.error("Campo tipo cliente obligatorio", {
           timer: 10,
           position: 'topRigth'
         });
         return false;
       } else {
+        console.log('tipo_cl ok: ' + pais);
+        return true;
+      }
+    },
+    controlAmbito: function controlAmbito(ambito_cl) {
+      if (!ambito_cl) {
+        console.log('ambito_cl es obligatorio');
+        $('#ambito_cl').focus();
+        this.$notification.error("Campo ámbito obligatorio", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        console.log('ambito_cl ok: ' + pais);
+        return true;
+      }
+    },
+    controlPais: function controlPais(pais) {
+      if (!pais) {
+        console.log('pais es obligatorio');
+        $('#pais').focus();
+        this.$notification.error("Campo pais obligatorio", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        console.log('pais ok: ' + pais);
+        return true;
+      }
+    },
+    controlTlfn: function controlTlfn(tlfn) {
+      if (tlfn) {
+        var patronTlfn = /^\+?([0-9]{2})\)?[-]?([0-9]{3})[ ]?([0-9]{2})[ ]?([0-9]{2})[ ]?([0-9]{2})$/;
+
+        if (!patronTlfn.test(tlfn)) {
+          console.log('tlfn mal: ' + tlfn);
+          $('#tlfn').focus();
+          this.$notification.error("Campo telefono incorrecto", {
+            timer: 10,
+            position: 'topRigth'
+          });
+          return false;
+        } else {
+          console.log('tlfn ok: ' + tlfn);
+          return true;
+        }
+      }
+    },
+    controlEmail: function controlEmail(email) {
+      if (this.nuevoCliente.email) {
+        var emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!emailPatron.test(email)) {
+          console.log('email formato invalido');
+          $('#email').focus();
+          this.$notification.error("Formato email inválido", {
+            timer: 10,
+            position: 'topRigth'
+          });
+          return false;
+        } else {
+          console.log('email oK: ' + email);
+          return true;
+        }
+      }
+    },
+    controlNiva: function controlNiva(niva) {
+      // console.log(this.nuevoCliente.niva);
+      // console.log(this.nuevoCliente.niva.substr(2, (this.nuevoCliente.niva.length- 2)));
+      // console.log(this.nuevoCliente.nif);
+      if (!this.nuevoCliente.niva) {
+        console.log('niva necesario...');
+        $('#niva').focus();
+        this.$notification.error("NIVA es campo obligatorio", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else if (this.nuevoCliente.niva.substr(2, this.nuevoCliente.niva.length - 2).toString() !== this.nuevoCliente.nif.toString()) {
+        console.log('niva no valido... ' + niva + ' ' + nif);
+        $('#niva').focus();
+        this.$notification.error("Formato NIVA inválido", {
+          timer: 10,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        console.log('niva validado... ' + niva);
         return true;
       }
     },
@@ -5832,6 +6190,8 @@ __webpack_require__.r(__webpack_exports__);
       var letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
 
       if (!dni) {
+        console.log('nif es campo oblig');
+        $('#nif').focus();
         this.$notification.error("Campo NIF es obligatorio", {
           timer: 10,
           position: 'topRigth'
@@ -5840,19 +6200,22 @@ __webpack_require__.r(__webpack_exports__);
       } else if (dniPatron1.test(dni)) {
         // pfisicas
         var numero = parseInt(dni.substr(0, dni.length - 1)) % 23;
+        console.log(numero);
 
         var _letraTeorica = letras.substring(numero, numero + 1);
 
+        console.log(_letraTeorica);
+
         var _letra = dni.substr(dni.length - 1, 1);
 
-        if (_letra != _letraTeorica) {
-          this.$notification.error("Formato NIF persona física inválido", {
-            timer: 10,
-            position: 'topRigth'
-          });
-          return false;
-        }
+        console.log(_letra); // if(letra != letraTeorica){
+        //     console.log("Formato NIF persona física inválido");
+        //     this.$notification.error("Formato NIF persona física inválido", {  timer: 10, position:'topRigth' });
+        //     return false;
+        // }
+        //53117466R 53183401H
 
+        console.log('nif persona fisica ok');
         return true;
       } else if (dniPatron2.test(dni)) {
         //residentes extranjeros
@@ -5884,14 +6247,20 @@ __webpack_require__.r(__webpack_exports__);
         letra = dni.substr(dni.length - 1, 1);
 
         if (letra != letraTeorica) {
+          console.log("Formato NIF residente extranjero inválido");
+          $('#nif').focus();
           this.$notification.error("Formato NIF residente extranjero inválido", {
             timer: 10,
             position: 'topRigth'
           });
           return false;
         }
+
+        console.log('nif persona residente extranjero ok');
+        return true;
       } else {
-        this.$notification.warning("Imposible validar. Compruebe en AEAT", {
+        console.log('no errores en nif, pero no se puede validar: ' + dni);
+        this.$notification.warning("Imposible validar NIF. Compruebe en AEAT", {
           timer: 10,
           position: 'topRigth'
         }); //FIXME: meter link a la web de aeat¿?
@@ -5901,26 +6270,29 @@ __webpack_require__.r(__webpack_exports__);
     },
     controlRazonSocial: function controlRazonSocial(razon_social) {
       if (!razon_social) {
+        console.log('Campo razón social es obligatorio');
+        $('#razon_social').focus();
         this.$notification.error("Campo razón social es obligatorio", {
           timer: 10,
           position: 'topRigth'
         });
         return false;
       } else if (razon_social.length == 0 || razon_social.length > 50) {
+        console.log('Campo razón social máximo de caracteres: 50');
         this.$notification.error("Campo razón social máximo de caracteres: 50", {
           timer: 10,
           position: 'topRigth'
         });
         return false;
       } else {
+        console.log('razon social ok: ' + razon_social);
         return true;
       }
-
-      console.log('dentro');
     },
     info: function info() {
       console.log('info');
-      $('#myPopup').toggleClass("show");
+      var infoCrear = "Debes tener en cuenta que estos datos deben ser fiables!";
+      alert(infoCrear);
     }
   } //end methods
 
@@ -10404,7 +10776,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* Popup container - can be anything you want */\n.popup {\r\n  visibility: hidden;\r\n  position: relative;\r\n  display: inline-block;\r\n  cursor: pointer;\r\n  -webkit-user-select: none;\r\n  -moz-user-select: none;\r\n  -ms-user-select: none;\r\n  user-select: none;\n}\r\n\r\n/* The actual popup */\n.popup .popuptext {\r\n  visibility: hidden;\r\n  width: 160px;\r\n  background-color: #555;\r\n  color: #fff;\r\n  text-align: center;\r\n  border-radius: 6px;\r\n  padding: 8px 0;\r\n  position: absolute;\r\n  z-index: 1;\r\n  bottom: 125%;\r\n  left: 50%;\r\n  margin-left: -80px;\n}\r\n\r\n/* Popup arrow */\n.popup .popuptext::after {\r\n  content: \"\";\r\n  position: absolute;\r\n  top: 100%;\r\n  left: 50%;\r\n  margin-left: -5px;\r\n  border-width: 5px;\r\n  border-style: solid;\r\n  border-color: #555 transparent transparent transparent;\n}\r\n\r\n/* Toggle this class - hide and show the popup */\n.show {\r\n  visibility: visible;\r\n  -webkit-animation: fadeIn 1s;\r\n  animation: fadeIn 1s;\n}\r\n\r\n/* Add animation (fade in the popup) */\n@-webkit-keyframes fadeIn {\nfrom {opacity: 0;}\nto {opacity: 1;}\n}\n@keyframes fadeIn {\nfrom {opacity: 0;}\nto {opacity:1 ;}\n}\r\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* Popup container - can be anything you want */\n.popup {\r\n  visibility: hidden;\r\n  position: relative;\r\n  display: inline-block;\r\n  cursor: pointer;\r\n  -webkit-user-select: none;\r\n  -moz-user-select: none;\r\n  -ms-user-select: none;\r\n  user-select: none;\n}\r\n\r\n/* The actual popup */\n.popup .popuptext {\r\n  visibility: hidden;\r\n  width: 160px;\r\n  background-color: #555;\r\n  color: #fff;\r\n  text-align: center;\r\n  border-radius: 6px;\r\n  padding: 8px 0;\r\n  position: absolute;\r\n  z-index: 1;\r\n  bottom: 125%;\r\n  left: 50%;\r\n  margin-left: -80px;\n}\r\n\r\n/* Popup arrow */\n.popup .popuptext::after {\r\n  content: \"\";\r\n  position: absolute;\r\n  top: 100%;\r\n  left: 50%;\r\n  margin-left: -5px;\r\n  border-width: 5px;\r\n  border-style: solid;\r\n  border-color: #555 transparent transparent transparent;\n}\r\n\r\n/* Toggle this class - hide and show the popup */\n.show {\r\n  visibility: visible;\r\n  -webkit-animation: fadeIn 1s;\r\n  animation: fadeIn 1s;\n}\r\n\r\n/* Add animation (fade in the popup) */\n@-webkit-keyframes fadeIn {\nfrom {opacity: 0;}\nto {opacity: 1;}\n}\n@keyframes fadeIn {\nfrom {opacity: 0;}\nto {opacity:1 ;}\n}\r\n", ""]);
 
 // exports
 
@@ -50536,7 +50908,17 @@ var render = function() {
                   _vm._v(_vm._s(cliente.id))
                 ]),
                 _vm._v(" "),
-                _c("td", [_vm._v(_vm._s(cliente.razon_social))]),
+                _c("td", [
+                  _c(
+                    "a",
+                    {
+                      attrs: {
+                        href: "/clientes/clientes_detalle/" + cliente.id
+                      }
+                    },
+                    [_vm._v(_vm._s(cliente.razon_social))]
+                  )
+                ]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(cliente.niva))]),
                 _vm._v(" "),
@@ -50553,7 +50935,7 @@ var render = function() {
                       staticClass: "btn btn-outline-primary btn-sm",
                       attrs: {
                         scope: "row",
-                        href: "/clientes_editar/" + cliente.id
+                        href: "/clientes/clientes_editar/" + cliente.id
                       }
                     },
                     [_vm._v("Editar")]
@@ -50583,6 +50965,7 @@ var render = function() {
             attrs: {
               for: "misClientes",
               "show-step-links": true,
+              "hide-single-page": true,
               simple: {
                 prev: "Anterior",
                 next: "Siguiente"
@@ -50601,7 +50984,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-sm-12" }, [
-      _c("h1", [_vm._v("Mantenimiento de Clientes")])
+      _c("h3", [_vm._v("Mantenimiento de Clientes")])
     ])
   },
   function() {
@@ -50613,7 +50996,7 @@ var staticRenderFns = [
         "a",
         {
           staticClass: "btn btn-success pull-right",
-          attrs: { role: "button", href: "/clientes_nuevo" }
+          attrs: { role: "button", href: "/clientes/clientes_nuevo" }
         },
         [_vm._v("Nuevo cliente")]
       )
@@ -50650,6 +51033,729 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/clientes_detalle.vue?vue&type=template&id=366ada88&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/clientes_detalle.vue?vue&type=template&id=366ada88& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row", attrs: { id: "clientes_nuevo" } }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-sm-12" }, [
+      _c("div", { staticClass: "card" }, [
+        _c("div", { staticClass: "card-header" }, [
+          _c("h4", { staticStyle: { display: "inline" } }, [
+            _vm._v("Visualización cliente ID: "),
+            _c("strong", [_vm._v(_vm._s(this.clMostrar.id))])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticStyle: { display: "inline", float: "right" } }, [
+            _c(
+              "a",
+              {
+                staticClass: "btn btn-primary",
+                attrs: {
+                  href: "/clientes/clientes_editar/" + this.clMostrar.id
+                }
+              },
+              [_vm._v("Permitir edición")]
+            ),
+            _vm._v(" "),
+            _c(
+              "a",
+              {
+                staticClass: "btn btn-danger",
+                attrs: { href: "/clientes/clientes" }
+              },
+              [_vm._v("Cancelar")]
+            ),
+            _vm._v(" "),
+            _vm._m(1)
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body" }, [
+          _c("form", [
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "label",
+                {
+                  staticClass: "col-form-label",
+                  attrs: { for: "razon_social" }
+                },
+                [_vm._v("Razón social")]
+              ),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.clMostrar.razon_social,
+                    expression: "clMostrar.razon_social"
+                  },
+                  { name: "touppercase", rawName: "v-touppercase" }
+                ],
+                staticClass: "form-control",
+                attrs: {
+                  type: "text",
+                  disabled: "",
+                  name: "razon_social",
+                  id: "razon_social"
+                },
+                domProps: { value: _vm.clMostrar.razon_social },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.clMostrar, "razon_social", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "nif" } },
+                  [_vm._v("NIF")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.nif,
+                      expression: "clMostrar.nif"
+                    },
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text", disabled: "", nif: "nif", id: "nif" },
+                  domProps: { value: _vm.clMostrar.nif },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clMostrar, "nif", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "niva" } },
+                  [_vm._v("NIVA")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.niva,
+                      expression: "clMostrar.niva"
+                    },
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    disabled: "",
+                    name: "niva",
+                    id: "niva"
+                  },
+                  domProps: { value: _vm.clMostrar.niva },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clMostrar, "niva", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "label",
+                { staticClass: "col-form-label", attrs: { for: "direccion" } },
+                [_vm._v("Dirección")]
+              ),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.clMostrar.direccion,
+                    expression: "clMostrar.direccion"
+                  },
+                  { name: "touppercase", rawName: "v-touppercase" }
+                ],
+                staticClass: "form-control",
+                attrs: {
+                  type: "text",
+                  disabled: "",
+                  name: "direccion",
+                  id: "direccion"
+                },
+                domProps: { value: _vm.clMostrar.direccion },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.clMostrar, "direccion", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-5" }, [
+                _c(
+                  "label",
+                  {
+                    staticClass: "col-form-label",
+                    attrs: { for: "provincia" }
+                  },
+                  [_vm._v("Provincia")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.provincia,
+                      expression: "clMostrar.provincia"
+                    },
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    disabled: "",
+                    name: "provincia",
+                    id: "provincia"
+                  },
+                  domProps: { value: _vm.clMostrar.provincia },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clMostrar, "provincia", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-5" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "pais" } },
+                  [_vm._v("Pais")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.pais,
+                      expression: "clMostrar.pais"
+                    },
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    disabled: "",
+                    name: "pais",
+                    id: "pais"
+                  },
+                  domProps: { value: _vm.clMostrar.pais },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clMostrar, "pais", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-2" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "cp" } },
+                  [_vm._v("Código Postal")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.cp,
+                      expression: "clMostrar.cp"
+                    },
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text", disabled: "", name: "cp", id: "cp" },
+                  domProps: { value: _vm.clMostrar.cp },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clMostrar, "cp", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "tlfn" } },
+                  [_vm._v("Teléfono")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.tlfn,
+                      expression: "clMostrar.tlfn"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "tel",
+                    disabled: "",
+                    name: "tlfn",
+                    id: "tlfn"
+                  },
+                  domProps: { value: _vm.clMostrar.tlfn },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clMostrar, "tlfn", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "email" } },
+                  [_vm._v("Email")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.email,
+                      expression: "clMostrar.email"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "email",
+                    disabled: "",
+                    name: "email",
+                    id: "email"
+                  },
+                  domProps: { value: _vm.clMostrar.email },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clMostrar, "email", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  {
+                    staticClass: "col-form-label",
+                    attrs: { for: "ambito_cl" }
+                  },
+                  [_vm._v("Ámbito cliente")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.clMostrar.ambito_cl,
+                        expression: "clMostrar.ambito_cl"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { name: "ambito_cl", id: "ambito_cl", disabled: "" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.clMostrar,
+                          "ambito_cl",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { disabled: "", selected: "", value: "" } },
+                      [_vm._v("Ámbito de cliente...")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "NACIONAL" } }, [
+                      _vm._v("NACIONAL")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "INTRACOMUNITARIO" } }, [
+                      _vm._v("INTRACOMUNITARIO")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "EXTRACOMUNITARIO" } }, [
+                      _vm._v("EXTRACOMUNITARIO")
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "tipo_cl" } },
+                  [_vm._v("Tipo cliente")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.clMostrar.tipo_cl,
+                        expression: "clMostrar.tipo_cl"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { name: "tipo_cl", id: "tipo_cl", disabled: "" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.clMostrar,
+                          "tipo_cl",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { disabled: "", selected: "", value: "" } },
+                      [_vm._v("Tipo de cliente...")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "PERSONA FISICA" } }, [
+                      _vm._v("PERSONA FISICA")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "PERSONA JURIDICA" } }, [
+                      _vm._v("PERSONA JURIDICA")
+                    ])
+                  ]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  {
+                    staticClass: "col-form-label",
+                    attrs: { for: "forma_pago" }
+                  },
+                  [_vm._v("Método de pago")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.clMostrar.forma_pago,
+                        expression: "clMostrar.forma_pago"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      disabled: "",
+                      name: "forma_pago",
+                      id: "forma_pago"
+                    },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.clMostrar,
+                          "forma_pago",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { disabled: "", selected: "", value: "" } },
+                      [_vm._v("Elije método...")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "TRANSFERENCIA" } }, [
+                      _vm._v("TRANSFERENCIA")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "PAY PAL" } }, [
+                      _vm._v("PAY PAL")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "CONTADO" } }, [
+                      _vm._v("CONTADO")
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  {
+                    staticClass: "col-form-label",
+                    attrs: { for: "dias_pago" }
+                  },
+                  [_vm._v("Plazo para el pago")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.clMostrar.dias_pago,
+                        expression: "clMostrar.dias_pago"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { disabled: "", name: "dias_pago", id: "dias_pago" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.clMostrar,
+                          "dias_pago",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { disabled: "", selected: "", value: "" } },
+                      [_vm._v("Elige días...")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "0" } }, [_vm._v("0")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "15" } }, [_vm._v("15")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "30" } }, [_vm._v("30")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "60" } }, [_vm._v("60")])
+                  ]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _vm._m(2),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer" }, [
+              _c(
+                "a",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: {
+                    href: "/clientes/clientes_editar/" + this.clMostrar.id
+                  }
+                },
+                [_vm._v("Permitir edición")]
+              ),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass: "btn btn-danger",
+                  attrs: { href: "/clientes/clientes" }
+                },
+                [_vm._v("Cancelar")]
+              ),
+              _vm._v(" "),
+              _vm._m(3)
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-sm-12" }, [
+      _c("h3", [_vm._v("Mantenimiento de Clientes")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("button", { staticClass: "btn btn-default" }, [
+      _c("i", {
+        staticClass: "mdi mdi-cloud-print",
+        attrs: { "aria-hidden": "true" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group" }, [
+      _c(
+        "label",
+        {
+          staticClass: "col-form-label",
+          attrs: { for: "observ", disabled: "" }
+        },
+        [_vm._v("Observaciones")]
+      ),
+      _vm._v(" "),
+      _c("textarea", {
+        staticClass: "form-control",
+        attrs: { name: "observ", id: "observ" }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("button", { staticClass: "btn btn-default" }, [
+      _c("i", {
+        staticClass: "mdi mdi-cloud-print",
+        attrs: { "aria-hidden": "true" }
+      })
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/clientes_editar.vue?vue&type=template&id=3ee40d06&":
 /*!******************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/clientes_editar.vue?vue&type=template&id=3ee40d06& ***!
@@ -50670,34 +51776,62 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "col-sm-12" }, [
       _c("div", { staticClass: "card" }, [
-        _vm._m(1),
+        _c("div", { staticClass: "card-header" }, [
+          _c("h4", { staticStyle: { display: "inline" } }, [
+            _vm._v("Actualizando cliente ID: "),
+            _c("strong", [_vm._v(_vm._s(this.clEditar.id))])
+          ]),
+          _vm._v(" "),
+          _vm._m(1)
+        ]),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
-          _c(
-            "form",
-            {
-              attrs: {
-                method: "post",
-                action: "/clientesData/" + _vm.clEditar.id
-              }
-            },
-            [
-              _c("input", {
-                attrs: { type: "hidden", name: "_method", value: "PATCH" }
-              }),
+          _c("form", [
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "label",
+                {
+                  staticClass: "col-form-label",
+                  attrs: { for: "razon_social" }
+                },
+                [_vm._v("Razón social")]
+              ),
               _vm._v(" "),
               _c("input", {
-                attrs: { type: "hidden", name: "_token", value: "csrf" }
-              }),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-group" }, [
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.clEditar.razon_social,
+                    expression: "clEditar.razon_social"
+                  },
+                  { name: "touppercase", rawName: "v-touppercase" }
+                ],
+                staticClass: "form-control",
+                attrs: {
+                  type: "text",
+                  required: "",
+                  name: "razon_social",
+                  id: "razon_social"
+                },
+                domProps: { value: _vm.clEditar.razon_social },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.clEditar, "razon_social", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-6" }, [
                 _c(
                   "label",
-                  {
-                    staticClass: "col-form-label",
-                    attrs: { for: "razon_social" }
-                  },
-                  [_vm._v("Razón social")]
+                  { staticClass: "col-form-label", attrs: { for: "nif" } },
+                  [_vm._v("NIF")]
                 ),
                 _vm._v(" "),
                 _c("input", {
@@ -50705,115 +51839,102 @@ var render = function() {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.clEditar.razon_social,
-                      expression: "clEditar.razon_social"
+                      value: _vm.clEditar.nif,
+                      expression: "clEditar.nif"
+                    },
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text", readonly: "", name: "nif", id: "nif" },
+                  domProps: { value: _vm.clEditar.nif },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clEditar, "nif", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "niva" } },
+                  [_vm._v("NIVA")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clEditar.niva,
+                      expression: "clEditar.niva"
                     },
                     { name: "touppercase", rawName: "v-touppercase" }
                   ],
                   staticClass: "form-control",
                   attrs: {
                     type: "text",
-                    name: "razon_social",
-                    id: "razon_social"
+                    readonly: "",
+                    name: "niva",
+                    id: "niva"
                   },
-                  domProps: { value: _vm.clEditar.razon_social },
+                  domProps: { value: _vm.clEditar.niva },
                   on: {
                     input: function($event) {
                       if ($event.target.composing) {
                         return
                       }
-                      _vm.$set(
-                        _vm.clEditar,
-                        "razon_social",
-                        $event.target.value
-                      )
+                      _vm.$set(_vm.clEditar, "niva", $event.target.value)
                     }
                   }
                 })
-              ]),
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "label",
+                { staticClass: "col-form-label", attrs: { for: "direccion" } },
+                [_vm._v("Dirección")]
+              ),
               _vm._v(" "),
-              _c("div", { staticClass: "form-row" }, [
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    { staticClass: "col-form-label", attrs: { for: "nif" } },
-                    [_vm._v("NIF")]
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.clEditar.nif,
-                        expression: "clEditar.nif"
-                      },
-                      { name: "touppercase", rawName: "v-touppercase" }
-                    ],
-                    staticClass: "form-control",
-                    attrs: {
-                      type: "text",
-                      disabled: "",
-                      nif: "nif",
-                      id: "nif"
-                    },
-                    domProps: { value: _vm.clEditar.nif },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.clEditar, "nif", $event.target.value)
-                      }
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.clEditar.direccion,
+                    expression: "clEditar.direccion"
+                  },
+                  { name: "touppercase", rawName: "v-touppercase" }
+                ],
+                staticClass: "form-control",
+                attrs: { type: "text", name: "direccion", id: "direccion" },
+                domProps: { value: _vm.clEditar.direccion },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
                     }
-                  })
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    { staticClass: "col-form-label", attrs: { for: "niva" } },
-                    [_vm._v("NIVA")]
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.clEditar.niva,
-                        expression: "clEditar.niva"
-                      },
-                      { name: "touppercase", rawName: "v-touppercase" }
-                    ],
-                    staticClass: "form-control",
-                    attrs: {
-                      type: "text",
-                      disabled: "",
-                      name: "niva",
-                      id: "niva"
-                    },
-                    domProps: { value: _vm.clEditar.niva },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.clEditar, "niva", $event.target.value)
-                      }
-                    }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-group" }, [
+                    _vm.$set(_vm.clEditar, "direccion", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-5" }, [
                 _c(
                   "label",
                   {
                     staticClass: "col-form-label",
-                    attrs: { for: "direccion" }
+                    attrs: { for: "provincia" }
                   },
-                  [_vm._v("Dirección")]
+                  [_vm._v("Provincia")]
                 ),
                 _vm._v(" "),
                 _c("input", {
@@ -50821,459 +51942,412 @@ var render = function() {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.clEditar.direccion,
-                      expression: "clEditar.direccion"
+                      value: _vm.clEditar.provincia,
+                      expression: "clEditar.provincia"
                     },
                     { name: "touppercase", rawName: "v-touppercase" }
                   ],
                   staticClass: "form-control",
-                  attrs: { type: "text", name: "direccion", id: "direccion" },
-                  domProps: { value: _vm.clEditar.direccion },
+                  attrs: { type: "text", name: "provincia", id: "provincia" },
+                  domProps: { value: _vm.clEditar.provincia },
                   on: {
                     input: function($event) {
                       if ($event.target.composing) {
                         return
                       }
-                      _vm.$set(_vm.clEditar, "direccion", $event.target.value)
+                      _vm.$set(_vm.clEditar, "provincia", $event.target.value)
                     }
                   }
                 })
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "form-row" }, [
-                _c("div", { staticClass: "form-group col-md-5" }, [
-                  _c(
-                    "label",
+              _c("div", { staticClass: "form-group col-md-5" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "pais" } },
+                  [_vm._v("Pais")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
                     {
-                      staticClass: "col-form-label",
-                      attrs: { for: "provincia" }
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clEditar.pais,
+                      expression: "clEditar.pais"
                     },
-                    [_vm._v("Provincia")]
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.clEditar.provincia,
-                        expression: "clEditar.provincia"
-                      },
-                      { name: "touppercase", rawName: "v-touppercase" }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text", name: "provincia", id: "provincia" },
-                    domProps: { value: _vm.clEditar.provincia },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.clEditar, "provincia", $event.target.value)
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    required: "",
+                    name: "pais",
+                    id: "pais"
+                  },
+                  domProps: { value: _vm.clEditar.pais },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
                       }
+                      _vm.$set(_vm.clEditar, "pais", $event.target.value)
                     }
-                  })
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group col-md-5" }, [
-                  _c(
-                    "label",
-                    { staticClass: "col-form-label", attrs: { for: "pais" } },
-                    [_vm._v("Pais")]
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.clEditar.pais,
-                        expression: "clEditar.pais"
-                      },
-                      { name: "touppercase", rawName: "v-touppercase" }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text", name: "pais", id: "pais" },
-                    domProps: { value: _vm.clEditar.pais },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.clEditar, "pais", $event.target.value)
-                      }
-                    }
-                  })
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group col-md-2" }, [
-                  _c(
-                    "label",
-                    { staticClass: "col-form-label", attrs: { for: "cp" } },
-                    [_vm._v("Código Postal")]
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.clEditar.cp,
-                        expression: "clEditar.cp"
-                      },
-                      { name: "touppercase", rawName: "v-touppercase" }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text", name: "cp", id: "cp" },
-                    domProps: { value: _vm.clEditar.cp },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.clEditar, "cp", $event.target.value)
-                      }
-                    }
-                  })
-                ])
+                  }
+                })
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "form-row" }, [
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    { staticClass: "col-form-label", attrs: { for: "tlfn" } },
-                    [_vm._v("Teléfono")]
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
+              _c("div", { staticClass: "form-group col-md-2" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "cp" } },
+                  [_vm._v("Código Postal")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clEditar.cp,
+                      expression: "clEditar.cp"
+                    },
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text", name: "cp", id: "cp" },
+                  domProps: { value: _vm.clEditar.cp },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clEditar, "cp", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "tlfn" } },
+                  [_vm._v("Teléfono")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clEditar.tlfn,
+                      expression: "clEditar.tlfn"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "tel", name: "tlfn", id: "tlfn" },
+                  domProps: { value: _vm.clEditar.tlfn },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clEditar, "tlfn", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "email" } },
+                  [_vm._v("Email")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clEditar.email,
+                      expression: "clEditar.email"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "email", name: "email", id: "email" },
+                  domProps: { value: _vm.clEditar.email },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clEditar, "email", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  {
+                    staticClass: "col-form-label",
+                    attrs: { for: "ambito_cl" }
+                  },
+                  [_vm._v("Ámbito cliente")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.clEditar.tlfn,
-                        expression: "clEditar.tlfn"
+                        value: _vm.clEditar.ambito_cl,
+                        expression: "clEditar.ambito_cl"
                       }
                     ],
                     staticClass: "form-control",
-                    attrs: { type: "tel", name: "tlfn", id: "tlfn" },
-                    domProps: { value: _vm.clEditar.tlfn },
+                    attrs: { name: "ambito_cl", id: "ambito_cl" },
                     on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.clEditar, "tlfn", $event.target.value)
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.clEditar,
+                          "ambito_cl",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
                       }
                     }
-                  })
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    { staticClass: "col-form-label", attrs: { for: "email" } },
-                    [_vm._v("Email")]
-                  ),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.clEditar.email,
-                        expression: "clEditar.email"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "email", name: "email", id: "email" },
-                    domProps: { value: _vm.clEditar.email },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.clEditar, "email", $event.target.value)
-                      }
-                    }
-                  })
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-row" }, [
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "col-form-label",
-                      attrs: { for: "ambito_cl" }
-                    },
-                    [_vm._v("Ámbito cliente")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.clEditar.ambito_cl,
-                          expression: "clEditar.ambito_cl"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: {
-                        name: "ambito_cl",
-                        id: "ambito_cl",
-                        disabled: ""
-                      },
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.clEditar,
-                            "ambito_cl",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        }
-                      }
-                    },
-                    [
-                      _c(
-                        "option",
-                        { attrs: { disabled: "", selected: "", value: "" } },
-                        [_vm._v("Ámbito de cliente...")]
-                      ),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "NACIONAL" } }, [
-                        _vm._v("NACIONAL")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "INTRACOMUNITARIO" } }, [
-                        _vm._v("INTRACOMUNITARIO")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "EXTRACOMUNITARIO" } }, [
-                        _vm._v("EXTRACOMUNITARIO")
-                      ])
-                    ]
-                  )
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "col-form-label",
-                      attrs: { for: "tipo_cl" }
-                    },
-                    [_vm._v("Tipo cliente")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.clEditar.tipo_cl,
-                          expression: "clEditar.tipo_cl"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { name: "tipo_cl", id: "tipo_cl", disabled: "" },
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.clEditar,
-                            "tipo_cl",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        }
-                      }
-                    },
-                    [
-                      _c(
-                        "option",
-                        { attrs: { disabled: "", selected: "", value: "" } },
-                        [_vm._v("Tipo de cliente...")]
-                      ),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "PERSONA FISICA" } }, [
-                        _vm._v("PERSONA FISICA")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "PERSONA JURIDICA" } }, [
-                        _vm._v("PERSONA JURIDICA")
-                      ])
-                    ]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "form-row" }, [
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "col-form-label",
-                      attrs: { for: "forma_pago" }
-                    },
-                    [_vm._v("Método de pago")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.clEditar.forma_pago,
-                          expression: "clEditar.forma_pago"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { name: "forma_pago", id: "forma_pago" },
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.clEditar,
-                            "forma_pago",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        }
-                      }
-                    },
-                    [
-                      _c(
-                        "option",
-                        { attrs: { disabled: "", selected: "", value: "" } },
-                        [_vm._v("Elije método...")]
-                      ),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "TRANSFERENCIA" } }, [
-                        _vm._v("TRANSFERENCIA")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "PAY PAL" } }, [
-                        _vm._v("PAY PAL")
-                      ]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "CONTADO" } }, [
-                        _vm._v("CONTADO")
-                      ])
-                    ]
-                  )
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "form-group col-md-6" }, [
-                  _c(
-                    "label",
-                    {
-                      staticClass: "col-form-label",
-                      attrs: { for: "dias_pago" }
-                    },
-                    [_vm._v("Plazo para el pago")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "select",
-                    {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.clEditar.dias_pago,
-                          expression: "clEditar.dias_pago"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { name: "dias_pago", id: "dias_pago" },
-                      on: {
-                        change: function($event) {
-                          var $$selectedVal = Array.prototype.filter
-                            .call($event.target.options, function(o) {
-                              return o.selected
-                            })
-                            .map(function(o) {
-                              var val = "_value" in o ? o._value : o.value
-                              return val
-                            })
-                          _vm.$set(
-                            _vm.clEditar,
-                            "dias_pago",
-                            $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          )
-                        }
-                      }
-                    },
-                    [
-                      _c(
-                        "option",
-                        { attrs: { disabled: "", selected: "", value: "" } },
-                        [_vm._v("Elige días...")]
-                      ),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "0" } }, [_vm._v("0")]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "15" } }, [_vm._v("15")]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "30" } }, [_vm._v("30")]),
-                      _vm._v(" "),
-                      _c("option", { attrs: { value: "60" } }, [_vm._v("60")])
-                    ]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _vm._m(2),
-              _vm._v(" "),
-              _vm._l(_vm.errores, function(error) {
-                return _c(
-                  "span",
-                  { key: error.id, staticClass: "text-danger" },
-                  [_vm._v(_vm._s(error))]
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { disabled: "", selected: "", value: "" } },
+                      [_vm._v("Ámbito de cliente...")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "NACIONAL" } }, [
+                      _vm._v("NACIONAL")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "INTRACOMUNITARIO" } }, [
+                      _vm._v("INTRACOMUNITARIO")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "EXTRACOMUNITARIO" } }, [
+                      _vm._v("EXTRACOMUNITARIO")
+                    ])
+                  ]
                 )
-              }),
+              ]),
               _vm._v(" "),
-              _vm._m(3)
-            ],
-            2
-          )
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "tipo_cl" } },
+                  [_vm._v("Tipo cliente")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.clEditar.tipo_cl,
+                        expression: "clEditar.tipo_cl"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { name: "tipo_cl", id: "tipo_cl" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.clEditar,
+                          "tipo_cl",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { disabled: "", selected: "", value: "" } },
+                      [_vm._v("Tipo de cliente...")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "PERSONA FISICA" } }, [
+                      _vm._v("PERSONA FISICA")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "PERSONA JURIDICA" } }, [
+                      _vm._v("PERSONA JURIDICA")
+                    ])
+                  ]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  {
+                    staticClass: "col-form-label",
+                    attrs: { for: "forma_pago" }
+                  },
+                  [_vm._v("Método de pago")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.clEditar.forma_pago,
+                        expression: "clEditar.forma_pago"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { name: "forma_pago", id: "forma_pago" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.clEditar,
+                          "forma_pago",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { disabled: "", selected: "", value: "" } },
+                      [_vm._v("Elije método...")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "TRANSFERENCIA" } }, [
+                      _vm._v("TRANSFERENCIA")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "PAY PAL" } }, [
+                      _vm._v("PAY PAL")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "CONTADO" } }, [
+                      _vm._v("CONTADO")
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-6" }, [
+                _c(
+                  "label",
+                  {
+                    staticClass: "col-form-label",
+                    attrs: { for: "dias_pago" }
+                  },
+                  [_vm._v("Plazo para el pago")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.clEditar.dias_pago,
+                        expression: "clEditar.dias_pago"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { name: "dias_pago", id: "dias_pago" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.clEditar,
+                          "dias_pago",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "option",
+                      { attrs: { disabled: "", selected: "", value: "" } },
+                      [_vm._v("Elige días...")]
+                    ),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "0" } }, [_vm._v("0")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "15" } }, [_vm._v("15")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "30" } }, [_vm._v("30")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "60" } }, [_vm._v("60")])
+                  ]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _vm._m(2),
+            _vm._v(" "),
+            _vm._m(3)
+          ])
         ])
       ])
     ])
@@ -51285,21 +52359,17 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-sm-12" }, [
-      _c("h1", [_vm._v("Mantenimiento de Clientes")])
+      _c("h3", [_vm._v("Mantenimiento de Clientes")])
     ])
   },
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h2", { staticStyle: { display: "inline" } }, [
-        _vm._v("Actualizar cliente ")
-      ]),
-      _vm._v(" "),
+    return _c("div", { staticStyle: { display: "inline", float: "right" } }, [
       _c(
         "button",
-        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        { staticClass: "btn btn-primary", attrs: { click: "updateCliente" } },
         [_vm._v("Actualizar")]
       ),
       _vm._v(" "),
@@ -51307,9 +52377,9 @@ var staticRenderFns = [
         "a",
         {
           staticClass: "btn btn-danger pull-right",
-          attrs: { href: "/clientes" }
+          attrs: { href: "/clientes/clientes" }
         },
-        [_vm._v("Volver")]
+        [_vm._v("Cancelar")]
       )
     ])
   },
@@ -51335,13 +52405,18 @@ var staticRenderFns = [
     return _c("div", { staticClass: "modal-footer" }, [
       _c(
         "button",
-        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        { staticClass: "btn btn-primary", attrs: { click: "updateCliente" } },
         [_vm._v("Actualizar")]
       ),
       _vm._v(" "),
-      _c("a", { staticClass: "btn btn-danger", attrs: { href: "/clientes" } }, [
-        _vm._v("Cancelar")
-      ])
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-danger",
+          attrs: { href: "/clientes/clientes" }
+        },
+        [_vm._v("Cancelar")]
+      )
     ])
   }
 ]
@@ -51372,13 +52447,17 @@ var render = function() {
     _c("div", { staticClass: "col-sm-12" }, [
       _c("div", { staticClass: "card" }, [
         _c("div", { staticClass: "card-header" }, [
-          _c("h2", { staticStyle: { display: "inline", float: "left" } }, [
+          _c("h4", { staticStyle: { display: "inline", float: "left" } }, [
             _vm._v("Alta nuevo cliente")
           ]),
           _vm._v(" "),
           _c(
             "button",
-            { staticClass: "btn btn-default", on: { click: _vm.info } },
+            {
+              staticClass: "btn btn-default",
+              attrs: { title: "reglas para crear cliente" },
+              on: { click: _vm.info }
+            },
             [
               _c("i", {
                 staticClass: "mdi mdi-information-outline",
@@ -51386,8 +52465,6 @@ var render = function() {
               })
             ]
           ),
-          _vm._v(" "),
-          _vm._m(1),
           _vm._v(" "),
           _c("div", { staticStyle: { display: "inline", float: "right" } }, [
             _c(
@@ -51407,7 +52484,10 @@ var render = function() {
             _vm._v(" "),
             _c(
               "a",
-              { staticClass: "btn btn-danger", attrs: { href: "clientes" } },
+              {
+                staticClass: "btn btn-danger",
+                attrs: { href: "/clientes/clientes" }
+              },
               [_vm._v("Cancelar")]
             )
           ])
@@ -51435,6 +52515,7 @@ var render = function() {
                   },
                   { name: "touppercase", rawName: "v-touppercase" }
                 ],
+                ref: "focus",
                 staticClass: "form-control",
                 attrs: {
                   type: "text",
@@ -51479,7 +52560,7 @@ var render = function() {
                   staticClass: "form-control",
                   attrs: {
                     type: "text",
-                    nif: "cliente",
+                    name: "nif",
                     id: "nif",
                     required: "",
                     placeholder: "Ejemplo: 12345678N"
@@ -51514,12 +52595,7 @@ var render = function() {
                     { name: "touppercase", rawName: "v-touppercase" }
                   ],
                   staticClass: "form-control",
-                  attrs: {
-                    type: "text",
-                    name: "niva",
-                    id: "niva",
-                    required: ""
-                  },
+                  attrs: { type: "text", name: "niva", id: "niva" },
                   domProps: { value: _vm.nuevoCliente.niva },
                   on: {
                     input: function($event) {
@@ -51689,7 +52765,12 @@ var render = function() {
                     }
                   ],
                   staticClass: "form-control",
-                  attrs: { type: "tel", name: "tlfn", id: "tlfn" },
+                  attrs: {
+                    type: "tel",
+                    name: "tlfn",
+                    id: "tlfn",
+                    placeholder: "+xx-xxx xx xx xx"
+                  },
                   domProps: { value: _vm.nuevoCliente.tlfn },
                   on: {
                     input: function($event) {
@@ -52035,7 +53116,10 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "a",
-                { staticClass: "btn btn-danger", attrs: { href: "clientes" } },
+                {
+                  staticClass: "btn btn-danger",
+                  attrs: { href: "/clientes/clientes" }
+                },
                 [_vm._v("Cancelar")]
               )
             ])
@@ -52051,34 +53135,8 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-sm-12" }, [
-      _c("h1", [_vm._v("Mantenimiento de Clientes")])
+      _c("h3", [_vm._v("Mantenimiento de Clientes")])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "popuptext popup", attrs: { id: "myPopup" } },
-      [
-        _c("ul", [
-          _vm._v("Consideraciones\r\n                        "),
-          _c("li", [
-            _vm._v("El campo NIF debe ser validado en la web de AEAT")
-          ]),
-          _vm._v(" "),
-          _c("li", [
-            _vm._v(
-              "Una vez creado un cliente nuevo, el campo NIF no podrá ser modificado"
-            )
-          ]),
-          _vm._v(" "),
-          _c("li", [_vm._v("Blablabla")])
-        ]),
-        _vm._v("\r\n                    A Simple Popup!")
-      ]
-    )
   }
 ]
 render._withStripped = true
@@ -64883,7 +65941,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js"); //registro de directiva personalizada para pasar datos form a upperCase
-//Aplica a toda la aplicación xD
+//Aplica a toda la aplicación
 
 Vue.directive('touppercase', {
   update: function update(el) {
@@ -64919,6 +65977,7 @@ Vue.use(_kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_1___default.a, {
 Vue.component('clientes', __webpack_require__(/*! ./components/clientes.vue */ "./resources/js/components/clientes.vue")["default"]);
 Vue.component('clientes_nuevo', __webpack_require__(/*! ./components/clientes_nuevo.vue */ "./resources/js/components/clientes_nuevo.vue")["default"]);
 Vue.component('clientes_editar', __webpack_require__(/*! ./components/clientes_editar.vue */ "./resources/js/components/clientes_editar.vue")["default"]);
+Vue.component('clientes_detalle', __webpack_require__(/*! ./components/clientes_detalle.vue */ "./resources/js/components/clientes_detalle.vue")["default"]);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -65071,6 +66130,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_clientes_vue_vue_type_template_id_4cc912f8___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_clientes_vue_vue_type_template_id_4cc912f8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/clientes_detalle.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/clientes_detalle.vue ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _clientes_detalle_vue_vue_type_template_id_366ada88___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./clientes_detalle.vue?vue&type=template&id=366ada88& */ "./resources/js/components/clientes_detalle.vue?vue&type=template&id=366ada88&");
+/* harmony import */ var _clientes_detalle_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./clientes_detalle.vue?vue&type=script&lang=js& */ "./resources/js/components/clientes_detalle.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _clientes_detalle_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _clientes_detalle_vue_vue_type_template_id_366ada88___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _clientes_detalle_vue_vue_type_template_id_366ada88___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/clientes_detalle.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/clientes_detalle.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/clientes_detalle.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_clientes_detalle_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./clientes_detalle.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/clientes_detalle.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_clientes_detalle_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/clientes_detalle.vue?vue&type=template&id=366ada88&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/clientes_detalle.vue?vue&type=template&id=366ada88& ***!
+  \*************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_clientes_detalle_vue_vue_type_template_id_366ada88___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./clientes_detalle.vue?vue&type=template&id=366ada88& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/clientes_detalle.vue?vue&type=template&id=366ada88&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_clientes_detalle_vue_vue_type_template_id_366ada88___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_clientes_detalle_vue_vue_type_template_id_366ada88___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

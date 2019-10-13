@@ -7,62 +7,52 @@ use App\Cliente;
 
 class ClienteController extends Controller
 {
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////     views     //////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
      * Muestra vista de clientes
-     * 
-     * @return view
      */
-    public function listarClientes(){
-        return view('clientes');
+    public function vistarClientes(){
+        return view('clientes/clientes'); //esta  vista tiene vue component <clientes>
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return view
-     */
-    public function clientesNuevo() {
-        return view('clientes_nuevo');
-    }
-
-    /**
-     * Muestra vista de detalle
      * 
      * @return view
      */
-    public function clientesEditar($id){
-        //  echo $id;
-        $editadoCliente = Cliente::findOrFail($id); //JSON
-        // echo $editadoCliente;
-        // echo gettype($editadoCliente);
-        if($editadoCliente){
-            return view('/clientes_editar', ['editadocliente' => $editadoCliente, 'token' => csrf_field()]);
-            //el helper view() permite enviar variables a blade. Aquí envía el objeto editadocliente
-        }
-
+    public function vistarNuevo() {
+        return view('clientes/clientes_nuevo');
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////     consultas bd      //////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //get
     /**
-     * Display a listing of the resource.
+     * Recoge todos los clientes de la BD.
      *
-     * @return \Illuminate\Http\Response
+     * @return Cliente
      */
-    public function index(){
+    public function getClientes(){
         //recogemos todos los clientes
         $clientes = Cliente::orderBy('razon_social', 'ASC')->get();
         return $clientes;
     } 
 
-    //post
+    /**
+     * Recoge un cliente de la BD.
+     *
+     * @return Cliente
+     */
+    public function getCliente($id){
+        //recogemos todos los clientes
+        $cliente = Cliente::findOrFail($id);
+        return view('clientes/cliente_detalle', ['cliente'=> $cliente]);
+    } 
+
+    public function checkNif($nif){
+        if(Cliente::where('nif', $nif)->first()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -70,48 +60,44 @@ class ClienteController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
-        //registro
         $nuevoCliente = Cliente::create($request->all());
         return;
+
+        
     }
 
-    //put
+    /**
+     * Muestra vista de detalle
+     * 
+     * @return view
+     */
+    public function vistarEditar($id){
+        //  echo $id;
+        $editadoCliente = Cliente::findOrFail($id); //JSON
+        // echo $editadoCliente;
+        // echo gettype($editadoCliente);
+        if($editadoCliente){
+            return view('clientes/clientes_editar', ['editadocliente' => $editadoCliente, 'token' => csrf_field()]);
+            //el helper view() permite enviar variables a blade. Aquí envía el objeto editadocliente
+        }
+
+    }
+
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) {
+    public function update(Request $request) {
         
-        $clienteEditado = Cliente::findOrFail($id);
-        $clienteEditado->razon_social = $request->input('razon_social');
-        $clienteEditado->nif = $request->input('nif');
-        $clienteEditado->niva = $request->input('niva');
-        $clienteEditado->direccion = $request->input('direccion');
-        $clienteEditado->pais = $request->input('pais');
-        $clienteEditado->provincia = $request->input('provincia');
-        $clienteEditado->cp = $request->input('cp');
-        $clienteEditado->tlfn = $request->input('tlfn');
-        $clienteEditado->email = $request->input('email');
-        $clienteEditado->ambito_cl = $request->input('ambito_cl');
-        $clienteEditado->tipo_cl = $request->input('tipo_cl');
-        $clienteEditado->forma_pago = $request->input('forma_pago');
-        $clienteEditado->dias_pago = $request->input('dias_pago');
-        $clienteEditado->observ = $request->input('observ');
-        $clienteEditado->save();
-
-        //UPDATE() DE TODO EL REQUEST
-        //REDIRECT()
-        return;
-
+        $cliente->update($request()->all());
+        // return redirect('/clientes');
     }
 
-    //delete
     /**
      * Remove the specified resource from storage.
-     *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
