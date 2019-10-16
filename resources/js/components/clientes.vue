@@ -7,7 +7,7 @@
     <div class="col-sm-12">
         <div class="espacios">
             <!-- link a crear nuevo cliente -->
-            <a class="btn btn-success pull-right" role="button" href="/clientes/clientes_nuevo">Nuevo cliente</a>
+            <a class="btn btn-success pull-right" role="button" href="/clientes/crear">Nuevo cliente</a>
         </div>
         
         <div class="espacios">
@@ -37,7 +37,7 @@
                 <tr v-for="cliente in paginated('misClientes')" v-bind:key="cliente.id">
 
                     <td width="10px" scope="row">{{ cliente.id }}</td>
-                    <td><a v-bind:href="'/clientes/clientes_detalle/'+cliente.id">{{ cliente.razon_social }}</a></td>
+                    <td><a v-bind:href="'/clientes/ver/'+cliente.id">{{ cliente.razon_social }}</a></td>
                     <!-- <td>{{ cliente.nif }}</td> -->
                     <td>{{ cliente.niva }}</td>
                     <!-- <td>{{ cliente.direccion }}</td> -->
@@ -54,7 +54,7 @@
                     
                     <td width="10px">
                         <!-- <button class="btn btn-outline-primary btn-sm" v-on:click="getCliente(cliente)">Editar</button> -->
-                        <a scope="row" v-bind:href="'/clientes/clientes_editar/'+cliente.id" class="btn btn-outline-primary btn-sm">Editar</a>
+                        <a scope="row" v-bind:href="'/clientes/editar/'+cliente.id" class="btn btn-outline-primary btn-sm">Editar</a>
                     </td>
 
                     <td width="10px">
@@ -97,17 +97,20 @@ export default{
     },
     methods:{
         getClientes(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-            var url = '/clientes/clientesData';
+            var url = '/clientes/get';
             axios.get(url).then(response => {
                 this.clientes = response.data;
                 console.log(response);
             });
         },
         deleteCliente(cliente){   //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
-            var url='/clientes/clientes_delete/' + cliente.id;
+            var url='/clientes/delete/' + cliente.id;
             axios.delete(url).then(response => {
                 console.log('eliminando cliente');
-                this.getClientes(); //recarga listado
+                // this.getClientes(); //recarga listado
+                let clDelete = clientes.filter((cl) => cl.id = cliente.id);
+                console.log(clDelete);
+
             });
         }
     },

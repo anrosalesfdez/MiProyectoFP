@@ -50,15 +50,18 @@ Route::get('/dashboard', function(){
 
 //CLIENTES
 Route::prefix('/clientes')->group(function () {
-    Route::get('/clientes', 'ClienteController@vistarClientes')->name('clientes'); //VISTA clientes.blade con <clientes>
-    Route::get('/clientesData', 'ClienteController@getClientes'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
-    Route::get('/clientes_detalle/{id}', 'ClienteController@getCliente'); //VISTA + DATOS detalle de cliente consultado en BD
-    Route::get('/clientes_nuevo', 'ClienteController@vistarNuevo')->name('clientes_nuevo'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
-    Route::post('/clientes_nuevo', 'ClienteController@store'); //DATOS recoge Request HTTP y hace POST a la BD con nuevo cliente
-    Route::get('/clientes_editar/{id}', 'ClienteController@vistarEditar')->name('clientes_editar'); //VISTA clientes_editar.blade con <clientes_editar>
-    Route::put('/clientesData/{cliente}', 'ClienteController@update')->name('clientesData'); //DATOS recoge Request HTTP y hace POST a la BD con datos actualizados
-    // Route::put('/clientesData/{cliente}', 'ClienteController@update')->name('clientesData'); //DATOS recoge Request HTTP y hace POST a la BD con datos actualizados
-    Route::delete('/clientes_delete/{id}', 'ClienteController@destroy')->name('clientes_delete'); // DATOS 
+
+    Route::get('/listar', 'ClienteController@vistarClientes')->name('listar'); //VISTA clientes.blade con <clientes>
+    Route::get('/get', 'ClienteController@getClientes'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
+    Route::get('/ver/{id}', 'ClienteController@getCliente')->name('ver'); //VISTA + DATOS detalle de cliente consultado en BD
+    
+    Route::get('/crear', 'ClienteController@vistaCrear')->name('crear'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
+    Route::post('/store', 'ClienteController@store'); //DATOS recoge Request HTTP y hace POST a la BD con nuevo cliente
+    
+    Route::get('/editar/{id}', 'ClienteController@vistaEditar')->name('editar'); //VISTA clientes_editar.blade con <clientes_editar>
+    Route::put('/update/{cliente}', 'ClienteController@update'); //DATOS recoge Request HTTP y hace POST a la BD con datos actualizados
+    
+    Route::delete('/delete/{id}', 'ClienteController@destroy'); // DATOS 
 });
 
 Route::get('/facturacion', function(){

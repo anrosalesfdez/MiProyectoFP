@@ -5369,35 +5369,35 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-      var url = '/clientes/clientesData';
+      var url = '/clientes/get';
       axios.get(url).then(function (response) {
         _this.clientes = response.data;
         console.log(response);
       });
     },
     deleteCliente: function deleteCliente(cliente) {
-      var _this2 = this;
-
       //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
-      var url = '/clientes/clientes_delete/' + cliente.id;
+      var url = '/clientes/delete/' + cliente.id;
       axios["delete"](url).then(function (response) {
-        console.log('eliminando cliente');
+        console.log('eliminando cliente'); // this.getClientes(); //recarga listado
 
-        _this2.getClientes(); //recarga listado
-
+        var clDelete = clientes.filter(function (cl) {
+          return cl.id = cliente.id;
+        });
+        console.log(clDelete);
       });
     }
   },
   computed: {
     //propiedad computada
     buscarCliente: function buscarCliente() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.clienteBuscado = this.clienteBuscado.toUpperCase(); //todo en bd está en upperCase. Buscamos pues como upperCase.
 
       console.log(this.clienteBuscado);
       return this.clientes.filter(function (cliente) {
-        return cliente.razon_social.includes(_this3.clienteBuscado);
+        return cliente.razon_social.includes(_this2.clienteBuscado);
       }); //a la data clientes [] se le aplica filtro
       //el filtro aplica a los clientes que coincidan con el data clienteBuscado.
     }
@@ -5956,6 +5956,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     //datos del componente
@@ -5994,7 +5998,7 @@ __webpack_require__.r(__webpack_exports__);
         console.log('Faltan campos obligatorios');
         return false;
       } else {
-        var url = '/clientes/clientes_nuevo';
+        var url = '/clientes/store';
         console.log('dentro');
         axios.post(url, this.nuevoCliente).then(function (response) {
           console.log(response.error);
@@ -50813,15 +50817,9 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("td", [
-                  _c(
-                    "a",
-                    {
-                      attrs: {
-                        href: "/clientes/clientes_detalle/" + cliente.id
-                      }
-                    },
-                    [_vm._v(_vm._s(cliente.razon_social))]
-                  )
+                  _c("a", { attrs: { href: "/clientes/ver/" + cliente.id } }, [
+                    _vm._v(_vm._s(cliente.razon_social))
+                  ])
                 ]),
                 _vm._v(" "),
                 _c("td", [_vm._v(_vm._s(cliente.niva))]),
@@ -50839,7 +50837,7 @@ var render = function() {
                       staticClass: "btn btn-outline-primary btn-sm",
                       attrs: {
                         scope: "row",
-                        href: "/clientes/clientes_editar/" + cliente.id
+                        href: "/clientes/editar/" + cliente.id
                       }
                     },
                     [_vm._v("Editar")]
@@ -50900,7 +50898,7 @@ var staticRenderFns = [
         "a",
         {
           staticClass: "btn btn-success pull-right",
-          attrs: { role: "button", href: "/clientes/clientes_nuevo" }
+          attrs: { role: "button", href: "/clientes/crear" }
         },
         [_vm._v("Nuevo cliente")]
       )
@@ -51675,7 +51673,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row", attrs: { id: "clientes_nuevo" } }, [
+  return _c("div", { staticClass: "row", attrs: { id: "clientes_editado" } }, [
     _vm._m(0),
     _vm._v(" "),
     _c("div", { staticClass: "col-sm-12" }, [
@@ -51685,7 +51683,7 @@ var render = function() {
           {
             attrs: {
               method: "post",
-              action: "/clientes/clientesData/" + _vm.editadocliente.id
+              action: "/clientes/update/" + _vm.editadocliente.id
             }
           },
           [
@@ -52405,7 +52403,7 @@ var staticRenderFns = [
         "a",
         {
           staticClass: "btn btn-danger pull-right",
-          attrs: { href: "/clientes/clientes" }
+          attrs: { href: "/clientes/listar" }
         },
         [_vm._v("Cancelar")]
       )
@@ -52439,10 +52437,7 @@ var staticRenderFns = [
       _vm._v(" "),
       _c(
         "a",
-        {
-          staticClass: "btn btn-danger",
-          attrs: { href: "/clientes/clientes" }
-        },
+        { staticClass: "btn btn-danger", attrs: { href: "/clientes/listar" } },
         [_vm._v("Cancelar")]
       )
     ])
@@ -52474,55 +52469,31 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "col-sm-12" }, [
       _c("div", { staticClass: "card" }, [
-        _c("div", { staticClass: "card-header" }, [
-          _c("h4", { staticStyle: { display: "inline", float: "left" } }, [
-            _vm._v("Alta nuevo cliente")
-          ]),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-default",
-              attrs: { title: "reglas para crear cliente" },
-              on: { click: _vm.info }
-            },
-            [
-              _c("i", {
-                staticClass: "mdi mdi-information-outline",
-                attrs: { "aria-hidden": "true" }
-              })
-            ]
-          ),
-          _vm._v(" "),
-          _c("div", { staticStyle: { display: "inline", float: "right" } }, [
+        _c("form", { attrs: { method: "post", action: "/clientes/store" } }, [
+          _c("div", { staticClass: "card-header" }, [
+            _c("h4", { staticStyle: { display: "inline", float: "left" } }, [
+              _vm._v("Alta nuevo cliente")
+            ]),
+            _vm._v(" "),
             _c(
               "button",
               {
-                staticClass: "btn btn-primary",
-                attrs: { type: "submit" },
-                on: {
-                  click: function($event) {
-                    $event.preventDefault()
-                    return _vm.storeCliente($event)
-                  }
-                }
+                staticClass: "btn btn-default",
+                attrs: { title: "reglas para crear cliente" },
+                on: { click: _vm.info }
               },
-              [_vm._v("Guardar")]
+              [
+                _c("i", {
+                  staticClass: "mdi mdi-information-outline",
+                  attrs: { "aria-hidden": "true" }
+                })
+              ]
             ),
             _vm._v(" "),
-            _c(
-              "a",
-              {
-                staticClass: "btn btn-danger",
-                attrs: { href: "/clientes/clientes" }
-              },
-              [_vm._v("Cancelar")]
-            )
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "card-body" }, [
-          _c("form", { attrs: { method: "post", action: "" } }, [
+            _vm._m(1)
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
             _c("div", { staticClass: "form-group" }, [
               _c(
                 "label",
@@ -53140,31 +53111,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "modal-footer" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-primary",
-                  attrs: { type: "submit" },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      return _vm.storeCliente($event)
-                    }
-                  }
-                },
-                [_vm._v("Guardar")]
-              ),
-              _vm._v(" "),
-              _c(
-                "a",
-                {
-                  staticClass: "btn btn-danger",
-                  attrs: { href: "/clientes/clientes" }
-                },
-                [_vm._v("Cancelar")]
-              )
-            ])
+            _vm._m(2)
           ])
         ])
       ])
@@ -53178,6 +53125,42 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-sm-12" }, [
       _c("h3", [_vm._v("Mantenimiento de Clientes")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticStyle: { display: "inline", float: "right" } }, [
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [_vm._v("Guardar")]
+      ),
+      _vm._v(" "),
+      _c(
+        "a",
+        { staticClass: "btn btn-danger", attrs: { href: "/clientes/listar" } },
+        [_vm._v("Cancelar")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        [_vm._v("Guardar")]
+      ),
+      _vm._v(" "),
+      _c(
+        "a",
+        { staticClass: "btn btn-danger", attrs: { href: "/clientes/listar" } },
+        [_vm._v("Cancelar")]
+      )
     ])
   }
 ]

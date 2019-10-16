@@ -6,118 +6,122 @@
 
     <div class="col-sm-12">
         <div class="card">
-            <div class="card-header">
-                <h4 style="display: inline; float: left">Alta nuevo cliente</h4>
-                <button @click="info" class="btn btn-default" title="reglas para crear cliente">
-                    <i class="mdi mdi-information-outline" aria-hidden="true"></i>  
-                    <!-- https://materialdesignicons.com/cdn/2.0.46/                -->
-                </button>
-                <div style="display: inline; float: right">
-                    <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button>
-                    <a href="/clientes/clientes" class="btn btn-danger">Cancelar</a>
-                </div>
-                
-            </div>
-            <div class="card-body">
-                <!--formulario nuevo cliente-->
-                <!-- <form> -->
-                <form method="post" action="">
-                    <div class="form-group">
-                        <label for="razon_social" class="col-form-label">Razón social</label>      
-                        <input type="text" class="form-control" name="razon_social" id="razon_social" @focusout="controlRazonSocial($event, nuevoCliente.razon_social)" v-model="nuevoCliente.razon_social" v-touppercase>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="nif" class="col-form-label">NIF</label>      
-                            <input type="text" class="form-control" name="nif" id="nif" @focusout="controlNif($event, nuevoCliente.nif)" placeholder="Ejemplo: 12345678N" v-model="nuevoCliente.nif" v-touppercase>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="niva" class="col-form-label">NIVA</label>      
-                            <input type="text" class="form-control" name="niva" id="niva" @focusout="controlNiva($event, nuevoCliente.niva)" v-model="nuevoCliente.niva" v-touppercase>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="direccion" class="col-form-label">Dirección fiscal</label>      
-                        <input type="text" class="form-control" name="direccion" id="direccion" v-model="nuevoCliente.direccion" v-touppercase>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-5">
-                            <label for="pais" class="col-form-label">Pais</label>      
-                            <input type="text" class="form-control" name="pais" id="pais" @focusout="controlPais($event, nuevoCliente.pais)" v-model="nuevoCliente.pais" v-touppercase>
-                        </div>
-                        <div class="form-group col-md-5">
-                            <label for="provincia" class="col-form-label">Provincia</label>      
-                            <input type="text" class="form-control" name="provincia" id="provincia" v-model="nuevoCliente.provincia" v-touppercase>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <label for="cp" class="col-form-label">Código Postal</label>      
-                            <input type="text" class="form-control" name="cp" id="cp" v-model="nuevoCliente.cp" v-touppercase>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="tlfn" class="col-form-label">Teléfono</label>      
-                            <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="nuevoCliente.tlfn">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="email" class="col-form-label">Email</label>      
-                            <input type="email" class="form-control" name="email" id="email" @focusout="controlEmail($event, nuevoCliente.email)" v-model="nuevoCliente.email" v-touppercase>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="ambito_cl" class="col-form-label">Ámbito cliente</label>
-                            <select class="form-control" name="ambito_cl" id="ambito_cl" @focusout="controlAmbito($event, nuevoCliente.ambito_cl)" v-model="nuevoCliente.ambito_cl">
-                                <option disabled selected value="">Ámbito de cliente...</option>
-                                <option value="NACIONAL">NACIONAL</option>
-                                <option value="INTRACOMUNITARIO">INTRACOMUNITARIO</option>
-                                <option value="EXTRACOMUNITARIO">EXTRACOMUNITARIO</option>
-                            </select>         
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="tipo_cl" class="col-form-label">Tipo cliente</label>
-                            <select class="form-control" name="tipo_cl" id="tipo_cl" @focusout="controlTipo($event, nuevoCliente.tipo_cl)" v-model="nuevoCliente.tipo_cl">
-                                <option disabled selected value="">Tipo de cliente...</option>
-                                <option value="PERSONA FISICA">PERSONA FISICA</option>
-                                <option value="PERSONA JURIDICA">PERSONA JURIDICA</option>
-                            </select>        
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="forma_pago" class="col-form-label">Método de pago</label>
-                            <select class="form-control" name="forma_pago" id="forma_pago" v-model="nuevoCliente.forma_pago">
-                                <option disabled selected value="">Elije método...</option>
-                                <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-                                <option value="PAY PAL">PAY PAL</option>
-                                <option value="CONTADO">CONTADO</option>
-                            </select>      
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="dias_pago" class="col-form-label">Plazo para el pago</label>
-                            <select class="form-control" name="dias_pago" id="dias_pago" v-model="nuevoCliente.dias_pago">
-                                <option disabled selected value="">Elige días...</option>
-                                <option value="0">0</option>
-                                <option value="15">15</option>
-                                <option value="30">30</option>
-                                <option value="60">60</option>
-                            </select>        
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="observ" class="col-form-label">Observaciones</label>
-                        <textarea class="form-control" name="observ" id="observ" v-model="nuevoCliente.observ"></textarea>
-                    </div>
 
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button>
-                        <a href="/clientes/clientes" class="btn btn-danger">Cancelar</a>
+            <form method="post" action="/clientes/store">
+
+                <div class="card-header">
+                    <h4 style="display: inline; float: left">Alta nuevo cliente</h4>
+                    <button @click="info" class="btn btn-default" title="reglas para crear cliente">
+                        <i class="mdi mdi-information-outline" aria-hidden="true"></i>  
+                        <!-- https://materialdesignicons.com/cdn/2.0.46/                -->
+                    </button>
+                    <div style="display: inline; float: right">
+                        <!-- <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button> -->
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
                     </div>
-                </form>
-            </div>
+                    
+                </div>
+                <div class="card-body">
+                    <!--formulario nuevo cliente-->
+                    <!-- <form> -->
+                        <div class="form-group">
+                            <label for="razon_social" class="col-form-label">Razón social</label>      
+                            <input type="text" class="form-control" name="razon_social" id="razon_social" @focusout="controlRazonSocial($event, nuevoCliente.razon_social)" v-model="nuevoCliente.razon_social" v-touppercase>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="nif" class="col-form-label">NIF</label>      
+                                <input type="text" class="form-control" name="nif" id="nif" @focusout="controlNif($event, nuevoCliente.nif)" placeholder="Ejemplo: 12345678N" v-model="nuevoCliente.nif" v-touppercase>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="niva" class="col-form-label">NIVA</label>      
+                                <input type="text" class="form-control" name="niva" id="niva" @focusout="controlNiva($event, nuevoCliente.niva)" v-model="nuevoCliente.niva" v-touppercase>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="direccion" class="col-form-label">Dirección fiscal</label>      
+                            <input type="text" class="form-control" name="direccion" id="direccion" v-model="nuevoCliente.direccion" v-touppercase>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-5">
+                                <label for="pais" class="col-form-label">Pais</label>      
+                                <input type="text" class="form-control" name="pais" id="pais" @focusout="controlPais($event, nuevoCliente.pais)" v-model="nuevoCliente.pais" v-touppercase>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="provincia" class="col-form-label">Provincia</label>      
+                                <input type="text" class="form-control" name="provincia" id="provincia" v-model="nuevoCliente.provincia" v-touppercase>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="cp" class="col-form-label">Código Postal</label>      
+                                <input type="text" class="form-control" name="cp" id="cp" v-model="nuevoCliente.cp" v-touppercase>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="tlfn" class="col-form-label">Teléfono</label>      
+                                <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="nuevoCliente.tlfn">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="email" class="col-form-label">Email</label>      
+                                <input type="email" class="form-control" name="email" id="email" @focusout="controlEmail($event, nuevoCliente.email)" v-model="nuevoCliente.email" v-touppercase>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="ambito_cl" class="col-form-label">Ámbito cliente</label>
+                                <select class="form-control" name="ambito_cl" id="ambito_cl" @focusout="controlAmbito($event, nuevoCliente.ambito_cl)" v-model="nuevoCliente.ambito_cl">
+                                    <option disabled selected value="">Ámbito de cliente...</option>
+                                    <option value="NACIONAL">NACIONAL</option>
+                                    <option value="INTRACOMUNITARIO">INTRACOMUNITARIO</option>
+                                    <option value="EXTRACOMUNITARIO">EXTRACOMUNITARIO</option>
+                                </select>         
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="tipo_cl" class="col-form-label">Tipo cliente</label>
+                                <select class="form-control" name="tipo_cl" id="tipo_cl" @focusout="controlTipo($event, nuevoCliente.tipo_cl)" v-model="nuevoCliente.tipo_cl">
+                                    <option disabled selected value="">Tipo de cliente...</option>
+                                    <option value="PERSONA FISICA">PERSONA FISICA</option>
+                                    <option value="PERSONA JURIDICA">PERSONA JURIDICA</option>
+                                </select>        
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="forma_pago" class="col-form-label">Método de pago</label>
+                                <select class="form-control" name="forma_pago" id="forma_pago" v-model="nuevoCliente.forma_pago">
+                                    <option disabled selected value="">Elije método...</option>
+                                    <option value="TRANSFERENCIA">TRANSFERENCIA</option>
+                                    <option value="PAY PAL">PAY PAL</option>
+                                    <option value="CONTADO">CONTADO</option>
+                                </select>      
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="dias_pago" class="col-form-label">Plazo para el pago</label>
+                                <select class="form-control" name="dias_pago" id="dias_pago" v-model="nuevoCliente.dias_pago">
+                                    <option disabled selected value="">Elige días...</option>
+                                    <option value="0">0</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="60">60</option>
+                                </select>        
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="observ" class="col-form-label">Observaciones</label>
+                            <textarea class="form-control" name="observ" id="observ" v-model="nuevoCliente.observ"></textarea>
+                        </div>
+
+                        <div class="modal-footer">
+                            <!-- <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button> -->
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
+                        </div>
+                </div>
+            </form>
+
         </div>
     </div>
-
 </div>
 </template> 
 
@@ -158,7 +162,7 @@ export default{
                     return false;
 
             }else{
-                    var url='/clientes/clientes_nuevo';
+                    var url='/clientes/store';
                     console.log('dentro');
                     axios.post(url, this.nuevoCliente)
                     .then(response => {   

@@ -1,5 +1,5 @@
 <template>
-<div class="row" id="clientes_nuevo">
+<div class="row" id="clientes_editado">
 <!-- <span>------ {{token}}-----</span> -->
 <!-- <span>------ {{editadocliente}}-----</span> -->
 
@@ -15,14 +15,14 @@
         <div class="card">
         <!--formulario editado cliente-->
         
-        <form method="post" v-bind:action="'/clientes/clientesData/'+editadocliente.id">
+        <form method="post" v-bind:action="'/clientes/update/'+editadocliente.id">
             
             <div class="card-header">
                 <h4 style="display: inline">Actualizando cliente ID: <strong>{{ this.editadocliente.id }}</strong></h4>
                 <div style="display: inline; float: right">
                     <!-- <button class="btn btn-primary" @click="updateCliente">Actualizar</button> -->
                     <button type="submit" class="btn btn-primary">Actualizar</button>
-                    <a href="/clientes/clientes" class="btn btn-danger pull-right">Cancelar</a>
+                    <a href="/clientes/listar" class="btn btn-danger pull-right">Cancelar</a>
                 </div>
             </div>
 
@@ -127,7 +127,7 @@
                     <div class="modal-footer">
                         <!-- <button class="btn btn-primary" click="updateCliente">Actualizar</button> -->
                         <button type="submit" class="btn btn-primary">Actualizar</button>
-                        <a href="/clientes/clientes" class="btn btn-danger">Cancelar</a>
+                        <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
                     </div>
             </div>
         </form>
