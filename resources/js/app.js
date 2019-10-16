@@ -6,7 +6,9 @@
 
 require('./bootstrap');
 
+
 window.Vue = require('vue');
+
 
 //registro de directiva personalizada para pasar datos form a upperCase
 //Aplica a toda la aplicación
@@ -16,22 +18,12 @@ Vue.directive( 'touppercase', {
     },
 })
 
-/**
- * Librerias
- * 
- */
-//1
+
 import VuePaginate from 'vue-paginate';
 Vue.use(VuePaginate);
 
-// import Vuetify from 'vuetify' // Import Vuetify to your project
-// Vue.use(Vuetify) // Add Vuetify as a plugin
-//NOTA. SACAR LA DEPENDENCIA DE TOASTR
-//sacar la dependencia de vue-notifications
 
-//2
 import VueNotification from "@kugatsu/vuenotification";
-
 Vue.use(VueNotification, {
   timer: 3,
   animateIn: function() {
@@ -55,6 +47,19 @@ Vue.use(VueNotification, {
   }
 });
 
+import {ClientTable, Event} from 'vue-tables-2';
+let options = {};
+let useVuex = false;
+let theme = "bootstrap4";
+let template = "default";
+Vue.use(ClientTable, options, useVuex, theme, template);
+
+import daterangepicker from 'daterangepicker';
+window.moment = require('moment');
+
+//sacar la dependencia de vuetify
+//sacar la dependencia de toastr
+//sacar la dependencia de vue-notifications
 
 /**
  * Componentes
