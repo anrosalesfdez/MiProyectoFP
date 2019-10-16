@@ -20,19 +20,20 @@
             </div>
             <div class="card-body">
                 <!--formulario nuevo cliente-->
-                <form>
+                <!-- <form> -->
+                <form method="post" action="">
                     <div class="form-group">
                         <label for="razon_social" class="col-form-label">Razón social</label>      
-                        <input type="text" class="form-control" name="razon_social" id="razon_social" ref="focus" required v-model="nuevoCliente.razon_social" v-touppercase>
+                        <input type="text" class="form-control" name="razon_social" id="razon_social" @focusout="controlRazonSocial($event, nuevoCliente.razon_social)" v-model="nuevoCliente.razon_social" v-touppercase>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="nif" class="col-form-label">NIF</label>      
-                            <input type="text" class="form-control" name="nif" id="nif" required placeholder="Ejemplo: 12345678N" v-model="nuevoCliente.nif" v-touppercase>
+                            <input type="text" class="form-control" name="nif" id="nif" @focusout="controlNif($event, nuevoCliente.nif)" placeholder="Ejemplo: 12345678N" v-model="nuevoCliente.nif" v-touppercase>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="niva" class="col-form-label">NIVA</label>      
-                            <input type="text" class="form-control" name="niva" id="niva" v-model="nuevoCliente.niva" v-touppercase>
+                            <input type="text" class="form-control" name="niva" id="niva" @focusout="controlNiva($event, nuevoCliente.niva)" v-model="nuevoCliente.niva" v-touppercase>
                         </div>
                     </div>
                     <div class="form-group">
@@ -42,7 +43,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-5">
                             <label for="pais" class="col-form-label">Pais</label>      
-                            <input type="text" class="form-control" name="pais" id="pais" required v-model="nuevoCliente.pais" v-touppercase>
+                            <input type="text" class="form-control" name="pais" id="pais" @focusout="controlPais($event, nuevoCliente.pais)" v-model="nuevoCliente.pais" v-touppercase>
                         </div>
                         <div class="form-group col-md-5">
                             <label for="provincia" class="col-form-label">Provincia</label>      
@@ -56,17 +57,17 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="tlfn" class="col-form-label">Teléfono</label>      
-                            <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="nuevoCliente.tlfn" placeholder="+xx-xxx xx xx xx">
+                            <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="nuevoCliente.tlfn">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email" class="col-form-label">Email</label>      
-                            <input type="email" class="form-control" name="email" id="email" v-model="nuevoCliente.email" v-touppercase>
+                            <input type="email" class="form-control" name="email" id="email" @focusout="controlEmail($event, nuevoCliente.email)" v-model="nuevoCliente.email" v-touppercase>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="ambito_cl" class="col-form-label">Ámbito cliente</label>
-                            <select class="form-control" name="ambito_cl" id="ambito_cl" required v-model="nuevoCliente.ambito_cl">
+                            <select class="form-control" name="ambito_cl" id="ambito_cl" @focusout="controlAmbito($event, nuevoCliente.ambito_cl)" v-model="nuevoCliente.ambito_cl">
                                 <option disabled selected value="">Ámbito de cliente...</option>
                                 <option value="NACIONAL">NACIONAL</option>
                                 <option value="INTRACOMUNITARIO">INTRACOMUNITARIO</option>
@@ -75,7 +76,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="tipo_cl" class="col-form-label">Tipo cliente</label>
-                            <select class="form-control" name="tipo_cl" id="tipo_cl" required v-model="nuevoCliente.tipo_cl">
+                            <select class="form-control" name="tipo_cl" id="tipo_cl" @focusout="controlTipo($event, nuevoCliente.tipo_cl)" v-model="nuevoCliente.tipo_cl">
                                 <option disabled selected value="">Tipo de cliente...</option>
                                 <option value="PERSONA FISICA">PERSONA FISICA</option>
                                 <option value="PERSONA JURIDICA">PERSONA JURIDICA</option>
@@ -141,146 +142,53 @@ export default{
                 forma_pago: '',
                 dias_pago: '',
                 observ: ''
-            },
-            validado: false
+            }
         }
     },
     created() {
         console.log(this.nuevoCliente == null ? 'created nuevoCliente: true' : 'created nuevoCliente: false');
-        console.log('created validado: '+this.validado);
-        this.info();
     },
     methods:{
-        validarForm(){
-            if(this.nuevoCliente.razon_social == '' && this.nuevoCliente.nif == '' && this.nuevoCliente.niva == '' && this.nuevoCliente.direccion == '' && 
-                this.nuevoCliente.provincia == '' && this.nuevoCliente.pais == '' && this.nuevoCliente.cp == '' && this.nuevoCliente.tlfn == '' && 
-                this.nuevoCliente.email == '' && this.nuevoCliente.ambito_cl == '' && this.nuevoCliente.tipo_cl == '' && this.nuevoCliente.forma_pago == '' && 
-                this.nuevoCliente.dias_pago == '' && this.nuevoCliente.observ == ''){
-                    
-                    this.$notification.error("Debes rellenar los campos", {  timer: 10, position:'topRigth' });
-                    this.$refs.focus.focus();
-                    console.log('todo blanco. form no validado');
-
-            }else{
-                if(this.controlRazonSocial(this.nuevoCliente.razon_social) && this.controlNif(this.nuevoCliente.nif) && this.controlNiva(this.nuevoCliente.niva) && this.controlPais(this.nuevoCliente.pais)
-                    && this.controlAmbito(this.nuevoCliente.ambito_cl) && this.controlTipo(this.nuevoCliente.tipo_cl)){
-                    TODO://INCLUIR MÁS CONTROLES...
-                    this.validado = true;
-                    console.log('validarForm: '+this.validado);
-                }
-            }
-        },
         storeCliente(){
-            //Validaciones del form en cliente
-            this.validarForm();
-            //si validado
-            if(this.validado == true){
-                var url='/clientes/clientes_nuevo';
-                console.log(this.nuevoCliente);
-                axios.post(url, this.nuevoCliente)
-                .then(response => {   
-                    console.log(response.data);
-                    this.nuevoCliente = response.data;
-                    this.$notification.success("Cliente guardado correctamente!", {  timer: 10, position:'topRigth' }); //FIXME: incluir id creado
-                    history.back(); //location.href()
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-            }
-            
-        },
-        controlTipo(tipo_cl){
-            if(!tipo_cl){
-                console.log('tipo_cl es obligatorio');
-                $('#tipo_cl').focus();
-                this.$notification.error("Campo tipo cliente obligatorio", {  timer: 10, position:'topRigth' });
-                return false;
-            }
-            else{
-                console.log('tipo_cl ok: '+pais)
-                return true;
-            }
-        },
-        controlAmbito(ambito_cl){
-            if(!ambito_cl){
-                console.log('ambito_cl es obligatorio')
-                $('#ambito_cl').focus();
-                this.$notification.error("Campo ámbito obligatorio", {  timer: 10, position:'topRigth' });
-                return false;
-            }
-            else{
-                console.log('ambito_cl ok: '+pais)
-                return true;
-            }
-        },
-        controlPais: function(pais){
-            if(!pais){
-                console.log('pais es obligatorio');
-                $('#pais').focus();
-                this.$notification.error("Campo pais obligatorio", {  timer: 10, position:'topRigth' });
-                return false;
-            }
-            else{
-                console.log('pais ok: '+pais)
-                return true;
-            }
-        },
-        controlTlfn: function (tlfn){
-            if(tlfn){
-                let patronTlfn = /^\+?([0-9]{2})\)?[-]?([0-9]{3})[ ]?([0-9]{2})[ ]?([0-9]{2})[ ]?([0-9]{2})$/;
-                
-                if(!patronTlfn.test(tlfn)){
-                    console.log('tlfn mal: '+tlfn);
-                    $('#tlfn').focus();
-                    this.$notification.error("Campo telefono incorrecto", {  timer: 10, position:'topRigth' });
+            if(this.nuevoCliente.razon_social == '' && this.nuevoCliente.nif == '' && this.nuevoCliente.niva == '' && 
+                this.nuevoCliente.pais == '' && this.nuevoCliente.ambito_cl == '' && this.nuevoCliente.tipo_cl == ''){
+                    
+                    this.$notification.error("Faltan campos obligatorios", {  timer: 2, position:'topRigth' });
+                    console.log('Faltan campos obligatorios');
                     return false;
 
-                }else{
-                    console.log('tlfn ok: '+tlfn);
-                    return true;
-                }
+            }else{
+                    var url='/clientes/clientes_nuevo';
+                    console.log('dentro');
+                    axios.post(url, this.nuevoCliente)
+                    .then(response => {   
+                        console.log(response.error);
+                        this.nuevoCliente = response.data;
+                        this.$notification.success("Cliente guardado correctamente!", {  timer: 2, position:'topRigth' }); //FIXME: incluir id creado
+                        history.back(); //location.href()
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             }
         },
-        controlEmail: function (email) {
+        controlRazonSocial(e, razon_social){
             
-            if(this.nuevoCliente.email){
-               let emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-                if(!emailPatron.test(email)){
-                    console.log('email formato invalido');
-                    $('#email').focus();
-                    this.$notification.error("Formato email inválido", {  timer: 10, position:'topRigth' });
-                    return false;
-
-                }else{
-                    console.log('email oK: '+ email);
-                    return true;
-                }
-            }
-        },
-        controlNiva: function(niva){
-            // console.log(this.nuevoCliente.niva);
-            // console.log(this.nuevoCliente.niva.substr(2, (this.nuevoCliente.niva.length- 2)));
-            // console.log(this.nuevoCliente.nif);
-            if(!this.nuevoCliente.niva){
-                console.log('niva necesario...');
-                $('#niva').focus();
-                this.$notification.error("NIVA es campo obligatorio", {  timer: 10, position:'topRigth' });
+            if(!razon_social){
+                console.log(razon_social+'Campo razón social es obligatorio');
+                $('#razon_social').focus();
+                this.$notification.error("Campo razón social es obligatorio", {  timer: 2, position:'topRigth' });
                 return false;
-
-            }else if(this.nuevoCliente.niva.substr(2, (this.nuevoCliente.niva.length- 2)).toString() !== this.nuevoCliente.nif.toString()){
-                console.log('niva no valido... '+niva+' '+nif);
-                $('#niva').focus();
-                this.$notification.error("Formato NIVA inválido", {  timer: 10, position:'topRigth' });
+            }else if (razon_social.length == 0 || razon_social.length > 50){
+                console.log(razon_social+'Campo razón social máximo de caracteres: 50');
+                this.$notification.error("Campo razón social máximo de caracteres: 50", {  timer: 2, position:'topRigth' });
                 return false;
             }else{
-                console.log('niva validado... '+niva);
+                console.log('razon social ok: '+razon_social);
                 return true;
             }
-            
         },
-        controlNif: function(dni) {
+        controlNif(e, dni) {
             /**
             * patrones de NIF
             * persona fisica nacional: 99999999X => 8 dígitos + letra control
@@ -313,25 +221,25 @@ export default{
             let letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
 
             if(!dni){
-                console.log('nif es campo oblig');
+                console.log(nif+'nif es campo oblig');
                 $('#nif').focus();
-                this.$notification.error("Campo NIF es obligatorio", {  timer: 10, position:'topRigth' });
+                this.$notification.error("Campo NIF es obligatorio", { timer: 2, position:'topRigth'});
                 return false;
 
             }else if(dniPatron1.test(dni)){ // pfisicas
                 let numero = parseInt(dni.substr(0, dni.length - 1)) % 23;
-                console.log(numero);
+                // console.log(numero);
                 let letraTeorica = letras.substring(numero, numero +1);
-                console.log(letraTeorica);
+                // console.log(letraTeorica);
                 let letra = dni.substr(dni.length - 1, 1);
-                console.log(letra);
+                // console.log(letra);
                 // if(letra != letraTeorica){
                 //     console.log("Formato NIF persona física inválido");
                 //     this.$notification.error("Formato NIF persona física inválido", {  timer: 10, position:'topRigth' });
                 //     return false;
                 // }
                 //53117466R 53183401H
-                console.log('nif persona fisica ok');
+                console.log(nif+'nif persona fisica ok');
                 return true;
 
             }else if(dniPatron2.test(dni)){ //residentes extranjeros
@@ -355,35 +263,115 @@ export default{
                 letraTeorica = letras.substring(numero, numero +1);
                 letra = dni.substr(dni.length - 1, 1);
                 if(letra != letraTeorica){
-                    console.log("Formato NIF residente extranjero inválido");
+                    console.log(nif+"Formato NIF residente extranjero inválido");
                     $('#nif').focus();
-                    this.$notification.error("Formato NIF residente extranjero inválido", {  timer: 10, position:'topRigth' });
+                    this.$notification.error("Formato NIF residente extranjero inválido");
                     return false;
                 }
-                console.log('nif persona residente extranjero ok');
+                console.log(nif+'nif persona residente extranjero ok');
                 return true;
             }else{
-                console.log('no errores en nif, pero no se puede validar: '+dni);
-                this.$notification.warning("Imposible validar NIF. Compruebe en AEAT", {  timer: 10, position:'topRigth' }); //FIXME: meter link a la web de aeat¿?
+                console.log(nif+'no errores en nif, pero no se puede validar: '+dni);
+                this.$notification.warning("Imposible validar NIF. Compruebe en AEAT", {  timer: 2, position:'topRigth' }); //FIXME: meter link a la web de aeat¿?
                 return true;
             }
         },
-        controlRazonSocial: function(razon_social){
-            if(!razon_social){
-                console.log('Campo razón social es obligatorio');
-                $('#razon_social').focus();
-                this.$notification.error("Campo razón social es obligatorio", {  timer: 10, position:'topRigth' });
+        controlNiva(e, niva){
+            
+            // console.log(this.nuevoCliente.niva);
+            // console.log(this.nuevoCliente.niva.substr(2, (this.nuevoCliente.niva.length- 2)));
+            // console.log(this.nuevoCliente.nif);
+            if(!this.nuevoCliente.niva){
+                console.log('niva necesario...');
+                $('#niva').focus();
+                this.$notification.error("NIVA es campo obligatorio", {  timer: 2, position:'topRigth' });
                 return false;
-            }else if (razon_social.length == 0 || razon_social.length > 50){
-                console.log('Campo razón social máximo de caracteres: 50');
-                this.$notification.error("Campo razón social máximo de caracteres: 50", {  timer: 10, position:'topRigth' });
+
+            }else if(this.nuevoCliente.niva.substr(2, (this.nuevoCliente.niva.length- 2)).toString() !== this.nuevoCliente.nif.toString()){
+                console.log('niva no valido... '+niva+' '+nif);
+                $('#niva').focus();
+                this.$notification.error("Formato NIVA inválido", {  timer: 2, position:'topRigth' });
                 return false;
             }else{
-                console.log('razon social ok: '+razon_social);
+                console.log('niva validado... '+niva);
+                return true;
+            }
+            
+        },
+        controlEmail(e, email) {
+            
+            if(this.nuevoCliente.email){
+               let emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+;
+
+                if(!emailPatron.test(email)){
+                    console.log(email+'email formato invalido');
+                    $('#email').focus();
+                    this.$notification.error("Formato email inválido", {  timer: 2, position:'topRigth' });
+                    return false;
+
+                }else{
+                    console.log(email+'email oK');
+                    return true;
+                }
+            }
+        },
+        // controlTlfn: function (tlfn){
+        //     if(tlfn){
+        //         let patronTlfn = /^\+?([0-9]{2})\)?[-]?([0-9]{3})[ ]?([0-9]{2})[ ]?([0-9]{2})[ ]?([0-9]{2})$/;
+                
+        //         if(!patronTlfn.test(tlfn)){
+        //             console.log('tlfn mal: '+tlfn);
+        //             $('#tlfn').focus();
+        //             this.$notification.error("Campo telefono incorrecto", {  timer: 10, position:'topRigth' });
+        //             return false;
+
+        //         }else{
+        //             console.log('tlfn ok: '+tlfn);
+        //             return true;
+        //         }
+        //     }
+        // },
+        controlPais(e, pais){
+            
+            if(!pais){
+                console.log(pais+' pais es obligatorio');
+                $('#pais').focus();
+                this.$notification.error("Campo pais obligatorio", {  timer: 2, position:'topRigth' });
+                return false;
+            }
+            else{
+                console.log('pais ok: '+pais)
                 return true;
             }
         },
-        info: function () {
+        controlAmbito(e, ambito_cl){
+            
+            if(!ambito_cl){
+                console.log(ambito_cl+' ambito_cl es obligatorio')
+                $('#ambito_cl').focus();
+                this.$notification.error("Campo ámbito obligatorio", {  timer: 2, position:'topRigth' });
+                return false;
+            }
+            else{
+                console.log('ambito_cl ok: '+ambito_cl)
+                return true;
+            }
+        },
+        controlTipo(e, tipo_cl){
+            
+            if(!tipo_cl){
+                console.log(tipo_cl+' tipo_cl es obligatorio');
+                $('#tipo_cl').focus();
+                this.$notification.error("Campo tipo cliente obligatorio", {  timer: 2, position:'topRigth' });
+                return false;
+            }
+            else{
+                console.log('tipo_cl ok: '+tipo_cl)
+                return true;
+            }
+        },
+        info: function () { //TODO: convertir en modal y unir al botón info
             console.log('info');
             let infoCrear = "Debes tener en cuenta que estos datos deben ser fiables!"
             alert(infoCrear);
@@ -391,63 +379,3 @@ export default{
     } //end methods
 }
 </script>
-
-<style>
-/* Popup container - can be anything you want */
-.popup {
-  visibility: hidden;
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-/* The actual popup */
-.popup .popuptext {
-  visibility: hidden;
-  width: 160px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -80px;
-}
-
-/* Popup arrow */
-.popup .popuptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-/* Toggle this class - hide and show the popup */
-.show {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
-}
-
-/* Add animation (fade in the popup) */
-@-webkit-keyframes fadeIn {
-  from {opacity: 0;} 
-  to {opacity: 1;}
-}
-
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
-}
-</style>

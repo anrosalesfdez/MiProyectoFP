@@ -55,8 +55,9 @@ Route::prefix('/clientes')->group(function () {
     Route::get('/clientes_detalle/{id}', 'ClienteController@getCliente'); //VISTA + DATOS detalle de cliente consultado en BD
     Route::get('/clientes_nuevo', 'ClienteController@vistarNuevo')->name('clientes_nuevo'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
     Route::post('/clientes_nuevo', 'ClienteController@store'); //DATOS recoge Request HTTP y hace POST a la BD con nuevo cliente
-    Route::get('/clientes_editar/{id}', 'ClienteController@vistarEditar')->name('clientesData'); //VISTA clientes_editar.blade con <clientes_editar>
-    Route::post('/clientesData', 'ClienteController@update')->name('clientesData'); //DATOS recoge Request HTTP y hace POST a la BD con datos actualizados
+    Route::get('/clientes_editar/{id}', 'ClienteController@vistarEditar')->name('clientes_editar'); //VISTA clientes_editar.blade con <clientes_editar>
+    Route::put('/clientesData/{cliente}', 'ClienteController@update')->name('clientesData'); //DATOS recoge Request HTTP y hace POST a la BD con datos actualizados
+    // Route::put('/clientesData/{cliente}', 'ClienteController@update')->name('clientesData'); //DATOS recoge Request HTTP y hace POST a la BD con datos actualizados
     Route::delete('/clientes_delete/{id}', 'ClienteController@destroy')->name('clientes_delete'); // DATOS 
 });
 

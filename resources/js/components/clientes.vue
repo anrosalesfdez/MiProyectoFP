@@ -19,7 +19,7 @@
         <table class="table table-hover table-striped ">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
+                    <th width="10px" scope="col">ID</th>
                     <th scope="col">Razón social</th>
                     <!-- <th>NIF</th> -->
                     <th scope="col">NIVA</th>
@@ -36,7 +36,7 @@
                 <!-- Partiendo del data buscarCliente, se recorren los elementos y se muestran sus atributos -->
                 <tr v-for="cliente in paginated('misClientes')" v-bind:key="cliente.id">
 
-                    <td scope="row">{{ cliente.id }}</td>
+                    <td width="10px" scope="row">{{ cliente.id }}</td>
                     <td><a v-bind:href="'/clientes/clientes_detalle/'+cliente.id">{{ cliente.razon_social }}</a></td>
                     <!-- <td>{{ cliente.nif }}</td> -->
                     <td>{{ cliente.niva }}</td>
@@ -100,7 +100,7 @@ export default{
             var url = '/clientes/clientesData';
             axios.get(url).then(response => {
                 this.clientes = response.data;
-                console.log(this.clientes);
+                console.log(response);
             });
         },
         deleteCliente(cliente){   //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd

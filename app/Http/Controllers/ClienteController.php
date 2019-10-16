@@ -45,14 +45,6 @@ class ClienteController extends Controller
         return view('clientes/cliente_detalle', ['cliente'=> $cliente]);
     } 
 
-    public function checkNif($nif){
-        if(Cliente::where('nif', $nif)->first()){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -60,10 +52,13 @@ class ClienteController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
-        $nuevoCliente = Cliente::create($request->all());
-        return;
-
-        
+        $cliente = Cliente::where('nif', $request->nif)->first();
+        if($cliente === null){
+            $nuevoCliente = Cliente::create($request->all());
+            return response(['error' => false, 'message' => 'cliente creado OK']);
+        }else{
+            return response(['error' => true, 'message' => 'cliente ya existe']);
+        }
     }
 
     /**
@@ -77,7 +72,7 @@ class ClienteController extends Controller
         // echo $editadoCliente;
         // echo gettype($editadoCliente);
         if($editadoCliente){
-            return view('clientes/clientes_editar', ['editadocliente' => $editadoCliente, 'token' => csrf_field()]);
+            return view('clientes/clientes_editar', ['editadocliente' => $editadoCliente]);
             //el helper view() permite enviar variables a blade. Aquí envía el objeto editadocliente
         }
 
@@ -90,12 +85,16 @@ class ClienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request) {
+    // public function update(Request $request, $id) {
+    //     $cliente = Cliente::findOrFail($id);
+    //     $cliente->update(request()->all());
+    //     return redirect('/clientes/clientes');
+    // }
+    public function update(Cliente $cliente) {
         
-        $cliente->update($request()->all());
-        // return redirect('/clientes');
+        $cliente->update(request()->all()); //ya hace findOrFail por detrás
+        return redirect('/clientes/clientes');
     }
-
     /**
      * Remove the specified resource from storage.
      * @param  int  $id

@@ -6,3 +6,9 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+
+//notificaciones
+.notificationCenter  {
+    z-index:2000 !important;
+  }

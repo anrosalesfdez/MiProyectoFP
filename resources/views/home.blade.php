@@ -20,7 +20,7 @@
     </ul>
 </nav>
       
-<div class="container-fluid" id="app">
+<div class="container-fluid" >
     <div class="row">
         <!--Define la nav lateral-->
         <!--TODO: meter clases active en enlaces-->
