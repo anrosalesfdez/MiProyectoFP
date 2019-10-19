@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Cliente extends Model
 {
+    use SoftDeletes;
+    
     //those fields which can be created/ filled by mass-assignment by use of fillable.
     protected $fillable = [
         'id',
@@ -24,5 +28,6 @@ class Cliente extends Model
         'dias_pago',
         'observ'
     ];
+    protected $dates = ['deleted_at'];
 
 }

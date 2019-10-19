@@ -19,10 +19,6 @@ Vue.directive( 'touppercase', {
 })
 
 
-import VuePaginate from 'vue-paginate';
-Vue.use(VuePaginate);
-
-
 import VueNotification from "@kugatsu/vuenotification";
 Vue.use(VueNotification, {
   timer: 3,
@@ -47,19 +43,25 @@ Vue.use(VueNotification, {
   }
 });
 
-import {ClientTable, Event} from 'vue-tables-2';
+
+import {ServerTable, ClientTable, Event} from 'vue-tables-2';
 let options = {};
 let useVuex = false;
 let theme = "bootstrap4";
 let template = "default";
 Vue.use(ClientTable, options, useVuex, theme, template);
-
+Vue.use(ServerTable, options, useVuex, theme, template);
 import daterangepicker from 'daterangepicker';
 window.moment = require('moment');
+
+
+import Print from 'vue-print-nb'
+Vue.use(Print);
 
 //sacar la dependencia de vuetify
 //sacar la dependencia de toastr
 //sacar la dependencia de vue-notifications
+//sacar la dependencia de VuePaginate
 
 /**
  * Componentes

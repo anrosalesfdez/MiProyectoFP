@@ -34,6 +34,7 @@
         "moment": "^2.24.0",
         "vue-notifications": "^1.0.2",
         "vue-paginate": "^3.6.0",
+        "vue-print-nb": "^1.4.0",
         "vue-tables-2": "^1.4.70",
         "vue-toastr": "^2.1.2",
         "vuetify": "^2.1.1"

@@ -1,8 +1,5 @@
 <template>
 <div class="row" id="clientes_nuevo">
-    <div class="col-sm-12">
-        <h3>Mantenimiento de Clientes</h3>
-    </div>
 
     <div class="col-sm-12">
         <div class="card">
@@ -10,14 +7,14 @@
             <form method="post" action="/clientes/store">
 
                 <div class="card-header">
-                    <h4 style="display: inline; float: left">Alta nuevo cliente</h4>
+                    <h3 style="display: inline; float: left">Alta nuevo cliente</h3>
                     <button @click="info" class="btn btn-default" title="reglas para crear cliente">
                         <i class="mdi mdi-information-outline" aria-hidden="true"></i>  
                         <!-- https://materialdesignicons.com/cdn/2.0.46/                -->
                     </button>
                     <div style="display: inline; float: right">
                         <!-- <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button> -->
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="submit" class="btn btn-success">Guardar</button>
                         <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
                     </div>
                     
@@ -25,6 +22,8 @@
                 <div class="card-body">
                     <!--formulario nuevo cliente-->
                     <!-- <form> -->
+                        <input type="hidden" name="_token" v-model="csrf">
+                        
                         <div class="form-group">
                             <label for="razon_social" class="col-form-label">Razón social</label>      
                             <input type="text" class="form-control" name="razon_social" id="razon_social" @focusout="controlRazonSocial($event, nuevoCliente.razon_social)" v-model="nuevoCliente.razon_social" v-touppercase>
@@ -114,7 +113,7 @@
 
                         <div class="modal-footer">
                             <!-- <button type="submit" class="btn btn-primary" @click.prevent="storeCliente">Guardar</button> -->
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" class="btn btn-success">Guardar</button>
                             <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
                         </div>
                 </div>
@@ -129,6 +128,7 @@
 <script>
 
 export default{
+    name:'clientesnuevo',
     data(){ //datos del componente
         return {
             nuevoCliente: { //objeto que recoge datos del request a usuario para nuevo
@@ -146,11 +146,13 @@ export default{
                 forma_pago: '',
                 dias_pago: '',
                 observ: ''
-            }
+            },
+            csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
     },
     created() {
         console.log(this.nuevoCliente == null ? 'created nuevoCliente: true' : 'created nuevoCliente: false');
+        console.log(this.clientes);
     },
     methods:{
         storeCliente(){
@@ -165,11 +167,13 @@ export default{
                     var url='/clientes/store';
                     console.log('dentro');
                     axios.post(url, this.nuevoCliente)
-                    .then(response => {   
-                        console.log(response.error);
-                        this.nuevoCliente = response.data;
-                        this.$notification.success("Cliente guardado correctamente!", {  timer: 2, position:'topRigth' }); //FIXME: incluir id creado
-                        history.back(); //location.href()
+                    .then(response => {
+                        if(response.error){
+                            this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
+                        }else{
+                            this.$notification.success("Cliente guardado correctamente!", {  timer: 2, position:'topRigth' });
+                            history.back(); //location.href()
+                        }   
                     })
                     .catch(error => {
                         console.log(error);
@@ -230,7 +234,10 @@ export default{
                 this.$notification.error("Campo NIF es obligatorio", { timer: 2, position:'topRigth'});
                 return false;
 
-            }else if(dniPatron1.test(dni)){ // pfisicas
+            }/*else if(dni){
+                //TODO: meter control si NIF ya existe. traer datos desde clientes.vue
+                return false
+            }*/else if(dniPatron1.test(dni)){ // pfisicas
                 let numero = parseInt(dni.substr(0, dni.length - 1)) % 23;
                 // console.log(numero);
                 let letraTeorica = letras.substring(numero, numero +1);

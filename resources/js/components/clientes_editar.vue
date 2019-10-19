@@ -4,13 +4,6 @@
 <!-- <span>------ {{editadocliente}}-----</span> -->
 
     <div class="col-sm-12">
-        <h3>Mantenimiento de Clientes</h3>
-        <!-- <div>
-            hola------------------
-        </div> -->
-    </div>
-
-    <div class="col-sm-12">
         
         <div class="card">
         <!--formulario editado cliente-->
@@ -18,10 +11,10 @@
         <form method="post" v-bind:action="'/clientes/update/'+editadocliente.id">
             
             <div class="card-header">
-                <h4 style="display: inline">Actualizando cliente ID: <strong>{{ this.editadocliente.id }}</strong></h4>
+                <h3 style="display: inline">Actualizando cliente: <strong>{{ this.editadocliente.razon_social }}</strong></h3>
                 <div style="display: inline; float: right">
                     <!-- <button class="btn btn-primary" @click="updateCliente">Actualizar</button> -->
-                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="submit" class="btn btn-success">Actualizar</button>
                     <a href="/clientes/listar" class="btn btn-danger pull-right">Cancelar</a>
                 </div>
             </div>
@@ -126,7 +119,7 @@
 
                     <div class="modal-footer">
                         <!-- <button class="btn btn-primary" click="updateCliente">Actualizar</button> -->
-                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                        <button type="submit" class="btn btn-success">Actualizar</button>
                         <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
                     </div>
             </div>

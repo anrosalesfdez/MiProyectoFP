@@ -1,22 +1,64 @@
 <template>
 <div class="row" id="clientes">
-    <div class="col-sm-12">
-        <h3>Mantenimiento de Clientes</h3>
-    </div>
 
-    <div class="col-sm-12">
-        <div class="espacios" style="display: inline; float: left">
-            <!-- link a crear nuevo cliente -->
-            <a class="btn btn-success pull-right" role="button" href="/clientes/crear">Nuevo cliente</a>
+
+        <div class="col-md-6">
+            <h3 style="display: inline; float: left">Listado de Clientes</h3>
         </div>
-              
-        <!-- tabla que muestra todos los clientes -->
-        <v-client-table :data="clientes" :columns="titulos" :options="options">
+        <div class="col-md-6" style="display: inline; margin-rigth:0; float:left">
+            <div class="col-md-4 funkyradio" style="display: inline; float:left">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="checkbox1" id="checkbox1" checked @change="getClientesNonTrashed()" />
+                        <span class="oi oi-check"></span>
+                        <span class="cr"><i class="cr-icon fa fa-check"></i></span>
+                        Clientes activos
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="checkbox2" id="checkbox2" @change="getClientesAll()" />
+                        <span class="cr"><i class="cr-icon fa fa-check"></i></span>
+                        Todos los clientes
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="checkbox3" id="checkbox3" @change="getClientesTrashed()" />
+                        <span class="cr"><i class="cr-icon fa fa-check"></i></span>
+                        Clientes inactivos
+                    </label>
+                </div>
+            </div>
             
-            <a slot="razon_social" slot-scope="props" target="_blank" :href="props.row.razon_social" class="glyphicon glyphicon-eye-open"></a>
-        </v-client-table>
-            
+            <div class="col-md-1" style="display: inline; float:rigth">
+                <a style="float: right" class="btn btn-success" role="button" href="/clientes/crear">Nuevo cliente</a>
+            </div>       
     </div>
+        
+        <!-- tabla que muestra todos los clientes -->
+<!--         
+        <div id="people">
+            <v-server-table url="/clientes/get" :columns="columns" :options="options">
+                <div slot="razon_social" slot-scope="props">
+                    <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
+                </div>
+                <div slot="acciones" slot-scope="props">
+                    <a type="button" class="btn btn-outline-primary btn-sm" :href="'/clientes/editar/'+props.row.id" >Editar</a>
+                    <button class="btn btn-outline-danger btn-sm" @click.prevent="deleteCliente(props.row.id)">Eliminar</button>
+                </div>
+            </v-server-table>
+        </div> -->
+        
+        <v-client-table class="col-md-12" :data="clientes" :columns="columns" :options="options">
+            <div slot="razon_social" slot-scope="props">
+                <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
+            </div>
+            <div slot="acciones" slot-scope="props">
+                <a type="button" class="btn btn-outline-primary btn-sm" :href="'/clientes/editar/'+props.row.id" >Editar</a>
+                <button class="btn btn-outline-danger btn-sm" @click.prevent="deleteCliente(props.row.id)">Eliminar</button>
+            </div>
+        </v-client-table> 
 </div>
 </template>
 
@@ -28,56 +70,93 @@ export default{
     data(){ //datos del componente
         return {
             clientes: [],    //array de clientes recogidos de db. Coge el valor que le pasa blade
-            titulos: ['ID', 'RAZÓN SOCIAL', 'NIVA', 'PAÍS', 'ÁMBITO', 'TIPO', 'OPCIONES'],
+            columns: ['id', 'razon_social', 'niva', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
+            
             filterByColumn: true,
+
             options:{
-                sortable: ['ID', 'RAZÓN SOCIAL', 'NIVA', 'PAÍS', 'ÁMBITO', 'TIPO'],
-                sortIcon: {
-                    down: 'arrow arrow-down',
-                    up: 'arrow arrow-up'
+                sortable: ['id', 'razon_social', 'niva', 'pais', 'ambito_cl', 'tipo_cl'],
+                filterable: ['razon_social'],
+                headings: {
+                        id: 'ID',
+                        razon_social: 'RAZÓN SOCIAL',
+                        niva: 'NIVA',
+                        pais: 'PAÍS',
+                        ambito_cl: 'ÁMBITO',
+                        tipo_cl: 'TIPO',
+                        'acciones': 'ACCIONES'
+                    },
+
+                orderBy: {
+                    column: 'razon_social',
+                    ascending: true
                 },
-                filterable: ['ID', 'RAZÓN SOCIAL', 'NIVA', 'PAÍS', 'ÁMBITO', 'TIPO'],
-                perPage:5,
+
+                sortIcon: { base:'glyphicon',
+                            up:'glyphicon-chevron-up',
+                            down:'glyphicon-chevron-down',
+                            is:'glyphicon-sort'
+                            },
+
+                perPage:10,
+
                 texts: {
-                        filter: "Filtrar resultados:",
+                        filter: "",
                         filterPlaceholder: "Filtrar resultados",
-                        filterBy: 'Filtrar por {column}',
+                        filterBy: 'Filtrar por {razon_social}',
                         count:' '
                     },
             }
-            // paginate: ['misClientes']  //para paginar resultados de clientes obtenido
         }
     },
     created() {
-            this.getClientes(); //carga datos BD
+            this.getClientesNonTrashed(); //carga datos BD
     },
     methods:{
-        getClientes(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-            var url = '/clientes/get';
-            console.log('dentro');
+        getClientesNonTrashed(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
+            var url = '/clientes/getNonTrashed';
+            console.log('dentro get cl');
             axios.get(url).then(response => {
                 this.clientes = response.data;
-                console.log('de vuelta');
-                console.log(this.clientes);
+                console.log('respuesta getNonTrashed');
+                console.log(response);
             });
         },
-        deleteCliente(cliente){   //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
-            var url='/clientes/delete/' + cliente.id;
-            axios.delete(url).then(response => {
-                console.log('eliminando cliente');
-                // this.getClientes(); //recarga listado
-                let clDelete = clientes.filter((cl) => cl.id = cliente.id);
-                console.log(clDelete);
-
+        getClientesAll(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
+            var url = '/clientes/getAll';
+            console.log('dentro get cl');
+            axios.get(url).then(response => {
+                this.clientes = response.data;
+                console.log('respuesta getAll');
+                console.log(response);
+                console.log(response.data);
+                console.log(response.count);
+                
             });
-        }
-    },
-    computed:{  //propiedad computada
-        buscarCliente(){
-            this.clienteBuscado = this.clienteBuscado.toUpperCase(); //todo en bd está en upperCase. Buscamos pues como upperCase.
-            console.log(this.clienteBuscado);
-            return this.clientes.filter((cliente) => cliente.razon_social.includes(this.clienteBuscado)); //a la data clientes [] se le aplica filtro
-                                                                                                          //el filtro aplica a los clientes que coincidan con el data clienteBuscado.
+        },
+        getClientesTrashed(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
+            var url = '/clientes/getTrashed';
+            console.log('dentro get cl');
+            axios.get(url).then(response => {
+                this.clientes = response.data;
+                console.log('respuesta getTrashed');
+                console.log(response);
+                console.log(response.data);
+                console.log(response.count);
+                
+            });
+        },
+        deleteCliente(id){   //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
+            var url='/clientes/delete/' + id;
+            axios.delete(url).then(response => {
+                console.log(response.error);
+                if(response.error){
+                    this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
+                }else{
+                    this.$notification.success("Cliente guardado correctamente!", {  timer: 2, position:'topRigth' });
+                }
+                this.getClientes(); //recarga listado
+            });
         }
     }
 }
@@ -106,5 +185,63 @@ export default{
 }
 .espacios{
     margin-top: 10px;
+}
+.checkbox label:after, 
+.radio label:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.checkbox .cr,
+.radio .cr {
+    position: relative;
+    display: inline-block;
+    border: 1px solid #a9a9a9;
+    border-radius: .25em;
+    width: 1.3em;
+    height: 1.3em;
+    float: left;
+    margin-right: .5em;
+}
+
+.radio .cr {
+    border-radius: 50%;
+}
+
+.checkbox .cr .cr-icon,
+.radio .cr .cr-icon {
+    position: absolute;
+    font-size: .8em;
+    line-height: 0;
+    top: 50%;
+    left: 20%;
+}
+
+.radio .cr .cr-icon {
+    margin-left: 0.04em;
+}
+
+.checkbox label input[type="checkbox"],
+.radio label input[type="radio"] {
+    display: none;
+}
+
+.checkbox label input[type="checkbox"] + .cr > .cr-icon,
+.radio label input[type="radio"] + .cr > .cr-icon {
+    transform: scale(3) rotateZ(-20deg);
+    opacity: 0;
+    transition: all .3s ease-in;
+}
+
+.checkbox label input[type="checkbox"]:checked + .cr > .cr-icon,
+.radio label input[type="radio"]:checked + .cr > .cr-icon {
+    transform: scale(1) rotateZ(0deg);
+    opacity: 1;
+}
+
+.checkbox label input[type="checkbox"]:disabled + .cr,
+.radio label input[type="radio"]:disabled + .cr {
+    opacity: .5;
 }
 </style>

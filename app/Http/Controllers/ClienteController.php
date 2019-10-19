@@ -20,9 +20,25 @@ class ClienteController extends Controller
     }
 
     // Recoge todos los clientes de la BD.
-    public function getClientes(){
+    public function getClientesNonTrashed(){
 
         $clientes = Cliente::orderBy('razon_social', 'ASC')->get();
+
+        return $clientes;
+    } 
+
+    // Recoge todos los clientes de la BD. //also deleted models
+    public function getClientesAll(){
+
+        $clientes = Cliente::withTrashed()->get();
+
+        return $clientes;
+    } 
+
+    // Recoge todos los clientes de la BD. //only deleted models
+    public function getClientesTrashed(){
+
+        $clientes = Cliente::onlyTrashed()->get();
 
         return $clientes;
     } 
@@ -42,7 +58,7 @@ class ClienteController extends Controller
 
         if($cliente === null){
             $nuevoCliente = Cliente::create($request->all());
-            return response(['error' => fase, 'message' => 'cliente creado OK']);
+            return response(['error' => false, 'message' => 'cliente creado OK']);
 
         }else{
             return response(['error' => true, 'message' => 'cliente ya existe']);

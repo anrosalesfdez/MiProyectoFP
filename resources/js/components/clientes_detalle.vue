@@ -1,29 +1,33 @@
 <template>
-<div class="row" id="clientes_nuevo">
-
-    <div class="col-sm-12">
-        <h3>Mantenimiento de Clientes</h3>
-    </div>
+<div class="row" id="cliente_nuevo">
 
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h4 style="display: inline">Visualización cliente ID: <strong>{{ this.clMostrar.id }}</strong></h4>
+                <h3 style="display: inline">Visualización cliente: <strong>{{ this.clMostrar.razon_social }}</strong></h3>
                 <div style="display: inline; float: right">
-                    <a v-bind:href="'/clientes/clientes_editar/'+this.clMostrar.id" class="btn btn-primary">Permitir edición</a>
-                    <a href="/clientes/clientes" class="btn btn-danger">Cancelar</a>
-                    <button class="btn btn-default">
-                        <i class="mdi mdi-cloud-print" aria-hidden="true"></i>
-                    </button>
+                    <a v-bind:href="'/clientes/editar/'+this.clMostrar.id" class="btn btn-primary">Permitir edición</a>
+                    <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
                 </div>
             </div>
             <div class="card-body">
                 <!--formulario visualización cliente-->
                 <form>
 
-                    <div class="form-group">
-                        <label for="razon_social" class="col-form-label">Razón social</label>      
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <label for="id" class="col-form-label">ID cliente</label>      
+                            <input type="text" class="form-control" readonly name="id" id="id" v-model="clMostrar.id">
+                        </div>
+                        <div class="form-group col-md-11">
+                            <label for="razon_social" class="col-form-label">Razón social</label>      
                         <input type="text" class="form-control" disabled name="razon_social" id="razon_social" v-model="clMostrar.razon_social" v-touppercase>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        
+                        
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
@@ -104,18 +108,13 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="observ" class="col-form-label" disabled>Observaciones</label>
-                        <textarea class="form-control" name="observ" id="observ"></textarea>
+                        <label for="observ" class="col-form-label">Observaciones</label>
+                        <textarea class="form-control" disabled name="observ" id="observ"></textarea>
                     </div>
 
                     <div class="modal-footer">
-                        <a v-bind:href="'/clientes/clientes_editar/'+this.clMostrar.id" class="btn btn-primary">Permitir edición</a>
-                        <a href="/clientes/clientes" class="btn btn-danger">Cancelar</a>
-                        <button class="btn btn-default">
-                            <i class="mdi mdi-cloud-print" aria-hidden="true"></i>
-                        </button>
-                        <!--TODO:cambiar clases para permitir edición-->
-                        <!--TODO:hilar con impresión pdf-->
+                        <a v-bind:href="'/clientes/editar/'+this.clMostrar.id" class="btn btn-primary">Permitir edición</a>
+                        <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
                     </div>
                 </form>
             </div>

@@ -5649,73 +5649,155 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     //datos del componente
     return {
       clientes: [],
       //array de clientes recogidos de db. Coge el valor que le pasa blade
-      titulos: ['ID', 'RAZÓN SOCIAL', 'NIVA', 'PAÍS', 'ÁMBITO', 'TIPO', 'OPCIONES'],
+      columns: ['id', 'razon_social', 'niva', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
       filterByColumn: true,
       options: {
-        sortable: ['ID', 'RAZÓN SOCIAL', 'NIVA', 'PAÍS', 'ÁMBITO', 'TIPO'],
-        sortIcon: {
-          down: 'arrow arrow-down',
-          up: 'arrow arrow-up'
+        sortable: ['id', 'razon_social', 'niva', 'pais', 'ambito_cl', 'tipo_cl'],
+        filterable: ['razon_social'],
+        headings: {
+          id: 'ID',
+          razon_social: 'RAZÓN SOCIAL',
+          niva: 'NIVA',
+          pais: 'PAÍS',
+          ambito_cl: 'ÁMBITO',
+          tipo_cl: 'TIPO',
+          'acciones': 'ACCIONES'
         },
-        filterable: ['ID', 'RAZÓN SOCIAL', 'NIVA', 'PAÍS', 'ÁMBITO', 'TIPO'],
-        perPage: 5,
+        orderBy: {
+          column: 'razon_social',
+          ascending: true
+        },
+        sortIcon: {
+          base: 'glyphicon',
+          up: 'glyphicon-chevron-up',
+          down: 'glyphicon-chevron-down',
+          is: 'glyphicon-sort'
+        },
+        perPage: 10,
         texts: {
-          filter: "Filtrar resultados:",
+          filter: "",
           filterPlaceholder: "Filtrar resultados",
-          filterBy: 'Filtrar por {column}',
+          filterBy: 'Filtrar por {razon_social}',
           count: ' '
         }
-      } // paginate: ['misClientes']  //para paginar resultados de clientes obtenido
-
+      }
     };
   },
   created: function created() {
-    this.getClientes(); //carga datos BD
+    this.getClientesNonTrashed(); //carga datos BD
   },
   methods: {
-    getClientes: function getClientes() {
+    getClientesNonTrashed: function getClientesNonTrashed() {
       var _this = this;
 
       //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-      var url = '/clientes/get';
-      console.log('dentro');
+      var url = '/clientes/getNonTrashed';
+      console.log('dentro get cl');
       axios.get(url).then(function (response) {
         _this.clientes = response.data;
-        console.log('de vuelta');
-        console.log(_this.clientes);
+        console.log('respuesta getNonTrashed');
+        console.log(response);
       });
     },
-    deleteCliente: function deleteCliente(cliente) {
-      //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
-      var url = '/clientes/delete/' + cliente.id;
-      axios["delete"](url).then(function (response) {
-        console.log('eliminando cliente'); // this.getClientes(); //recarga listado
-
-        var clDelete = clientes.filter(function (cl) {
-          return cl.id = cliente.id;
-        });
-        console.log(clDelete);
-      });
-    }
-  },
-  computed: {
-    //propiedad computada
-    buscarCliente: function buscarCliente() {
+    getClientesAll: function getClientesAll() {
       var _this2 = this;
 
-      this.clienteBuscado = this.clienteBuscado.toUpperCase(); //todo en bd está en upperCase. Buscamos pues como upperCase.
+      //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
+      var url = '/clientes/getAll';
+      console.log('dentro get cl');
+      axios.get(url).then(function (response) {
+        _this2.clientes = response.data;
+        console.log('respuesta getAll');
+        console.log(response);
+        console.log(response.data);
+        console.log(response.count);
+      });
+    },
+    getClientesTrashed: function getClientesTrashed() {
+      var _this3 = this;
 
-      console.log(this.clienteBuscado);
-      return this.clientes.filter(function (cliente) {
-        return cliente.razon_social.includes(_this2.clienteBuscado);
-      }); //a la data clientes [] se le aplica filtro
-      //el filtro aplica a los clientes que coincidan con el data clienteBuscado.
+      //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
+      var url = '/clientes/getTrashed';
+      console.log('dentro get cl');
+      axios.get(url).then(function (response) {
+        _this3.clientes = response.data;
+        console.log('respuesta getTrashed');
+        console.log(response);
+        console.log(response.data);
+        console.log(response.count);
+      });
+    },
+    deleteCliente: function deleteCliente(id) {
+      var _this4 = this;
+
+      //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
+      var url = '/clientes/delete/' + id;
+      axios["delete"](url).then(function (response) {
+        console.log(response.error);
+
+        if (response.error) {
+          _this4.$notification.error("response.error", {
+            timer: 3,
+            position: 'topRigth'
+          });
+        } else {
+          _this4.$notification.success("Cliente guardado correctamente!", {
+            timer: 2,
+            position: 'topRigth'
+          });
+        }
+
+        _this4.getClientes(); //recarga listado
+
+      });
     }
   }
 });
@@ -5731,7 +5813,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
 //
 //
 //
@@ -5885,13 +5966,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -6275,8 +6349,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'clientesnuevo',
   data: function data() {
     //datos del componente
     return {
@@ -6296,11 +6370,13 @@ __webpack_require__.r(__webpack_exports__);
         forma_pago: '',
         dias_pago: '',
         observ: ''
-      }
+      },
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     };
   },
   created: function created() {
     console.log(this.nuevoCliente == null ? 'created nuevoCliente: true' : 'created nuevoCliente: false');
+    console.log(this.clientes);
   },
   methods: {
     storeCliente: function storeCliente() {
@@ -6317,16 +6393,19 @@ __webpack_require__.r(__webpack_exports__);
         var url = '/clientes/store';
         console.log('dentro');
         axios.post(url, this.nuevoCliente).then(function (response) {
-          console.log(response.error);
-          _this.nuevoCliente = response.data;
+          if (response.error) {
+            _this.$notification.error("response.error", {
+              timer: 3,
+              position: 'topRigth'
+            });
+          } else {
+            _this.$notification.success("Cliente guardado correctamente!", {
+              timer: 2,
+              position: 'topRigth'
+            });
 
-          _this.$notification.success("Cliente guardado correctamente!", {
-            timer: 2,
-            position: 'topRigth'
-          }); //FIXME: incluir id creado
-
-
-          history.back(); //location.href()
+            history.back(); //location.href()
+          }
         })["catch"](function (error) {
           console.log(error);
         });
@@ -6395,71 +6474,76 @@ __webpack_require__.r(__webpack_exports__);
           position: 'topRigth'
         });
         return false;
-      } else if (dniPatron1.test(dni)) {
-        // pfisicas
-        var numero = parseInt(dni.substr(0, dni.length - 1)) % 23; // console.log(numero);
-
-        var _letraTeorica = letras.substring(numero, numero + 1); // console.log(letraTeorica);
-
-
-        var _letra = dni.substr(dni.length - 1, 1); // console.log(letra);
-        // if(letra != letraTeorica){
-        //     console.log("Formato NIF persona física inválido");
-        //     this.$notification.error("Formato NIF persona física inválido", {  timer: 10, position:'topRigth' });
-        //     return false;
-        // }
-        //53117466R 53183401H
-
-
-        console.log(nif + 'nif persona fisica ok');
-        return true;
-      } else if (dniPatron2.test(dni)) {
-        //residentes extranjeros
-        var letra1 = dni.substr(0, 1);
-
-        var _numero = dni.substr(1, dni.length - 2);
-
-        var letraControl = dni.length - 1;
-
-        switch (letra1) {
-          case 'X':
-            _numero = str.concat('0', _numero);
-            break;
-
-          case 'Y':
-            _numero = str.concat('1', _numero);
-            break;
-
-          case 'Z':
-            _numero = str.concat('2', _numero);
-            break;
-
-          default:
-            break;
-        }
-
-        _numero = _numero % 23;
-        letraTeorica = letras.substring(_numero, _numero + 1);
-        letra = dni.substr(dni.length - 1, 1);
-
-        if (letra != letraTeorica) {
-          console.log(nif + "Formato NIF residente extranjero inválido");
-          $('#nif').focus();
-          this.$notification.error("Formato NIF residente extranjero inválido");
-          return false;
-        }
-
-        console.log(nif + 'nif persona residente extranjero ok');
-        return true;
-      } else {
-        console.log(nif + 'no errores en nif, pero no se puede validar: ' + dni);
-        this.$notification.warning("Imposible validar NIF. Compruebe en AEAT", {
-          timer: 2,
-          position: 'topRigth'
-        }); //FIXME: meter link a la web de aeat¿?
-
-        return true;
       }
+      /*else if(dni){
+         //TODO: meter control si NIF ya existe. traer datos desde clientes.vue
+         return false
+      }*/
+      else if (dniPatron1.test(dni)) {
+          // pfisicas
+          var numero = parseInt(dni.substr(0, dni.length - 1)) % 23; // console.log(numero);
+
+          var _letraTeorica = letras.substring(numero, numero + 1); // console.log(letraTeorica);
+
+
+          var _letra = dni.substr(dni.length - 1, 1); // console.log(letra);
+          // if(letra != letraTeorica){
+          //     console.log("Formato NIF persona física inválido");
+          //     this.$notification.error("Formato NIF persona física inválido", {  timer: 10, position:'topRigth' });
+          //     return false;
+          // }
+          //53117466R 53183401H
+
+
+          console.log(nif + 'nif persona fisica ok');
+          return true;
+        } else if (dniPatron2.test(dni)) {
+          //residentes extranjeros
+          var letra1 = dni.substr(0, 1);
+
+          var _numero = dni.substr(1, dni.length - 2);
+
+          var letraControl = dni.length - 1;
+
+          switch (letra1) {
+            case 'X':
+              _numero = str.concat('0', _numero);
+              break;
+
+            case 'Y':
+              _numero = str.concat('1', _numero);
+              break;
+
+            case 'Z':
+              _numero = str.concat('2', _numero);
+              break;
+
+            default:
+              break;
+          }
+
+          _numero = _numero % 23;
+          letraTeorica = letras.substring(_numero, _numero + 1);
+          letra = dni.substr(dni.length - 1, 1);
+
+          if (letra != letraTeorica) {
+            console.log(nif + "Formato NIF residente extranjero inválido");
+            $('#nif').focus();
+            this.$notification.error("Formato NIF residente extranjero inválido");
+            return false;
+          }
+
+          console.log(nif + 'nif persona residente extranjero ok');
+          return true;
+        } else {
+          console.log(nif + 'no errores en nif, pero no se puede validar: ' + dni);
+          this.$notification.warning("Imposible validar NIF. Compruebe en AEAT", {
+            timer: 2,
+            position: 'topRigth'
+          }); //FIXME: meter link a la web de aeat¿?
+
+          return true;
+        }
     },
     controlNiva: function controlNiva(e, niva) {
       // console.log(this.nuevoCliente.niva);
@@ -13265,7 +13349,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.paginate-links{\n    width:100%;\n    list-style: none;\n    text-align: center;\n}\n.paginate-links li {\n    display: inline;\n    background-color:#6c757d;\n    color:white;\n    padding:0.5rem;\n    margin-left:0.3rem;\n    margin-right: 0.3rem;\n    cursor:pointer;\n    border-radius: 3px;\n}\n.paginate-result{\n    width: 100%;\n    text-align:center;\n    margin-bottom: 1rem;\n}\n.espacios{\n    margin-top: 10px;\n}\n", ""]);
+exports.push([module.i, "\n.paginate-links{\n    width:100%;\n    list-style: none;\n    text-align: center;\n}\n.paginate-links li {\n    display: inline;\n    background-color:#6c757d;\n    color:white;\n    padding:0.5rem;\n    margin-left:0.3rem;\n    margin-right: 0.3rem;\n    cursor:pointer;\n    border-radius: 3px;\n}\n.paginate-result{\n    width: 100%;\n    text-align:center;\n    margin-bottom: 1rem;\n}\n.espacios{\n    margin-top: 10px;\n}\n.checkbox label:after, \n.radio label:after {\n    content: '';\n    display: table;\n    clear: both;\n}\n.checkbox .cr,\n.radio .cr {\n    position: relative;\n    display: inline-block;\n    border: 1px solid #a9a9a9;\n    border-radius: .25em;\n    width: 1.3em;\n    height: 1.3em;\n    float: left;\n    margin-right: .5em;\n}\n.radio .cr {\n    border-radius: 50%;\n}\n.checkbox .cr .cr-icon,\n.radio .cr .cr-icon {\n    position: absolute;\n    font-size: .8em;\n    line-height: 0;\n    top: 50%;\n    left: 20%;\n}\n.radio .cr .cr-icon {\n    margin-left: 0.04em;\n}\n.checkbox label input[type=\"checkbox\"],\n.radio label input[type=\"radio\"] {\n    display: none;\n}\n.checkbox label input[type=\"checkbox\"] + .cr > .cr-icon,\n.radio label input[type=\"radio\"] + .cr > .cr-icon {\n    transform: scale(3) rotateZ(-20deg);\n    opacity: 0;\n    transition: all .3s ease-in;\n}\n.checkbox label input[type=\"checkbox\"]:checked + .cr > .cr-icon,\n.radio label input[type=\"radio\"]:checked + .cr > .cr-icon {\n    transform: scale(1) rotateZ(0deg);\n    opacity: 1;\n}\n.checkbox label input[type=\"checkbox\"]:disabled + .cr,\n.radio label input[type=\"radio\"]:disabled + .cr {\n    opacity: .5;\n}\n", ""]);
 
 // exports
 
@@ -77673,45 +77757,190 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row", attrs: { id: "clientes" } }, [
-    _vm._m(0),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "col-sm-12" },
-      [
-        _vm._m(1),
-        _vm._v(" "),
-        _c("v-client-table", {
-          attrs: {
-            data: _vm.clientes,
-            columns: _vm.titulos,
-            options: _vm.options
-          },
-          scopedSlots: _vm._u([
+  return _c(
+    "div",
+    { staticClass: "row", attrs: { id: "clientes" } },
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "col-md-6",
+          staticStyle: { display: "inline", "margin-rigth": "0", float: "left" }
+        },
+        [
+          _c(
+            "div",
             {
-              key: "razon_social",
-              fn: function(props) {
-                return _c("a", {
-                  staticClass: "glyphicon glyphicon-eye-open",
-                  attrs: { target: "_blank", href: props.row.razon_social }
-                })
-              }
+              staticClass: "col-md-4 funkyradio",
+              staticStyle: { display: "inline", float: "left" }
+            },
+            [
+              _c("div", { staticClass: "checkbox" }, [
+                _c("label", [
+                  _c("input", {
+                    attrs: {
+                      type: "checkbox",
+                      name: "checkbox1",
+                      id: "checkbox1",
+                      checked: ""
+                    },
+                    on: {
+                      change: function($event) {
+                        return _vm.getClientesNonTrashed()
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "oi oi-check" }),
+                  _vm._v(" "),
+                  _vm._m(1),
+                  _vm._v(
+                    "\r\n                        Clientes activos\r\n                    "
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "checkbox" }, [
+                _c("label", [
+                  _c("input", {
+                    attrs: {
+                      type: "checkbox",
+                      name: "checkbox2",
+                      id: "checkbox2"
+                    },
+                    on: {
+                      change: function($event) {
+                        return _vm.getClientesAll()
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm._m(2),
+                  _vm._v(
+                    "\r\n                        Todos los clientes\r\n                    "
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "checkbox" }, [
+                _c("label", [
+                  _c("input", {
+                    attrs: {
+                      type: "checkbox",
+                      name: "checkbox3",
+                      id: "checkbox3"
+                    },
+                    on: {
+                      change: function($event) {
+                        return _vm.getClientesTrashed()
+                      }
+                    }
+                  }),
+                  _vm._v(" "),
+                  _vm._m(3),
+                  _vm._v(
+                    "\r\n                        Clientes inactivos\r\n                    "
+                  )
+                ])
+              ])
+            ]
+          ),
+          _vm._v(" "),
+          _vm._m(4)
+        ]
+      ),
+      _vm._v(" "),
+      _c("v-client-table", {
+        staticClass: "col-md-12",
+        attrs: {
+          data: _vm.clientes,
+          columns: _vm.columns,
+          options: _vm.options
+        },
+        scopedSlots: _vm._u([
+          {
+            key: "razon_social",
+            fn: function(props) {
+              return _c("div", {}, [
+                _c("a", { attrs: { href: "/clientes/ver/" + props.row.id } }, [
+                  _vm._v(_vm._s(props.row.razon_social))
+                ])
+              ])
             }
-          ])
-        })
-      ],
-      1
-    )
-  ])
+          },
+          {
+            key: "acciones",
+            fn: function(props) {
+              return _c("div", {}, [
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-outline-primary btn-sm",
+                    attrs: {
+                      type: "button",
+                      href: "/clientes/editar/" + props.row.id
+                    }
+                  },
+                  [_vm._v("Editar")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-outline-danger btn-sm",
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.deleteCliente(props.row.id)
+                      }
+                    }
+                  },
+                  [_vm._v("Eliminar")]
+                )
+              ])
+            }
+          }
+        ])
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-sm-12" }, [
-      _c("h3", [_vm._v("Mantenimiento de Clientes")])
+    return _c("div", { staticClass: "col-md-6" }, [
+      _c("h3", { staticStyle: { display: "inline", float: "left" } }, [
+        _vm._v("Listado de Clientes")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "cr" }, [
+      _c("i", { staticClass: "cr-icon fa fa-check" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "cr" }, [
+      _c("i", { staticClass: "cr-icon fa fa-check" })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "cr" }, [
+      _c("i", { staticClass: "cr-icon fa fa-check" })
     ])
   },
   function() {
@@ -77721,14 +77950,15 @@ var staticRenderFns = [
     return _c(
       "div",
       {
-        staticClass: "espacios",
-        staticStyle: { display: "inline", float: "left" }
+        staticClass: "col-md-1",
+        staticStyle: { display: "inline", float: "rigth" }
       },
       [
         _c(
           "a",
           {
-            staticClass: "btn btn-success pull-right",
+            staticClass: "btn btn-success",
+            staticStyle: { float: "right" },
             attrs: { role: "button", href: "/clientes/crear" }
           },
           [_vm._v("Nuevo cliente")]
@@ -77758,15 +77988,13 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row", attrs: { id: "clientes_nuevo" } }, [
-    _vm._m(0),
-    _vm._v(" "),
+  return _c("div", { staticClass: "row", attrs: { id: "cliente_nuevo" } }, [
     _c("div", { staticClass: "col-sm-12" }, [
       _c("div", { staticClass: "card" }, [
         _c("div", { staticClass: "card-header" }, [
-          _c("h4", { staticStyle: { display: "inline" } }, [
-            _vm._v("Visualización cliente ID: "),
-            _c("strong", [_vm._v(_vm._s(this.clMostrar.id))])
+          _c("h3", { staticStyle: { display: "inline" } }, [
+            _vm._v("Visualización cliente: "),
+            _c("strong", [_vm._v(_vm._s(this.clMostrar.razon_social))])
           ]),
           _vm._v(" "),
           _c("div", { staticStyle: { display: "inline", float: "right" } }, [
@@ -77774,9 +78002,7 @@ var render = function() {
               "a",
               {
                 staticClass: "btn btn-primary",
-                attrs: {
-                  href: "/clientes/clientes_editar/" + this.clMostrar.id
-                }
+                attrs: { href: "/clientes/editar/" + this.clMostrar.id }
               },
               [_vm._v("Permitir edición")]
             ),
@@ -77785,55 +78011,91 @@ var render = function() {
               "a",
               {
                 staticClass: "btn btn-danger",
-                attrs: { href: "/clientes/clientes" }
+                attrs: { href: "/clientes/listar" }
               },
               [_vm._v("Cancelar")]
-            ),
-            _vm._v(" "),
-            _vm._m(1)
+            )
           ])
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
           _c("form", [
-            _c("div", { staticClass: "form-group" }, [
-              _c(
-                "label",
-                {
-                  staticClass: "col-form-label",
-                  attrs: { for: "razon_social" }
-                },
-                [_vm._v("Razón social")]
-              ),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.clMostrar.razon_social,
-                    expression: "clMostrar.razon_social"
-                  },
-                  { name: "touppercase", rawName: "v-touppercase" }
-                ],
-                staticClass: "form-control",
-                attrs: {
-                  type: "text",
-                  disabled: "",
-                  name: "razon_social",
-                  id: "razon_social"
-                },
-                domProps: { value: _vm.clMostrar.razon_social },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+            _c("div", { staticClass: "form-row" }, [
+              _c("div", { staticClass: "form-group col-md-1" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "id" } },
+                  [_vm._v("ID cliente")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.id,
+                      expression: "clMostrar.id"
                     }
-                    _vm.$set(_vm.clMostrar, "razon_social", $event.target.value)
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "text", readonly: "", name: "id", id: "id" },
+                  domProps: { value: _vm.clMostrar.id },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.clMostrar, "id", $event.target.value)
+                    }
                   }
-                }
-              })
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group col-md-11" }, [
+                _c(
+                  "label",
+                  {
+                    staticClass: "col-form-label",
+                    attrs: { for: "razon_social" }
+                  },
+                  [_vm._v("Razón social")]
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.clMostrar.razon_social,
+                      expression: "clMostrar.razon_social"
+                    },
+                    { name: "touppercase", rawName: "v-touppercase" }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    disabled: "",
+                    name: "razon_social",
+                    id: "razon_social"
+                  },
+                  domProps: { value: _vm.clMostrar.razon_social },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.clMostrar,
+                        "razon_social",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ])
             ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }),
             _vm._v(" "),
             _c("div", { staticClass: "form-row" }, [
               _c("div", { staticClass: "form-group col-md-6" }, [
@@ -78377,16 +78639,14 @@ var render = function() {
               ])
             ]),
             _vm._v(" "),
-            _vm._m(2),
+            _vm._m(0),
             _vm._v(" "),
             _c("div", { staticClass: "modal-footer" }, [
               _c(
                 "a",
                 {
                   staticClass: "btn btn-primary",
-                  attrs: {
-                    href: "/clientes/clientes_editar/" + this.clMostrar.id
-                  }
+                  attrs: { href: "/clientes/editar/" + this.clMostrar.id }
                 },
                 [_vm._v("Permitir edición")]
               ),
@@ -78395,12 +78655,10 @@ var render = function() {
                 "a",
                 {
                   staticClass: "btn btn-danger",
-                  attrs: { href: "/clientes/clientes" }
+                  attrs: { href: "/clientes/listar" }
                 },
                 [_vm._v("Cancelar")]
-              ),
-              _vm._v(" "),
-              _vm._m(3)
+              )
             ])
           ])
         ])
@@ -78413,49 +78671,14 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-sm-12" }, [
-      _c("h3", [_vm._v("Mantenimiento de Clientes")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("button", { staticClass: "btn btn-default" }, [
-      _c("i", {
-        staticClass: "mdi mdi-cloud-print",
-        attrs: { "aria-hidden": "true" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group" }, [
-      _c(
-        "label",
-        {
-          staticClass: "col-form-label",
-          attrs: { for: "observ", disabled: "" }
-        },
-        [_vm._v("Observaciones")]
-      ),
+      _c("label", { staticClass: "col-form-label", attrs: { for: "observ" } }, [
+        _vm._v("Observaciones")
+      ]),
       _vm._v(" "),
       _c("textarea", {
         staticClass: "form-control",
-        attrs: { name: "observ", id: "observ" }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("button", { staticClass: "btn btn-default" }, [
-      _c("i", {
-        staticClass: "mdi mdi-cloud-print",
-        attrs: { "aria-hidden": "true" }
+        attrs: { disabled: "", name: "observ", id: "observ" }
       })
     ])
   }
@@ -78482,8 +78705,6 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row", attrs: { id: "clientes_editado" } }, [
-    _vm._m(0),
-    _vm._v(" "),
     _c("div", { staticClass: "col-sm-12" }, [
       _c("div", { staticClass: "card" }, [
         _c(
@@ -78496,12 +78717,12 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "card-header" }, [
-              _c("h4", { staticStyle: { display: "inline" } }, [
-                _vm._v("Actualizando cliente ID: "),
-                _c("strong", [_vm._v(_vm._s(this.editadocliente.id))])
+              _c("h3", { staticStyle: { display: "inline" } }, [
+                _vm._v("Actualizando cliente: "),
+                _c("strong", [_vm._v(_vm._s(this.editadocliente.razon_social))])
               ]),
               _vm._v(" "),
-              _vm._m(1)
+              _vm._m(0)
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "card-body" }, [
@@ -79177,9 +79398,9 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(2),
+              _vm._m(1),
               _vm._v(" "),
-              _vm._m(3)
+              _vm._m(2)
             ])
           ]
         )
@@ -79192,18 +79413,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-sm-12" }, [
-      _c("h3", [_vm._v("Mantenimiento de Clientes")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("div", { staticStyle: { display: "inline", float: "right" } }, [
       _c(
         "button",
-        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        { staticClass: "btn btn-success", attrs: { type: "submit" } },
         [_vm._v("Actualizar")]
       ),
       _vm._v(" "),
@@ -79239,7 +79452,7 @@ var staticRenderFns = [
     return _c("div", { staticClass: "modal-footer" }, [
       _c(
         "button",
-        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        { staticClass: "btn btn-success", attrs: { type: "submit" } },
         [_vm._v("Actualizar")]
       ),
       _vm._v(" "),
@@ -79273,13 +79486,11 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row", attrs: { id: "clientes_nuevo" } }, [
-    _vm._m(0),
-    _vm._v(" "),
     _c("div", { staticClass: "col-sm-12" }, [
       _c("div", { staticClass: "card" }, [
         _c("form", { attrs: { method: "post", action: "/clientes/store" } }, [
           _c("div", { staticClass: "card-header" }, [
-            _c("h4", { staticStyle: { display: "inline", float: "left" } }, [
+            _c("h3", { staticStyle: { display: "inline", float: "left" } }, [
               _vm._v("Alta nuevo cliente")
             ]),
             _vm._v(" "),
@@ -79298,10 +79509,31 @@ var render = function() {
               ]
             ),
             _vm._v(" "),
-            _vm._m(1)
+            _vm._m(0)
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.csrf,
+                  expression: "csrf"
+                }
+              ],
+              attrs: { type: "hidden", name: "_token" },
+              domProps: { value: _vm.csrf },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.csrf = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
               _c(
                 "label",
@@ -79919,7 +80151,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _vm._m(2)
+            _vm._m(1)
           ])
         ])
       ])
@@ -79931,18 +80163,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-sm-12" }, [
-      _c("h3", [_vm._v("Mantenimiento de Clientes")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("div", { staticStyle: { display: "inline", float: "right" } }, [
       _c(
         "button",
-        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        { staticClass: "btn btn-success", attrs: { type: "submit" } },
         [_vm._v("Guardar")]
       ),
       _vm._v(" "),
@@ -79960,7 +80184,7 @@ var staticRenderFns = [
     return _c("div", { staticClass: "modal-footer" }, [
       _c(
         "button",
-        { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+        { staticClass: "btn btn-success", attrs: { type: "submit" } },
         [_vm._v("Guardar")]
       ),
       _vm._v(" "),
@@ -80082,610 +80306,6 @@ function normalizeComponent (
   }
 }
 
-
-/***/ }),
-
-/***/ "./node_modules/vue-paginate/dist/vue-paginate.js":
-/*!********************************************************!*\
-  !*** ./node_modules/vue-paginate/dist/vue-paginate.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * vue-paginate v3.6.0
- * (c) 2018 Taha Shashtari
- * @license MIT
- */
-(function (global, factory) {
-   true ? module.exports = factory() :
-  undefined;
-}(this, function () { 'use strict';
-
-  var warn = function () {}
-  var formatComponentName
-
-  var hasConsole = typeof console !== 'undefined'
-
-  warn = function (msg, vm, type) {
-    if ( type === void 0 ) type = 'error';
-
-    if (hasConsole) {
-      console[type]("[vue-paginate]: " + msg + " " + (
-        vm ? formatLocation(formatComponentName(vm)) : ''
-        ))
-    }
-  }
-
-  formatComponentName = function (vm) {
-    if (vm.$root === vm) {
-      return 'root instance'
-    }
-    var name = vm._isVue
-    ? vm.$options.name || vm.$options._componentTag
-    : vm.name
-    return (
-      (name ? ("component <" + name + ">") : "anonymous component") +
-      (vm._isVue && vm.$options.__file ? (" at " + (vm.$options.__file)) : '')
-      )
-  }
-
-  var formatLocation = function (str) {
-    if (str === 'anonymous component') {
-      str += " - use the \"name\" option for better debugging messages."
-    }
-    return ("\n(found in " + str + ")")
-  }
-
-  var Paginate = {
-    name: 'paginate',
-    props: {
-      name: {
-        type: String,
-        required: true
-      },
-      list: {
-        type: Array,
-        required: true
-      },
-      per: {
-        type: Number,
-        default: 3,
-        validator: function validator (value) {
-          return value > 0
-        }
-      },
-      tag: {
-        type: String,
-        default: 'ul'
-      },
-      container: {
-        type: Object,
-        default: null
-      }
-    },
-    data: function data () {
-      return {
-        initialListSize: this.list.length
-      }
-    },
-    computed: {
-      parent: function parent () {
-        return this.container ? this.container : this.$parent
-      },
-      currentPage: {
-        get: function get () {
-          if (this.parent.paginate[this.name]) {
-            return this.parent.paginate[this.name].page
-          }
-        },
-        set: function set (page) {
-          this.parent.paginate[this.name].page = page
-        }
-      },
-      pageItemsCount: function pageItemsCount () {
-        var numOfItems = this.list.length
-        var first = this.currentPage * this.per + 1
-        var last = Math.min((this.currentPage * this.per) + this.per, numOfItems)
-        return (first + "-" + last + " of " + numOfItems)
-      },
-
-      lastPage: function lastPage () {
-        return Math.ceil(this.list.length / this.per)
-      }
-    },
-    mounted: function mounted () {
-      if (this.per <= 0) {
-        warn(("<paginate name=\"" + (this.name) + "\"> 'per' prop can't be 0 or less."), this.parent)
-      }
-      if (!this.parent.paginate[this.name]) {
-        warn(("'" + (this.name) + "' is not registered in 'paginate' array."), this.parent)
-        return
-      }
-      this.paginateList()
-    },
-    watch: {
-      currentPage: function currentPage () {
-        this.paginateList()
-      },
-      list: function list () {
-        if (this.currentPage >= this.lastPage) {
-          this.currentPage = this.lastPage - 1
-        }
-        this.paginateList()
-      },
-      per: function per () {
-        this.currentPage = 0
-        this.paginateList()
-      }
-    },
-    methods: {
-      paginateList: function paginateList () {
-        var index = this.currentPage * this.per
-        var paginatedList = this.list.slice(index, index + this.per)
-        this.parent.paginate[this.name].list = paginatedList
-      },
-      goToPage: function goToPage (page) {
-        var lastPage = Math.ceil(this.list.length / this.per)
-        if (page > lastPage) {
-          warn(("You cannot go to page " + page + ". The last page is " + lastPage + "."), this.parent)
-          return
-        }
-        this.currentPage = page - 1
-      }
-    },
-    render: function render (h) {
-      return h(this.tag, {}, this.$slots.default)
-    }
-  }
-
-  var LEFT_ARROW = '«'
-  var RIGHT_ARROW = '»'
-  var ELLIPSES = '…'
-
-  var LimitedLinksGenerator = function LimitedLinksGenerator (listOfPages, currentPage, limit) {
-    this.listOfPages = listOfPages
-    this.lastPage = listOfPages.length - 1
-    this.currentPage = currentPage === this.lastPage
-      ? this.lastPage - 1
-      : currentPage
-    this.limit = limit
-  };
-
-  LimitedLinksGenerator.prototype.generate = function generate () {
-    var firstHalf = this._buildFirstHalf()
-    var secondHalf = this._buildSecondHalf()
-    return firstHalf.concat( secondHalf)
-  };
-
-  LimitedLinksGenerator.prototype._buildFirstHalf = function _buildFirstHalf () {
-    var firstHalf = this._allPagesButLast()
-      .slice(
-        this._currentChunkIndex(),
-        this._currentChunkIndex() + this.limit
-      )
-    // Add backward ellipses with first page if needed
-    if (this.currentPage >= this.limit) {
-      firstHalf.unshift(ELLIPSES)
-      firstHalf.unshift(0)
-    }
-    // Add ellipses if needed
-    if (this.lastPage - this.limit > this._currentChunkIndex()) {
-      firstHalf.push(ELLIPSES)
-    }
-    return firstHalf
-  };
-
-  LimitedLinksGenerator.prototype._buildSecondHalf = function _buildSecondHalf () {
-    var secondHalf = [this.lastPage]
-    return secondHalf
-  };
-
-  LimitedLinksGenerator.prototype._currentChunkIndex = function _currentChunkIndex () {
-    var currentChunk = Math.floor(this.currentPage / this.limit)
-    return currentChunk * this.limit 
-  };
-
-  LimitedLinksGenerator.prototype._allPagesButLast = function _allPagesButLast () {
-      var this$1 = this;
-
-    return this.listOfPages.filter(function (n) { return n !== this$1.lastPage; })
-  };
-
-  var PaginateLinks = {
-    name: 'paginate-links',
-    props: {
-      for: {
-        type: String,
-        required: true
-      },
-      limit: {
-        type: Number,
-        default: 0
-      },
-      simple: {
-        type: Object,
-        default: null,
-        validator: function validator (obj) {
-          return obj.prev && obj.next
-        }
-      },
-      stepLinks: {
-        type: Object,
-        default: function () {
-          return {
-            prev: LEFT_ARROW,
-            next: RIGHT_ARROW
-          }
-        },
-        validator: function validator$1 (obj) {
-          return obj.prev && obj.next
-        }
-      },
-      showStepLinks: {
-        type: Boolean
-      },
-      hideSinglePage: {
-        type: Boolean
-      },
-      classes: {
-        type: Object,
-        default: null
-      },
-      async: {
-        type: Boolean,
-        default: false
-      },
-      container: {
-        type: Object,
-        default: null
-      }
-    },
-    data: function data () {
-      return {
-        listOfPages: [],
-        numberOfPages: 0,
-        target: null
-      }
-    },
-    computed: {
-      parent: function parent () {
-        return this.container ? this.container.el : this.$parent
-      },
-      state: function state () {
-        return this.container ? this.container.state : this.$parent.paginate[this.for]
-      },
-      currentPage: {
-        get: function get () {
-          if (this.state) {
-            return this.state.page
-          }
-        },
-        set: function set (page) {
-          this.state.page = page
-        }
-      }
-    },
-    mounted: function mounted () {
-      var this$1 = this;
-
-      if (this.simple && this.limit) {
-        warn(("<paginate-links for=\"" + (this.for) + "\"> 'simple' and 'limit' props can't be used at the same time. In this case, 'simple' will take precedence, and 'limit' will be ignored."), this.parent, 'warn')
-      }
-      if (this.simple && !this.simple.next) {
-        warn(("<paginate-links for=\"" + (this.for) + "\"> 'simple' prop doesn't contain 'next' value."), this.parent)
-      }
-      if (this.simple && !this.simple.prev) {
-        warn(("<paginate-links for=\"" + (this.for) + "\"> 'simple' prop doesn't contain 'prev' value."), this.parent)
-      }
-      if (this.stepLinks && !this.stepLinks.next) {
-        warn(("<paginate-links for=\"" + (this.for) + "\"> 'step-links' prop doesn't contain 'next' value."), this.parent)
-      }
-      if (this.stepLinks && !this.stepLinks.prev) {
-        warn(("<paginate-links for=\"" + (this.for) + "\"> 'step-links' prop doesn't contain 'prev' value."), this.parent)
-      }
-      this.$nextTick(function () {
-        this$1.updateListOfPages()
-      })
-    },
-    watch: {
-      'state': {
-        handler: function handler () {
-          this.updateListOfPages()
-        },
-        deep: true
-      },
-      currentPage: function currentPage (toPage, fromPage) {
-        this.$emit('change', toPage + 1, fromPage + 1)
-      }
-    },
-    methods: {
-      updateListOfPages: function updateListOfPages () {
-        this.target = getTargetPaginateComponent(this.parent.$children, this.for)
-        if (!this.target) {
-          if (this.async) { return }
-          warn(("<paginate-links for=\"" + (this.for) + "\"> can't be used without its companion <paginate name=\"" + (this.for) + "\">"), this.parent)
-          warn("To fix that issue you may need to use :async=\"true\" on <paginate-links> component to allow for asyncronous rendering", this.parent, 'warn')
-          return
-        }
-        this.numberOfPages = Math.ceil(this.target.list.length / this.target.per)
-        this.listOfPages = getListOfPageNumbers(this.numberOfPages)
-      }
-    },
-    render: function render (h) {
-      var this$1 = this;
-
-      if (!this.target && this.async) { return null }
-
-      var links = this.simple
-        ? getSimpleLinks(this, h)
-        : this.limit > 1
-        ? getLimitedLinks(this, h)
-        : getFullLinks(this, h)
-
-      if (this.hideSinglePage && this.numberOfPages <= 1) {
-        return null
-      }
-
-      var el = h('ul', {
-        class: ['paginate-links', this.for]
-      }, links)
-
-      if (this.classes) {
-        this.$nextTick(function () {
-          addAdditionalClasses(el.elm, this$1.classes)
-        })
-      }
-      return el
-    }
-  }
-
-  function getFullLinks (vm, h) {
-    var allLinks = vm.showStepLinks
-      ? [vm.stepLinks.prev ].concat( vm.listOfPages, [vm.stepLinks.next])
-      : vm.listOfPages
-    return allLinks.map(function (link) {
-      var data = {
-        on: {
-          click: function (e) {
-            e.preventDefault()
-            vm.currentPage = getTargetPageForLink(
-              link,
-              vm.limit,
-              vm.currentPage,
-              vm.listOfPages,
-              vm.stepLinks
-            )
-          }
-        }
-      }
-      var liClasses = getClassesForLink(
-        link,
-        vm.currentPage,
-        vm.listOfPages.length - 1,
-        vm.stepLinks
-      )
-      var linkText = link === vm.stepLinks.next || link === vm.stepLinks.prev
-        ? link
-        : link + 1 // it means it's a number
-      return h('li', { class: liClasses }, [h('a', data, linkText)])
-    })
-  }
-
-  function getLimitedLinks (vm, h) {
-    var limitedLinks = new LimitedLinksGenerator(
-      vm.listOfPages,
-      vm.currentPage,
-      vm.limit,
-      vm.stepLinks
-    ).generate()
-
-    limitedLinks = vm.showStepLinks
-      ? [vm.stepLinks.prev ].concat( limitedLinks, [vm.stepLinks.next])
-      : limitedLinks
-
-    var limitedLinksMetadata = getLimitedLinksMetadata(limitedLinks)
-
-    return limitedLinks.map(function (link, index) {
-      var data = {
-        on: {
-          click: function (e) {
-            e.preventDefault()
-            vm.currentPage = getTargetPageForLink(
-              link,
-              vm.limit,
-              vm.currentPage,
-              vm.listOfPages,
-              vm.stepLinks,
-              limitedLinksMetadata[index]
-            )
-          }
-        }
-      }
-      var liClasses = getClassesForLink(
-        link,
-        vm.currentPage,
-        vm.listOfPages.length - 1,
-        vm.stepLinks
-      )
-      // If the link is a number,
-      // then incremented by 1 (since it's 0 based).
-      // otherwise, do nothing (so, it's a symbol).
-      var text = (link === parseInt(link, 10)) ? link + 1 : link
-      return h('li', { class: liClasses }, [h('a', data, text)])
-    })
-  }
-
-  function getSimpleLinks (vm, h) {
-    var lastPage = vm.listOfPages.length - 1
-    var prevData = {
-      on: {
-        click: function (e) {
-          e.preventDefault()
-          if (vm.currentPage > 0) { vm.currentPage -= 1 }
-        }
-      }
-    }
-    var nextData = {
-      on: {
-        click: function (e) {
-          e.preventDefault()
-          if (vm.currentPage < lastPage) { vm.currentPage += 1 }
-        }
-      }
-    }
-    var nextListData = { class: ['next', vm.currentPage >= lastPage ? 'disabled' : ''] }
-    var prevListData = { class: ['prev', vm.currentPage <= 0 ? 'disabled' : ''] }
-    var prevLink = h('li', prevListData, [h('a', prevData, vm.simple.prev)])
-    var nextLink = h('li', nextListData, [h('a', nextData, vm.simple.next)])
-    return [prevLink, nextLink]
-  }
-
-  function getTargetPaginateComponent (children, targetName) {
-    return children
-      .filter(function (child) { return (child.$vnode.componentOptions.tag === 'paginate'); })
-      .find(function (child) { return child.name === targetName; })
-  }
-
-  function getListOfPageNumbers (numberOfPages) {
-    // converts number of pages into an array
-    // that contains each individual page number
-    // For Example: 4 => [0, 1, 2, 3]
-    return Array.apply(null, { length: numberOfPages })
-      .map(function (val, index) { return index; })
-  }
-
-  function getClassesForLink(link, currentPage, lastPage, ref) {
-    var prev = ref.prev;
-    var next = ref.next;
-
-    var liClass = []
-    if (link === prev) {
-      liClass.push('left-arrow')
-    } else if (link === next) {
-      liClass.push('right-arrow')
-    } else if (link === ELLIPSES) {
-      liClass.push('ellipses')
-    } else {
-      liClass.push('number')
-    }
-
-    if (link === currentPage) {
-      liClass.push('active')
-    }
-
-    if (link === prev && currentPage <= 0) {
-      liClass.push('disabled')
-    } else if (link === next && currentPage >= lastPage) {
-      liClass.push('disabled')
-    }
-    return liClass
-  }
-
-  function getTargetPageForLink (link, limit, currentPage, listOfPages, ref, metaData) {
-    var prev = ref.prev;
-    var next = ref.next;
-    if ( metaData === void 0 ) metaData = null;
-
-    var currentChunk = Math.floor(currentPage / limit)
-    if (link === prev) {
-      return (currentPage - 1) < 0 ? 0 : currentPage - 1
-    } else if (link === next) {
-      return (currentPage + 1 > listOfPages.length - 1)
-        ? listOfPages.length - 1
-        : currentPage + 1
-    } else if (metaData && metaData === 'right-ellipses') {
-      return (currentChunk + 1) * limit
-    } else if (metaData && metaData === 'left-ellipses') {
-      var chunkContent = listOfPages.slice(currentChunk * limit, currentChunk * limit + limit)
-      var isLastPage = currentPage === listOfPages.length - 1
-      if (isLastPage && chunkContent.length === 1) {
-        currentChunk--
-      }
-      return (currentChunk - 1) * limit + limit - 1
-    }
-    // which is number
-    return link
-  }
-
-  /**
-   * Mainly used here to check whether the displayed
-   * ellipses is for showing previous or next links
-   */
-  function getLimitedLinksMetadata (limitedLinks) {
-    return limitedLinks.map(function (link, index) {
-      if (link === ELLIPSES && limitedLinks[index - 1] === 0) {
-        return 'left-ellipses'
-      } else if (link === ELLIPSES && limitedLinks[index - 1] !== 0) {
-        return 'right-ellipses'
-      }
-      return link
-    })
-  }
-
-  function addAdditionalClasses (linksContainer, classes) {
-    Object.keys(classes).forEach(function (selector) {
-      if (selector === 'ul') {
-        var selectorValue = classes['ul']
-        if (Array.isArray(selectorValue)) {
-          selectorValue.forEach(function (c) { return linksContainer.classList.add(c); })
-        } else {
-          linksContainer.classList.add(selectorValue)
-        }
-      }
-      linksContainer.querySelectorAll(selector).forEach(function (node) {
-        var selectorValue = classes[selector]
-        if (Array.isArray(selectorValue)) {
-          selectorValue.forEach(function (c) { return node.classList.add(c); })
-        } else {
-          node.classList.add(selectorValue)
-        }
-      })
-    })
-  }
-
-  function paginateDataGenerator (listNames) {
-    if ( listNames === void 0 ) listNames = [];
-
-    return listNames.reduce(function (curr, listName) {
-      curr[listName] = {
-        list: [],
-        page: 0
-      }
-      return curr
-    }, {})
-  }
-
-  var vuePaginate = {}
-
-  vuePaginate.install = function (Vue) {
-    Vue.mixin({
-      created: function created () {
-        if (this.paginate !== 'undefined' && this.paginate instanceof Array) {
-          this.paginate = paginateDataGenerator(this.paginate)
-        }
-      },
-      methods: {
-        paginated: function paginated (listName) {
-          if (!this.paginate || !this.paginate[listName]) {
-            warn(("'" + listName + "' is not registered in 'paginate' array."), this)
-            return
-          }
-          return this.paginate[listName].list
-        }
-      }
-    })
-    Vue.component('paginate', Paginate)
-    Vue.component('paginate-links', PaginateLinks)
-  }
-
-  if (typeof window !== 'undefined' && window.Vue) {
-    window.Vue.use(vuePaginate)
-  }
-
-  return vuePaginate;
-
-}));
 
 /***/ }),
 
@@ -81244,6 +80864,18 @@ module.exports = {
   PaginationEvent:PaginationEvent
 }
 
+
+/***/ }),
+
+/***/ "./node_modules/vue-print-nb/lib/tag-textarea.umd.min.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/vue-print-nb/lib/tag-textarea.umd.min.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function(t,e){ true?module.exports=e():undefined})("undefined"!==typeof self?self:this,function(){return function(t){var e={};function n(r){if(e[r])return e[r].exports;var o=e[r]={i:r,l:!1,exports:{}};return t[r].call(o.exports,o,o.exports,n),o.l=!0,o.exports}return n.m=t,n.c=e,n.d=function(t,e,r){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},n.r=function(t){"undefined"!==typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"===typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)n.d(r,o,function(e){return t[e]}.bind(null,o));return r},n.n=function(t){var e=t&&t.__esModule?function(){return t["default"]}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="",n(n.s="fb15")}({"014b":function(t,e,n){"use strict";var r=n("e53d"),o=n("07e3"),i=n("8e60"),c=n("63b6"),u=n("9138"),a=n("ebfd").KEY,f=n("294c"),s=n("dbdb"),l=n("45f2"),p=n("62a0"),d=n("5168"),v=n("ccb9"),h=n("6718"),b=n("47ee"),y=n("9003"),g=n("e4ae"),x=n("f772"),m=n("241e"),w=n("36c3"),S=n("1bc3"),O=n("aebd"),j=n("a159"),E=n("0395"),P=n("bf0b"),T=n("9aa9"),_=n("d9f6"),k=n("c3a1"),A=P.f,M=_.f,L=E.f,C=r.Symbol,I=r.JSON,N=I&&I.stringify,F="prototype",R=d("_hidden"),D=d("toPrimitive"),H={}.propertyIsEnumerable,W=s("symbol-registry"),B=s("symbols"),G=s("op-symbols"),$=Object[F],q="function"==typeof C&&!!T.f,V=r.QObject,U=!V||!V[F]||!V[F].findChild,z=i&&f(function(){return 7!=j(M({},"a",{get:function(){return M(this,"a",{value:7}).a}})).a})?function(t,e,n){var r=A($,e);r&&delete $[e],M(t,e,n),r&&t!==$&&M($,e,r)}:M,J=function(t){var e=B[t]=j(C[F]);return e._k=t,e},Y=q&&"symbol"==typeof C.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof C},K=function(t,e,n){return t===$&&K(G,e,n),g(t),e=S(e,!0),g(n),o(B,e)?(n.enumerable?(o(t,R)&&t[R][e]&&(t[R][e]=!1),n=j(n,{enumerable:O(0,!1)})):(o(t,R)||M(t,R,O(1,{})),t[R][e]=!0),z(t,e,n)):M(t,e,n)},Q=function(t,e){g(t);var n,r=b(e=w(e)),o=0,i=r.length;while(i>o)K(t,n=r[o++],e[n]);return t},X=function(t,e){return void 0===e?j(t):Q(j(t),e)},Z=function(t){var e=H.call(this,t=S(t,!0));return!(this===$&&o(B,t)&&!o(G,t))&&(!(e||!o(this,t)||!o(B,t)||o(this,R)&&this[R][t])||e)},tt=function(t,e){if(t=w(t),e=S(e,!0),t!==$||!o(B,e)||o(G,e)){var n=A(t,e);return!n||!o(B,e)||o(t,R)&&t[R][e]||(n.enumerable=!0),n}},et=function(t){var e,n=L(w(t)),r=[],i=0;while(n.length>i)o(B,e=n[i++])||e==R||e==a||r.push(e);return r},nt=function(t){var e,n=t===$,r=L(n?G:w(t)),i=[],c=0;while(r.length>c)!o(B,e=r[c++])||n&&!o($,e)||i.push(B[e]);return i};q||(C=function(){if(this instanceof C)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),e=function(n){this===$&&e.call(G,n),o(this,R)&&o(this[R],t)&&(this[R][t]=!1),z(this,t,O(1,n))};return i&&U&&z($,t,{configurable:!0,set:e}),J(t)},u(C[F],"toString",function(){return this._k}),P.f=tt,_.f=K,n("6abf").f=E.f=et,n("355d").f=Z,T.f=nt,i&&!n("b8e3")&&u($,"propertyIsEnumerable",Z,!0),v.f=function(t){return J(d(t))}),c(c.G+c.W+c.F*!q,{Symbol:C});for(var rt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),ot=0;rt.length>ot;)d(rt[ot++]);for(var it=k(d.store),ct=0;it.length>ct;)h(it[ct++]);c(c.S+c.F*!q,"Symbol",{for:function(t){return o(W,t+="")?W[t]:W[t]=C(t)},keyFor:function(t){if(!Y(t))throw TypeError(t+" is not a symbol!");for(var e in W)if(W[e]===t)return e},useSetter:function(){U=!0},useSimple:function(){U=!1}}),c(c.S+c.F*!q,"Object",{create:X,defineProperty:K,defineProperties:Q,getOwnPropertyDescriptor:tt,getOwnPropertyNames:et,getOwnPropertySymbols:nt});var ut=f(function(){T.f(1)});c(c.S+c.F*ut,"Object",{getOwnPropertySymbols:function(t){return T.f(m(t))}}),I&&c(c.S+c.F*(!q||f(function(){var t=C();return"[null]"!=N([t])||"{}"!=N({a:t})||"{}"!=N(Object(t))})),"JSON",{stringify:function(t){var e,n,r=[t],o=1;while(arguments.length>o)r.push(arguments[o++]);if(n=e=r[1],(x(e)||void 0!==t)&&!Y(t))return y(e)||(e=function(t,e){if("function"==typeof n&&(e=n.call(this,t,e)),!Y(e))return e}),r[1]=e,N.apply(I,r)}}),C[F][D]||n("35e8")(C[F],D,C[F].valueOf),l(C,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},"02f4":function(t,e,n){var r=n("4588"),o=n("be13");t.exports=function(t){return function(e,n){var i,c,u=String(o(e)),a=r(n),f=u.length;return a<0||a>=f?t?"":void 0:(i=u.charCodeAt(a),i<55296||i>56319||a+1===f||(c=u.charCodeAt(a+1))<56320||c>57343?t?u.charAt(a):i:t?u.slice(a,a+2):c-56320+(i-55296<<10)+65536)}}},"0390":function(t,e,n){"use strict";var r=n("02f4")(!0);t.exports=function(t,e,n){return e+(n?r(t,e).length:1)}},"0395":function(t,e,n){var r=n("36c3"),o=n("6abf").f,i={}.toString,c="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],u=function(t){try{return o(t)}catch(e){return c.slice()}};t.exports.f=function(t){return c&&"[object Window]"==i.call(t)?u(t):o(r(t))}},"07e3":function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},"0bfb":function(t,e,n){"use strict";var r=n("cb7c");t.exports=function(){var t=r(this),e="";return t.global&&(e+="g"),t.ignoreCase&&(e+="i"),t.multiline&&(e+="m"),t.unicode&&(e+="u"),t.sticky&&(e+="y"),e}},"0d58":function(t,e,n){var r=n("ce10"),o=n("e11e");t.exports=Object.keys||function(t){return r(t,o)}},"0fc9":function(t,e,n){var r=n("3a38"),o=Math.max,i=Math.min;t.exports=function(t,e){return t=r(t),t<0?o(t+e,0):i(t,e)}},1654:function(t,e,n){"use strict";var r=n("71c1")(!0);n("30f1")(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,e=this._t,n=this._i;return n>=e.length?{value:void 0,done:!0}:(t=r(e,n),this._i+=t.length,{value:t,done:!1})})},1691:function(t,e){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},"1bc3":function(t,e,n){var r=n("f772");t.exports=function(t,e){if(!r(t))return t;var n,o;if(e&&"function"==typeof(n=t.toString)&&!r(o=n.call(t)))return o;if("function"==typeof(n=t.valueOf)&&!r(o=n.call(t)))return o;if(!e&&"function"==typeof(n=t.toString)&&!r(o=n.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},"1ec9":function(t,e,n){var r=n("f772"),o=n("e53d").document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},"214f":function(t,e,n){"use strict";n("b0c5");var r=n("2aba"),o=n("32e9"),i=n("79e5"),c=n("be13"),u=n("2b4c"),a=n("520a"),f=u("species"),s=!i(function(){var t=/./;return t.exec=function(){var t=[];return t.groups={a:"7"},t},"7"!=="".replace(t,"$<a>")}),l=function(){var t=/(?:)/,e=t.exec;t.exec=function(){return e.apply(this,arguments)};var n="ab".split(t);return 2===n.length&&"a"===n[0]&&"b"===n[1]}();t.exports=function(t,e,n){var p=u(t),d=!i(function(){var e={};return e[p]=function(){return 7},7!=""[t](e)}),v=d?!i(function(){var e=!1,n=/a/;return n.exec=function(){return e=!0,null},"split"===t&&(n.constructor={},n.constructor[f]=function(){return n}),n[p](""),!e}):void 0;if(!d||!v||"replace"===t&&!s||"split"===t&&!l){var h=/./[p],b=n(c,p,""[t],function(t,e,n,r,o){return e.exec===a?d&&!o?{done:!0,value:h.call(e,n,r)}:{done:!0,value:t.call(n,e,r)}:{done:!1}}),y=b[0],g=b[1];r(String.prototype,t,y),o(RegExp.prototype,p,2==e?function(t,e){return g.call(t,this,e)}:function(t){return g.call(t,this)})}}},"230e":function(t,e,n){var r=n("d3f4"),o=n("7726").document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},"23c6":function(t,e,n){var r=n("2d95"),o=n("2b4c")("toStringTag"),i="Arguments"==r(function(){return arguments}()),c=function(t,e){try{return t[e]}catch(n){}};t.exports=function(t){var e,n,u;return void 0===t?"Undefined":null===t?"Null":"string"==typeof(n=c(e=Object(t),o))?n:i?r(e):"Object"==(u=r(e))&&"function"==typeof e.callee?"Arguments":u}},"241e":function(t,e,n){var r=n("25eb");t.exports=function(t){return Object(r(t))}},"25eb":function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},2621:function(t,e){e.f=Object.getOwnPropertySymbols},"294c":function(t,e){t.exports=function(t){try{return!!t()}catch(e){return!0}}},"2aba":function(t,e,n){var r=n("7726"),o=n("32e9"),i=n("69a8"),c=n("ca5a")("src"),u=n("fa5b"),a="toString",f=(""+u).split(a);n("8378").inspectSource=function(t){return u.call(t)},(t.exports=function(t,e,n,u){var a="function"==typeof n;a&&(i(n,"name")||o(n,"name",e)),t[e]!==n&&(a&&(i(n,c)||o(n,c,t[e]?""+t[e]:f.join(String(e)))),t===r?t[e]=n:u?t[e]?t[e]=n:o(t,e,n):(delete t[e],o(t,e,n)))})(Function.prototype,a,function(){return"function"==typeof this&&this[c]||u.call(this)})},"2b4c":function(t,e,n){var r=n("5537")("wks"),o=n("ca5a"),i=n("7726").Symbol,c="function"==typeof i,u=t.exports=function(t){return r[t]||(r[t]=c&&i[t]||(c?i:o)("Symbol."+t))};u.store=r},"2d00":function(t,e){t.exports=!1},"2d95":function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},"30f1":function(t,e,n){"use strict";var r=n("b8e3"),o=n("63b6"),i=n("9138"),c=n("35e8"),u=n("481b"),a=n("8f60"),f=n("45f2"),s=n("53e2"),l=n("5168")("iterator"),p=!([].keys&&"next"in[].keys()),d="@@iterator",v="keys",h="values",b=function(){return this};t.exports=function(t,e,n,y,g,x,m){a(n,e,y);var w,S,O,j=function(t){if(!p&&t in _)return _[t];switch(t){case v:return function(){return new n(this,t)};case h:return function(){return new n(this,t)}}return function(){return new n(this,t)}},E=e+" Iterator",P=g==h,T=!1,_=t.prototype,k=_[l]||_[d]||g&&_[g],A=k||j(g),M=g?P?j("entries"):A:void 0,L="Array"==e&&_.entries||k;if(L&&(O=s(L.call(new t)),O!==Object.prototype&&O.next&&(f(O,E,!0),r||"function"==typeof O[l]||c(O,l,b))),P&&k&&k.name!==h&&(T=!0,A=function(){return k.call(this)}),r&&!m||!p&&!T&&_[l]||c(_,l,A),u[e]=A,u[E]=b,g)if(w={values:P?A:j(h),keys:x?A:j(v),entries:M},m)for(S in w)S in _||i(_,S,w[S]);else o(o.P+o.F*(p||T),e,w);return w}},"32e9":function(t,e,n){var r=n("86cc"),o=n("4630");t.exports=n("9e1e")?function(t,e,n){return r.f(t,e,o(1,n))}:function(t,e,n){return t[e]=n,t}},"32fc":function(t,e,n){var r=n("e53d").document;t.exports=r&&r.documentElement},"335c":function(t,e,n){var r=n("6b4c");t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},"355d":function(t,e){e.f={}.propertyIsEnumerable},"35e8":function(t,e,n){var r=n("d9f6"),o=n("aebd");t.exports=n("8e60")?function(t,e,n){return r.f(t,e,o(1,n))}:function(t,e,n){return t[e]=n,t}},"36c3":function(t,e,n){var r=n("335c"),o=n("25eb");t.exports=function(t){return r(o(t))}},"3a38":function(t,e){var n=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:n)(t)}},"454f":function(t,e,n){n("46a7");var r=n("584a").Object;t.exports=function(t,e,n){return r.defineProperty(t,e,n)}},4588:function(t,e){var n=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:n)(t)}},"45f2":function(t,e,n){var r=n("d9f6").f,o=n("07e3"),i=n("5168")("toStringTag");t.exports=function(t,e,n){t&&!o(t=n?t:t.prototype,i)&&r(t,i,{configurable:!0,value:e})}},4630:function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},"46a7":function(t,e,n){var r=n("63b6");r(r.S+r.F*!n("8e60"),"Object",{defineProperty:n("d9f6").f})},"47ee":function(t,e,n){var r=n("c3a1"),o=n("9aa9"),i=n("355d");t.exports=function(t){var e=r(t),n=o.f;if(n){var c,u=n(t),a=i.f,f=0;while(u.length>f)a.call(t,c=u[f++])&&e.push(c)}return e}},"481b":function(t,e){t.exports={}},"4bf8":function(t,e,n){var r=n("be13");t.exports=function(t){return Object(r(t))}},"50ed":function(t,e){t.exports=function(t,e){return{value:e,done:!!t}}},5168:function(t,e,n){var r=n("dbdb")("wks"),o=n("62a0"),i=n("e53d").Symbol,c="function"==typeof i,u=t.exports=function(t){return r[t]||(r[t]=c&&i[t]||(c?i:o)("Symbol."+t))};u.store=r},"520a":function(t,e,n){"use strict";var r=n("0bfb"),o=RegExp.prototype.exec,i=String.prototype.replace,c=o,u="lastIndex",a=function(){var t=/a/,e=/b*/g;return o.call(t,"a"),o.call(e,"a"),0!==t[u]||0!==e[u]}(),f=void 0!==/()??/.exec("")[1],s=a||f;s&&(c=function(t){var e,n,c,s,l=this;return f&&(n=new RegExp("^"+l.source+"$(?!\\s)",r.call(l))),a&&(e=l[u]),c=o.call(l,t),a&&c&&(l[u]=l.global?c.index+c[0].length:e),f&&c&&c.length>1&&i.call(c[0],n,function(){for(s=1;s<arguments.length-2;s++)void 0===arguments[s]&&(c[s]=void 0)}),c}),t.exports=c},"52a7":function(t,e){e.f={}.propertyIsEnumerable},"53e2":function(t,e,n){var r=n("07e3"),o=n("241e"),i=n("5559")("IE_PROTO"),c=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?c:null}},5537:function(t,e,n){var r=n("8378"),o=n("7726"),i="__core-js_shared__",c=o[i]||(o[i]={});(t.exports=function(t,e){return c[t]||(c[t]=void 0!==e?e:{})})("versions",[]).push({version:r.version,mode:n("2d00")?"pure":"global",copyright:"© 2019 Denis Pushkarev (zloirock.ru)"})},5559:function(t,e,n){var r=n("dbdb")("keys"),o=n("62a0");t.exports=function(t){return r[t]||(r[t]=o(t))}},"584a":function(t,e){var n=t.exports={version:"2.6.9"};"number"==typeof __e&&(__e=n)},"5b4e":function(t,e,n){var r=n("36c3"),o=n("b447"),i=n("0fc9");t.exports=function(t){return function(e,n,c){var u,a=r(e),f=o(a.length),s=i(c,f);if(t&&n!=n){while(f>s)if(u=a[s++],u!=u)return!0}else for(;f>s;s++)if((t||s in a)&&a[s]===n)return t||s||0;return!t&&-1}}},"5ca1":function(t,e,n){var r=n("7726"),o=n("8378"),i=n("32e9"),c=n("2aba"),u=n("9b43"),a="prototype",f=function(t,e,n){var s,l,p,d,v=t&f.F,h=t&f.G,b=t&f.S,y=t&f.P,g=t&f.B,x=h?r:b?r[e]||(r[e]={}):(r[e]||{})[a],m=h?o:o[e]||(o[e]={}),w=m[a]||(m[a]={});for(s in h&&(n=e),n)l=!v&&x&&void 0!==x[s],p=(l?x:n)[s],d=g&&l?u(p,r):y&&"function"==typeof p?u(Function.call,p):p,x&&c(x,s,p,t&f.U),m[s]!=p&&i(m,s,d),y&&w[s]!=p&&(w[s]=p)};r.core=o,f.F=1,f.G=2,f.S=4,f.P=8,f.B=16,f.W=32,f.U=64,f.R=128,t.exports=f},"5d58":function(t,e,n){t.exports=n("d8d6")},"5f1b":function(t,e,n){"use strict";var r=n("23c6"),o=RegExp.prototype.exec;t.exports=function(t,e){var n=t.exec;if("function"===typeof n){var i=n.call(t,e);if("object"!==typeof i)throw new TypeError("RegExp exec method returned something other than an Object or null");return i}if("RegExp"!==r(t))throw new TypeError("RegExp#exec called on incompatible receiver");return o.call(t,e)}},"613b":function(t,e,n){var r=n("5537")("keys"),o=n("ca5a");t.exports=function(t){return r[t]||(r[t]=o(t))}},"626a":function(t,e,n){var r=n("2d95");t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},"62a0":function(t,e){var n=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++n+r).toString(36))}},"63b6":function(t,e,n){var r=n("e53d"),o=n("584a"),i=n("d864"),c=n("35e8"),u=n("07e3"),a="prototype",f=function(t,e,n){var s,l,p,d=t&f.F,v=t&f.G,h=t&f.S,b=t&f.P,y=t&f.B,g=t&f.W,x=v?o:o[e]||(o[e]={}),m=x[a],w=v?r:h?r[e]:(r[e]||{})[a];for(s in v&&(n=e),n)l=!d&&w&&void 0!==w[s],l&&u(x,s)||(p=l?w[s]:n[s],x[s]=v&&"function"!=typeof w[s]?n[s]:y&&l?i(p,r):g&&w[s]==p?function(t){var e=function(e,n,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(e);case 2:return new t(e,n)}return new t(e,n,r)}return t.apply(this,arguments)};return e[a]=t[a],e}(p):b&&"function"==typeof p?i(Function.call,p):p,b&&((x.virtual||(x.virtual={}))[s]=p,t&f.R&&m&&!m[s]&&c(m,s,p)))};f.F=1,f.G=2,f.S=4,f.P=8,f.B=16,f.W=32,f.U=64,f.R=128,t.exports=f},6718:function(t,e,n){var r=n("e53d"),o=n("584a"),i=n("b8e3"),c=n("ccb9"),u=n("d9f6").f;t.exports=function(t){var e=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in e||u(e,t,{value:c.f(t)})}},"67bb":function(t,e,n){t.exports=n("f921")},6821:function(t,e,n){var r=n("626a"),o=n("be13");t.exports=function(t){return r(o(t))}},"69a8":function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},"69d3":function(t,e,n){n("6718")("asyncIterator")},"6a99":function(t,e,n){var r=n("d3f4");t.exports=function(t,e){if(!r(t))return t;var n,o;if(e&&"function"==typeof(n=t.toString)&&!r(o=n.call(t)))return o;if("function"==typeof(n=t.valueOf)&&!r(o=n.call(t)))return o;if(!e&&"function"==typeof(n=t.toString)&&!r(o=n.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},"6abf":function(t,e,n){var r=n("e6f3"),o=n("1691").concat("length","prototype");e.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},"6b4c":function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},"6c1c":function(t,e,n){n("c367");for(var r=n("e53d"),o=n("35e8"),i=n("481b"),c=n("5168")("toStringTag"),u="CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,MediaList,MimeTypeArray,NamedNodeMap,NodeList,PaintRequestList,Plugin,PluginArray,SVGLengthList,SVGNumberList,SVGPathSegList,SVGPointList,SVGStringList,SVGTransformList,SourceBufferList,StyleSheetList,TextTrackCueList,TextTrackList,TouchList".split(","),a=0;a<u.length;a++){var f=u[a],s=r[f],l=s&&s.prototype;l&&!l[c]&&o(l,c,f),i[f]=i.Array}},"71c1":function(t,e,n){var r=n("3a38"),o=n("25eb");t.exports=function(t){return function(e,n){var i,c,u=String(o(e)),a=r(n),f=u.length;return a<0||a>=f?t?"":void 0:(i=u.charCodeAt(a),i<55296||i>56319||a+1===f||(c=u.charCodeAt(a+1))<56320||c>57343?t?u.charAt(a):i:t?u.slice(a,a+2):c-56320+(i-55296<<10)+65536)}}},7333:function(t,e,n){"use strict";var r=n("9e1e"),o=n("0d58"),i=n("2621"),c=n("52a7"),u=n("4bf8"),a=n("626a"),f=Object.assign;t.exports=!f||n("79e5")(function(){var t={},e={},n=Symbol(),r="abcdefghijklmnopqrst";return t[n]=7,r.split("").forEach(function(t){e[t]=t}),7!=f({},t)[n]||Object.keys(f({},e)).join("")!=r})?function(t,e){var n=u(t),f=arguments.length,s=1,l=i.f,p=c.f;while(f>s){var d,v=a(arguments[s++]),h=l?o(v).concat(l(v)):o(v),b=h.length,y=0;while(b>y)d=h[y++],r&&!p.call(v,d)||(n[d]=v[d])}return n}:f},"765d":function(t,e,n){n("6718")("observable")},7726:function(t,e){var n=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},"77f1":function(t,e,n){var r=n("4588"),o=Math.max,i=Math.min;t.exports=function(t,e){return t=r(t),t<0?o(t+e,0):i(t,e)}},"794b":function(t,e,n){t.exports=!n("8e60")&&!n("294c")(function(){return 7!=Object.defineProperty(n("1ec9")("div"),"a",{get:function(){return 7}}).a})},"79aa":function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},"79e5":function(t,e){t.exports=function(t){try{return!!t()}catch(e){return!0}}},"7e90":function(t,e,n){var r=n("d9f6"),o=n("e4ae"),i=n("c3a1");t.exports=n("8e60")?Object.defineProperties:function(t,e){o(t);var n,c=i(e),u=c.length,a=0;while(u>a)r.f(t,n=c[a++],e[n]);return t}},8378:function(t,e){var n=t.exports={version:"2.6.9"};"number"==typeof __e&&(__e=n)},8436:function(t,e){t.exports=function(){}},"85f2":function(t,e,n){t.exports=n("454f")},"86cc":function(t,e,n){var r=n("cb7c"),o=n("c69a"),i=n("6a99"),c=Object.defineProperty;e.f=n("9e1e")?Object.defineProperty:function(t,e,n){if(r(t),e=i(e,!0),r(n),o)try{return c(t,e,n)}catch(u){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(t[e]=n.value),t}},"8e60":function(t,e,n){t.exports=!n("294c")(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},"8f60":function(t,e,n){"use strict";var r=n("a159"),o=n("aebd"),i=n("45f2"),c={};n("35e8")(c,n("5168")("iterator"),function(){return this}),t.exports=function(t,e,n){t.prototype=r(c,{next:o(1,n)}),i(t,e+" Iterator")}},9003:function(t,e,n){var r=n("6b4c");t.exports=Array.isArray||function(t){return"Array"==r(t)}},9138:function(t,e,n){t.exports=n("35e8")},"9aa9":function(t,e){e.f=Object.getOwnPropertySymbols},"9b43":function(t,e,n){var r=n("d8e8");t.exports=function(t,e,n){if(r(t),void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 2:return function(n,r){return t.call(e,n,r)};case 3:return function(n,r,o){return t.call(e,n,r,o)}}return function(){return t.apply(e,arguments)}}},"9def":function(t,e,n){var r=n("4588"),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},"9e1e":function(t,e,n){t.exports=!n("79e5")(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},a159:function(t,e,n){var r=n("e4ae"),o=n("7e90"),i=n("1691"),c=n("5559")("IE_PROTO"),u=function(){},a="prototype",f=function(){var t,e=n("1ec9")("iframe"),r=i.length,o="<",c=">";e.style.display="none",n("32fc").appendChild(e),e.src="javascript:",t=e.contentWindow.document,t.open(),t.write(o+"script"+c+"document.F=Object"+o+"/script"+c),t.close(),f=t.F;while(r--)delete f[a][i[r]];return f()};t.exports=Object.create||function(t,e){var n;return null!==t?(u[a]=r(t),n=new u,u[a]=null,n[c]=t):n=f(),void 0===e?n:o(n,e)}},a481:function(t,e,n){"use strict";var r=n("cb7c"),o=n("4bf8"),i=n("9def"),c=n("4588"),u=n("0390"),a=n("5f1b"),f=Math.max,s=Math.min,l=Math.floor,p=/\$([$&`']|\d\d?|<[^>]*>)/g,d=/\$([$&`']|\d\d?)/g,v=function(t){return void 0===t?t:String(t)};n("214f")("replace",2,function(t,e,n,h){return[function(r,o){var i=t(this),c=void 0==r?void 0:r[e];return void 0!==c?c.call(r,i,o):n.call(String(i),r,o)},function(t,e){var o=h(n,t,this,e);if(o.done)return o.value;var l=r(t),p=String(this),d="function"===typeof e;d||(e=String(e));var y=l.global;if(y){var g=l.unicode;l.lastIndex=0}var x=[];while(1){var m=a(l,p);if(null===m)break;if(x.push(m),!y)break;var w=String(m[0]);""===w&&(l.lastIndex=u(p,i(l.lastIndex),g))}for(var S="",O=0,j=0;j<x.length;j++){m=x[j];for(var E=String(m[0]),P=f(s(c(m.index),p.length),0),T=[],_=1;_<m.length;_++)T.push(v(m[_]));var k=m.groups;if(d){var A=[E].concat(T,P,p);void 0!==k&&A.push(k);var M=String(e.apply(void 0,A))}else M=b(E,p,P,T,k,e);P>=O&&(S+=p.slice(O,P)+M,O=P+E.length)}return S+p.slice(O)}];function b(t,e,r,i,c,u){var a=r+t.length,f=i.length,s=d;return void 0!==c&&(c=o(c),s=p),n.call(u,s,function(n,o){var u;switch(o.charAt(0)){case"$":return"$";case"&":return t;case"`":return e.slice(0,r);case"'":return e.slice(a);case"<":u=c[o.slice(1,-1)];break;default:var s=+o;if(0===s)return n;if(s>f){var p=l(s/10);return 0===p?n:p<=f?void 0===i[p-1]?o.charAt(1):i[p-1]+o.charAt(1):n}u=i[s-1]}return void 0===u?"":u})}})},aebd:function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},b0c5:function(t,e,n){"use strict";var r=n("520a");n("5ca1")({target:"RegExp",proto:!0,forced:r!==/./.exec},{exec:r})},b447:function(t,e,n){var r=n("3a38"),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},b8e3:function(t,e){t.exports=!0},be13:function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},bf0b:function(t,e,n){var r=n("355d"),o=n("aebd"),i=n("36c3"),c=n("1bc3"),u=n("07e3"),a=n("794b"),f=Object.getOwnPropertyDescriptor;e.f=n("8e60")?f:function(t,e){if(t=i(t),e=c(e,!0),a)try{return f(t,e)}catch(n){}if(u(t,e))return o(!r.f.call(t,e),t[e])}},c207:function(t,e){},c366:function(t,e,n){var r=n("6821"),o=n("9def"),i=n("77f1");t.exports=function(t){return function(e,n,c){var u,a=r(e),f=o(a.length),s=i(c,f);if(t&&n!=n){while(f>s)if(u=a[s++],u!=u)return!0}else for(;f>s;s++)if((t||s in a)&&a[s]===n)return t||s||0;return!t&&-1}}},c367:function(t,e,n){"use strict";var r=n("8436"),o=n("50ed"),i=n("481b"),c=n("36c3");t.exports=n("30f1")(Array,"Array",function(t,e){this._t=c(t),this._i=0,this._k=e},function(){var t=this._t,e=this._k,n=this._i++;return!t||n>=t.length?(this._t=void 0,o(1)):o(0,"keys"==e?n:"values"==e?t[n]:[n,t[n]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},c3a1:function(t,e,n){var r=n("e6f3"),o=n("1691");t.exports=Object.keys||function(t){return r(t,o)}},c69a:function(t,e,n){t.exports=!n("9e1e")&&!n("79e5")(function(){return 7!=Object.defineProperty(n("230e")("div"),"a",{get:function(){return 7}}).a})},ca5a:function(t,e){var n=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++n+r).toString(36))}},cb7c:function(t,e,n){var r=n("d3f4");t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},ccb9:function(t,e,n){e.f=n("5168")},ce10:function(t,e,n){var r=n("69a8"),o=n("6821"),i=n("c366")(!1),c=n("613b")("IE_PROTO");t.exports=function(t,e){var n,u=o(t),a=0,f=[];for(n in u)n!=c&&r(u,n)&&f.push(n);while(e.length>a)r(u,n=e[a++])&&(~i(f,n)||f.push(n));return f}},d3f4:function(t,e){t.exports=function(t){return"object"===typeof t?null!==t:"function"===typeof t}},d864:function(t,e,n){var r=n("79aa");t.exports=function(t,e,n){if(r(t),void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 2:return function(n,r){return t.call(e,n,r)};case 3:return function(n,r,o){return t.call(e,n,r,o)}}return function(){return t.apply(e,arguments)}}},d8d6:function(t,e,n){n("1654"),n("6c1c"),t.exports=n("ccb9").f("iterator")},d8e8:function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},d9f6:function(t,e,n){var r=n("e4ae"),o=n("794b"),i=n("1bc3"),c=Object.defineProperty;e.f=n("8e60")?Object.defineProperty:function(t,e,n){if(r(t),e=i(e,!0),r(n),o)try{return c(t,e,n)}catch(u){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(t[e]=n.value),t}},dbdb:function(t,e,n){var r=n("584a"),o=n("e53d"),i="__core-js_shared__",c=o[i]||(o[i]={});(t.exports=function(t,e){return c[t]||(c[t]=void 0!==e?e:{})})("versions",[]).push({version:r.version,mode:n("b8e3")?"pure":"global",copyright:"© 2019 Denis Pushkarev (zloirock.ru)"})},e11e:function(t,e){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},e4ae:function(t,e,n){var r=n("f772");t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},e53d:function(t,e){var n=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},e6f3:function(t,e,n){var r=n("07e3"),o=n("36c3"),i=n("5b4e")(!1),c=n("5559")("IE_PROTO");t.exports=function(t,e){var n,u=o(t),a=0,f=[];for(n in u)n!=c&&r(u,n)&&f.push(n);while(e.length>a)r(u,n=e[a++])&&(~i(f,n)||f.push(n));return f}},ebfd:function(t,e,n){var r=n("62a0")("meta"),o=n("f772"),i=n("07e3"),c=n("d9f6").f,u=0,a=Object.isExtensible||function(){return!0},f=!n("294c")(function(){return a(Object.preventExtensions({}))}),s=function(t){c(t,r,{value:{i:"O"+ ++u,w:{}}})},l=function(t,e){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!a(t))return"F";if(!e)return"E";s(t)}return t[r].i},p=function(t,e){if(!i(t,r)){if(!a(t))return!0;if(!e)return!1;s(t)}return t[r].w},d=function(t){return f&&v.NEED&&a(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},f6fd:function(t,e){(function(t){var e="currentScript",n=t.getElementsByTagName("script");e in t||Object.defineProperty(t,e,{get:function(){try{throw new Error}catch(r){var t,e=(/.*at [^\(]*\((.*):.+:.+\)$/gi.exec(r.stack)||[!1])[1];for(t in n)if(n[t].src==e||"interactive"==n[t].readyState)return n[t];return null}}})})(document)},f751:function(t,e,n){var r=n("5ca1");r(r.S+r.F,"Object",{assign:n("7333")})},f772:function(t,e){t.exports=function(t){return"object"===typeof t?null!==t:"function"===typeof t}},f921:function(t,e,n){n("014b"),n("c207"),n("69d3"),n("765d"),t.exports=n("584a").Symbol},fa5b:function(t,e,n){t.exports=n("5537")("native-function-to-string",Function.toString)},fb15:function(t,e,n){"use strict";var r;(n.r(e),"undefined"!==typeof window)&&(n("f6fd"),(r=window.document.currentScript)&&(r=r.src.match(/(.+\/)[^\/]+\.js(\?.*)?$/))&&(n.p=r[1]));var o=n("5d58"),i=n.n(o),c=n("67bb"),u=n.n(c);function a(t){return a="function"===typeof u.a&&"symbol"===typeof i.a?function(t){return typeof t}:function(t){return t&&"function"===typeof u.a&&t.constructor===u.a&&t!==u.a.prototype?"symbol":typeof t},a(t)}function f(t){return f="function"===typeof u.a&&"symbol"===a(i.a)?function(t){return a(t)}:function(t){return t&&"function"===typeof u.a&&t.constructor===u.a&&t!==u.a.prototype?"symbol":a(t)},f(t)}n("a481"),n("f751");function s(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}var l=n("85f2"),p=n.n(l);function d(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),p()(t,r.key,r)}}function v(t,e,n){return e&&d(t.prototype,e),n&&d(t,n),t}var h=function(){function t(e){s(this,t),this.standards={strict:"strict",loose:"loose",html5:"html5"},this.selectArray=[],this.counter=0,this.settings={standard:this.standards.html5,extraHead:"",extraCss:"",popTitle:"",endCallback:null,el:""},Object.assign(this.settings,e),this.init()}return v(t,[{key:"init",value:function(){this.counter++,this.settings.id="printArea_".concat(this.counter);var t=this.getPrintWindow();this.write(t.doc),this.print(t),this.settings.endCallback();var e=document.getElementById(this.settings.id);e&&e.parentNode.removeChild(e)}},{key:"print",value:function(t){document.getElementById(this.settings.id);var e=t.win,n=(t.f,function(){e.focus(),e.print()});e.onload=n()}},{key:"write",value:function(t,e){t.open(),t.write("".concat(this.docType(),"<html>").concat(this.getHead()).concat(this.getBody(),"</html>")),t.close()}},{key:"docType",value:function(){if(this.settings.standard===this.standards.html5)return"<!DOCTYPE html>";var t=this.settings.standard===this.standards.loose?" Transitional":"",e=this.settings.standard===this.standards.loose?"loose":"strict";return'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01'.concat(t,'//EN" "http://www.w3.org/TR/html4/').concat(e,'.dtd">')}},{key:"getHead",value:function(){var t="",e="",n="";this.settings.extraHead&&this.settings.extraHead.replace(/([^,]+)/g,function(e){t+=e});var r=document.querySelectorAll("link");if("object"===f(r)||r.length>0)for(var o=0;o<r.length;o++){var i=r[o];i.href.indexOf(".css")>=0&&(e+='<link type="text/css" rel="stylesheet" href="'.concat(i.href,'" >'))}for(var c=0;c<document.styleSheets.length;c++)if(document.styleSheets[c].cssRules||document.styleSheets[c].rules)for(var u=document.styleSheets[c].cssRules||document.styleSheets[c].rules,a=0;a<u.length;a++)n+=u[a].cssText;return this.settings.extraCss&&this.settings.extraCss.replace(/([^,\s]+)/g,function(t){e+='<link type="text/css" rel="stylesheet" href="'.concat(t,'">')}),"<head><title>".concat(this.settings.popTitle,"</title>").concat(t).concat(e,'<style type="text/css">').concat(n,"</style></head>")}},{key:"getBody",value:function(){var t=this.getFormData(document.querySelector(this.settings.el)),e=t.outerHTML;return"<body>"+e+"</body>"}},{key:"getFormData",value:function(t){for(var e=t.cloneNode(!0),n=e.querySelectorAll("input,select,textarea"),r=-1,o=0;o<n.length;o++){var i=n[o],c=i.getAttribute("type"),u=n[o];if(c||(c="SELECT"===i.tagName?"select":"TEXTAREA"===i.tagName?"textarea":""),"INPUT"===i.tagName)"radio"===c||"checkbox"===c?u.setAttribute("checked",i.checked):(u.value=i.value,u.setAttribute("value",i.value));else if("select"===c){r++;for(var a=0;a<t.querySelectorAll("select").length;a++){var f=t.querySelectorAll("select")[a];if(!f.getAttribute("newbs")&&f.setAttribute("newbs",a),f.getAttribute("newbs")==r){var s=t.querySelectorAll("select")[r].selectedIndex;i.options[s].setAttribute("selected",!0)}}}else u.innerHTML=i.value,u.setAttribute("html",i.value)}return e}},{key:"getPrintWindow",value:function(){var t=this.Iframe();return{f:t,win:t.contentWindow||t,doc:t.doc}}},{key:"Iframe",value:function(){var t,e=this.settings.id;try{t=document.createElement("iframe"),document.body.appendChild(t),t.style.border="0px",t.style.position="absolute",t.style.width="0px",t.style.height="0px",t.style.right="0px",t.style.top="0px",t.setAttribute("id",e),t.setAttribute("src",(new Date).getTime()),t.doc=null,t.doc=t.contentDocument?t.contentDocument:t.contentWindow?t.contentWindow.document:t.document}catch(n){throw new Error(n+". iframes may not be supported in this browser.")}if(null==t.doc)throw new Error("Cannot find document.");return t}}]),t}(),b={directiveName:"print",bind:function(t,e,n){var r=n.context,o=!0;t.addEventListener("click",function(t){e.value?i():window.print()});var i=function(){r.$nextTick(function(){if(o){o=!1;new h({el:e.value,endCallback:function(){o=!0}})}})}},install:function(t){t.directive("print",b)}},y=b;e["default"]=y}})});
+//# sourceMappingURL=tag-textarea.umd.min.js.map
 
 /***/ }),
 
@@ -98421,14 +98053,14 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue_paginate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-paginate */ "./node_modules/vue-paginate/dist/vue-paginate.js");
-/* harmony import */ var vue_paginate__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_paginate__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @kugatsu/vuenotification */ "./node_modules/@kugatsu/vuenotification/dist/vueNotification.common.js");
-/* harmony import */ var _kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var vue_tables_2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-tables-2 */ "./node_modules/vue-tables-2/compiled/index.js");
-/* harmony import */ var vue_tables_2__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_tables_2__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var daterangepicker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! daterangepicker */ "./node_modules/daterangepicker/daterangepicker.js");
-/* harmony import */ var daterangepicker__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(daterangepicker__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @kugatsu/vuenotification */ "./node_modules/@kugatsu/vuenotification/dist/vueNotification.common.js");
+/* harmony import */ var _kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_tables_2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-tables-2 */ "./node_modules/vue-tables-2/compiled/index.js");
+/* harmony import */ var vue_tables_2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_tables_2__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var daterangepicker__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! daterangepicker */ "./node_modules/daterangepicker/daterangepicker.js");
+/* harmony import */ var daterangepicker__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(daterangepicker__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var vue_print_nb__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-print-nb */ "./node_modules/vue-print-nb/lib/tag-textarea.umd.min.js");
+/* harmony import */ var vue_print_nb__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vue_print_nb__WEBPACK_IMPORTED_MODULE_3__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -98445,9 +98077,7 @@ Vue.directive('touppercase', {
   }
 });
 
-Vue.use(vue_paginate__WEBPACK_IMPORTED_MODULE_0___default.a);
-
-Vue.use(_kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_1___default.a, {
+Vue.use(_kugatsu_vuenotification__WEBPACK_IMPORTED_MODULE_0___default.a, {
   timer: 3,
   animateIn: function animateIn() {
     var tl = new TimelineMax().from(this.notificationEl, 0.6, {
@@ -98471,11 +98101,15 @@ var options = {};
 var useVuex = false;
 var theme = "bootstrap4";
 var template = "default";
-Vue.use(vue_tables_2__WEBPACK_IMPORTED_MODULE_2__["ClientTable"], options, useVuex, theme, template);
+Vue.use(vue_tables_2__WEBPACK_IMPORTED_MODULE_1__["ClientTable"], options, useVuex, theme, template);
+Vue.use(vue_tables_2__WEBPACK_IMPORTED_MODULE_1__["ServerTable"], options, useVuex, theme, template);
 
-window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js"); //sacar la dependencia de vuetify
+window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+
+Vue.use(vue_print_nb__WEBPACK_IMPORTED_MODULE_3___default.a); //sacar la dependencia de vuetify
 //sacar la dependencia de toastr
 //sacar la dependencia de vue-notifications
+//sacar la dependencia de VuePaginate
 
 /**
  * Componentes
@@ -98785,15 +98419,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!****************************************************!*\
   !*** ./resources/js/components/clientes_nuevo.vue ***!
   \****************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _clientes_nuevo_vue_vue_type_template_id_4edb6f3c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./clientes_nuevo.vue?vue&type=template&id=4edb6f3c& */ "./resources/js/components/clientes_nuevo.vue?vue&type=template&id=4edb6f3c&");
 /* harmony import */ var _clientes_nuevo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./clientes_nuevo.vue?vue&type=script&lang=js& */ "./resources/js/components/clientes_nuevo.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _clientes_nuevo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _clientes_nuevo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -98823,7 +98456,7 @@ component.options.__file = "resources/js/components/clientes_nuevo.vue"
 /*!*****************************************************************************!*\
   !*** ./resources/js/components/clientes_nuevo.vue?vue&type=script&lang=js& ***!
   \*****************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
