@@ -19,29 +19,24 @@ class ClienteController extends Controller
         return view('clientes/crear');
     }
 
-    // Recoge todos los clientes de la BD.
-    public function getClientesNonTrashed(){
+    // public function getClientesNonTrashed(){
+    //     $clientes = Cliente::orderBy('razon_social', 'ASC')->get();
 
-        $clientes = Cliente::orderBy('razon_social', 'ASC')->get();
-
-        return $clientes;
-    } 
-
-    // Recoge todos los clientes de la BD. //also deleted models
-    public function getClientesAll(){
-
-        $clientes = Cliente::withTrashed()->get();
-
-        return $clientes;
-    } 
-
-    // Recoge todos los clientes de la BD. //only deleted models
-    public function getClientesTrashed(){
-
-        $clientes = Cliente::onlyTrashed()->get();
-
-        return $clientes;
-    } 
+    //     return $clientes;
+    // }
+    //Recoge todos los clientes de la BD.
+    public function getClientesNonTrashed(Request $request){
+        $ascending = $request->input("ascending") == 1 ? 'ASC' : 'DESC';
+        $query = json_decode($request->input("query"));
+        $clientes = Cliente::get();
+        $count = $clientes->count();
+        $order = $request->input("orderBy") ? $request->input("orderBy") : 'created_at';
+        $clientes = Cliente::orderBy($order, $ascending);
+        $count = $clientes->count();
+        $clientes = $clientes->limit($request->input("limit"))->skip($request->input("limit") * ($request->input("page")-1))->get();
+        
+        return response(["count" => $count, "data" => $clientes]);
+    }
 
     // Recoge un cliente de la BD.
     public function getCliente($id){

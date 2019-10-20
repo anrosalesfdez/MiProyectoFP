@@ -7,10 +7,13 @@
     </a>
     <ul class="navbar-nav px-3">
         <li class="nav-item">
-            <a style="display: inline" class="nav-link" href="{{ route('home') }}" role="button">
+            <a class="nav-link" style="display: inline-block; margin-rigth: 5px;" href="{{ route('home') }}" role="button">
+                <i class="material-icons">perm_identity</i>
                 {{ "Mi cuenta: ".Auth::user()->name }} <span class="caret"></span>
             </a>
-            <a style="display: inline" class="nav-link" href="#" role="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            
+            <a class="nav-link" style="display: inline" href="#" role="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="material-icons">logout</i>
                 {{ __('Salir') }}
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -23,7 +26,6 @@
 <div class="container-fluid" >
     <div class="row">
         <!--Define la nav lateral-->
-        <!--TODO: meter clases active en enlaces-->
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky">
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
@@ -32,26 +34,25 @@
                 <ul class="nav flex-column nav-pills">
                     <li class='nav-item'>
                         <a class="{{ request()->route()->getName() === 'dashboard' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('dashboard') }}">
-                        <span data-feather="home"></span>
-                        Seguimiento
-                        <span class="sr-only"></span>
+                            <i class="material-icons">home</i>
+                            Seguimiento
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="{{ request()->route()->getName() === 'facturacion' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('facturacion') }}">
-                        <span data-feather="file"></span>
-                        Facturación
+                            <i class="material-icons">format_list_bulleted</i>
+                            Facturación
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="{{ request()->route()->getName() === 'listar' || request()->route()->getName() === 'ver' || request()->route()->getName() === 'crear' || request()->route()->getName() === 'editar' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('/clientes/listar') }}">
-                        <span data-feather="users"></span>
-                        Clientes
+                            <i class="material-icons">group</i>
+                            Clientes
                         </a>
                     </li>
                     <li class="nav-item">
                     <a class="{{ request()->route()->getName() === 'productos' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('productos') }}">
-                        <span data-feather="list"></span>
+                        <i class="material-icons">add</i>
                         Productos
                         </a>
                     </li>

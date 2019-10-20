@@ -10,7 +10,7 @@
         
         <form method="post" v-bind:action="'/clientes/update/'+editadocliente.id">
             
-            <div class="card-header">
+            <div class="card-header espacios">
                 <h3 style="display: inline">Actualizando cliente: <strong>{{ this.editadocliente.razon_social }}</strong></h3>
                 <div style="display: inline; float: right">
                     <!-- <button class="btn btn-primary" @click="updateCliente">Actualizar</button> -->
@@ -19,7 +19,7 @@
                 </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body espacios">
                     <!-- html no acepta el verbo patch, lo pasamos con campo hidden -->
                     <input type="hidden" name="_method" value="PUT">
                     <input type="hidden" name="_token" v-model="csrf">
@@ -234,3 +234,10 @@ export default{
     }
 }
 </script>
+
+<style>
+/* mio */
+.espacios{
+    margin-top: 10px;
+}
+</style>

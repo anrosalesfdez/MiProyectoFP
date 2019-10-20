@@ -2,63 +2,42 @@
 <div class="row" id="clientes">
 
 
-        <div class="col-md-6">
-            <h3 style="display: inline; float: left">Listado de Clientes</h3>
+        <div class="col-md-6 espacios">
+            <h3 style="display: inline">Listado de Clientes</h3>
         </div>
-        <div class="col-md-6" style="display: inline; margin-rigth:0; float:left">
-            <div class="col-md-4 funkyradio" style="display: inline; float:left">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="checkbox1" id="checkbox1" checked @change="getClientesNonTrashed()" />
-                        <span class="oi oi-check"></span>
-                        <span class="cr"><i class="cr-icon fa fa-check"></i></span>
-                        Clientes activos
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="checkbox2" id="checkbox2" @change="getClientesAll()" />
-                        <span class="cr"><i class="cr-icon fa fa-check"></i></span>
-                        Todos los clientes
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" name="checkbox3" id="checkbox3" @change="getClientesTrashed()" />
-                        <span class="cr"><i class="cr-icon fa fa-check"></i></span>
-                        Clientes inactivos
-                    </label>
-                </div>
-            </div>
-            
-            <div class="col-md-1" style="display: inline; float:rigth">
-                <a style="float: right" class="btn btn-success" role="button" href="/clientes/crear">Nuevo cliente</a>
-            </div>       
-    </div>
-        
+        <div class="col-md-6" style="display: inline; float:rigth">
+            <a style="float: right" class="btn btn-success" role="button" href="/clientes/crear">Nuevo cliente</a>
+        </div> 
+                
         <!-- tabla que muestra todos los clientes -->
-<!--         
-        <div id="people">
-            <v-server-table url="/clientes/get" :columns="columns" :options="options">
+            <div id="people">
+            <v-server-table url="/clientes/getClientesNonTrashed" :data="clientes" :columns="columns" :options="options">
                 <div slot="razon_social" slot-scope="props">
                     <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
                 </div>
-                <div slot="acciones" slot-scope="props">
-                    <a type="button" class="btn btn-outline-primary btn-sm" :href="'/clientes/editar/'+props.row.id" >Editar</a>
-                    <button class="btn btn-outline-danger btn-sm" @click.prevent="deleteCliente(props.row.id)">Eliminar</button>
+                <div slot="acciones" slot-scope="props" style="display: inline">
+                    <a title="editar" class="btn btn-xs" :href="'/clientes/editar/'+props.row.id" >
+                        <i class="material-icons" style="font-size: 18px; color:blue">edit</i>
+                    </a>
+                    <button title="eliminar" class="btn btn-xs" @click.prevent="deleteCliente(props.row.id)">
+                        <i class="material-icons" style="font-size: 18px; color:red">delete</i>
+                    </button>
                 </div>
             </v-server-table>
-        </div> -->
-        
-        <v-client-table class="col-md-12" :data="clientes" :columns="columns" :options="options">
-            <div slot="razon_social" slot-scope="props">
+        </div>
+        <!-- <v-client-table class="col-md-12" :data="clientes" :columns="columns" :options="options">
+            <div slot="razon_social" slot-scope="props" style="display: inline">
                 <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
             </div>
-            <div slot="acciones" slot-scope="props">
-                <a type="button" class="btn btn-outline-primary btn-sm" :href="'/clientes/editar/'+props.row.id" >Editar</a>
-                <button class="btn btn-outline-danger btn-sm" @click.prevent="deleteCliente(props.row.id)">Eliminar</button>
+            <div slot="acciones" slot-scope="props" style="display: inline">
+                <a title="editar" class="btn btn-xs" :href="'/clientes/editar/'+props.row.id" >
+                    <i class="material-icons" style="font-size: 18px; color:blue">edit</i>
+                </a>
+                <button title="eliminar" class="btn btn-xs" @click.prevent="deleteCliente(props.row.id)">
+                   <i class="material-icons" style="font-size: 18px; color:red">delete</i>
+                </button>
             </div>
-        </v-client-table> 
+        </v-client-table>  -->
 </div>
 </template>
 
@@ -70,16 +49,17 @@ export default{
     data(){ //datos del componente
         return {
             clientes: [],    //array de clientes recogidos de db. Coge el valor que le pasa blade
-            columns: ['id', 'razon_social', 'niva', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
+            columns: ['id', 'razon_social', 'nif', 'niva', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
             
             filterByColumn: true,
 
             options:{
-                sortable: ['id', 'razon_social', 'niva', 'pais', 'ambito_cl', 'tipo_cl'],
+                sortable: ['id', 'razon_social', 'nif', 'niva', 'pais', 'ambito_cl', 'tipo_cl'],
                 filterable: ['razon_social'],
                 headings: {
                         id: 'ID',
                         razon_social: 'RAZÓN SOCIAL',
+                        nif: 'NIF',
                         niva: 'NIVA',
                         pais: 'PAÍS',
                         ambito_cl: 'ÁMBITO',
@@ -91,14 +71,17 @@ export default{
                     column: 'razon_social',
                     ascending: true
                 },
+                
+                pagination: { chunk:10,dropdown:false,nav: 'scroll'},
 
-                sortIcon: { base:'glyphicon',
-                            up:'glyphicon-chevron-up',
-                            down:'glyphicon-chevron-down',
-                            is:'glyphicon-sort'
-                            },
+                sortIcon: { //FIXME: no salen... ver css
+                    is: 'fa-sort',
+                    base: 'fa',
+                    up: 'fa-sort-up',
+                    down: 'fa-sort-down',
+                },
 
-                perPage:10,
+                perPage:3,
 
                 texts: {
                         filter: "",
@@ -106,46 +89,15 @@ export default{
                         filterBy: 'Filtrar por {razon_social}',
                         count:' '
                     },
+                columnsDropdown: true, //permite que el user elija que columnas ver.
             }
         }
     },
     created() {
-            this.getClientesNonTrashed(); //carga datos BD
+            // this.getClientesNonTrashed(); //carga datos BD
     },
     methods:{
-        getClientesNonTrashed(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-            var url = '/clientes/getNonTrashed';
-            console.log('dentro get cl');
-            axios.get(url).then(response => {
-                this.clientes = response.data;
-                console.log('respuesta getNonTrashed');
-                console.log(response);
-            });
-        },
-        getClientesAll(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-            var url = '/clientes/getAll';
-            console.log('dentro get cl');
-            axios.get(url).then(response => {
-                this.clientes = response.data;
-                console.log('respuesta getAll');
-                console.log(response);
-                console.log(response.data);
-                console.log(response.count);
-                
-            });
-        },
-        getClientesTrashed(){  //Envía http request a la url dada. El método del controlador obtiene los clientes en JSON. Los devuelve y se almacenan en clientes[] (data del objeto clientes de vue)
-            var url = '/clientes/getTrashed';
-            console.log('dentro get cl');
-            axios.get(url).then(response => {
-                this.clientes = response.data;
-                console.log('respuesta getTrashed');
-                console.log(response);
-                console.log(response.data);
-                console.log(response.count);
-                
-            });
-        },
+
         deleteCliente(id){   //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
             var url='/clientes/delete/' + id;
             axios.delete(url).then(response => {
@@ -153,7 +105,7 @@ export default{
                 if(response.error){
                     this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
                 }else{
-                    this.$notification.success("Cliente guardado correctamente!", {  timer: 2, position:'topRigth' });
+                    this.$notification.success("Cliente eliminado correctamente!", {  timer: 3, position:'topRigth' });
                 }
                 this.getClientes(); //recarga listado
             });
@@ -183,6 +135,8 @@ export default{
     text-align:center;
     margin-bottom: 1rem;
 }
+
+/* mio */
 .espacios{
     margin-top: 10px;
 }
@@ -193,6 +147,7 @@ export default{
     clear: both;
 }
 
+/* s */
 .checkbox .cr,
 .radio .cr {
     position: relative;
@@ -201,7 +156,7 @@ export default{
     border-radius: .25em;
     width: 1.3em;
     height: 1.3em;
-    float: left;
+    /* float: left; */
     margin-right: .5em;
 }
 
@@ -243,5 +198,13 @@ export default{
 .checkbox label input[type="checkbox"]:disabled + .cr,
 .radio label input[type="radio"]:disabled + .cr {
     opacity: .5;
+}
+
+/* vye tables 2 */
+.VueTables__date-filter {
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>

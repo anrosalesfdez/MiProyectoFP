@@ -52,7 +52,7 @@ Route::get('/dashboard', function(){
 Route::prefix('/clientes')->group(function () {
 
     Route::get('/listar', 'ClienteController@vistarClientes')->name('listar'); //VISTA clientes.blade con <clientes>
-    Route::get('/getNonTrashed', 'ClienteController@getClientesNonTrashed'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
+    Route::get('/getClientesNonTrashed', 'ClienteController@getClientesNonTrashed'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
     Route::get('/getTrashed', 'ClienteController@getClientesTrashed'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
     Route::get('/getAll', 'ClienteController@getClientesAll'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
     Route::get('/ver/{id}', 'ClienteController@getCliente')->name('ver'); //VISTA + DATOS detalle de cliente consultado en BD
