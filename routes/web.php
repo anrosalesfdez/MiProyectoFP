@@ -51,13 +51,10 @@ Route::get('/dashboard', function(){
 //CLIENTES
 Route::prefix('/clientes')->group(function () {
 
-    Route::get('/listar', 'ClienteController@vistarClientes')->name('listar'); //VISTA clientes.blade con <clientes>
-    Route::get('/getClientesNonTrashed', 'ClienteController@getClientesNonTrashed'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
-    Route::get('/getTrashed', 'ClienteController@getClientesTrashed'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
-    Route::get('/getAll', 'ClienteController@getClientesAll'); //DATOS recoge Request HTTP y hace GET a la BD para obtener todos los clientes de la BD
+    Route::get('/listar', 'ClienteController@getClientesNonTrashed')->name('listar'); //VISTA clientes.blade con <clientes>
     Route::get('/ver/{id}', 'ClienteController@getCliente')->name('ver'); //VISTA + DATOS detalle de cliente consultado en BD
     
-    Route::get('/crear', 'ClienteController@vistaCrear')->name('crear'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
+    Route::get('/crear', 'ClienteController@create')->name('crear'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
     Route::post('/store', 'ClienteController@store'); //DATOS recoge Request HTTP y hace POST a la BD con nuevo cliente
     
     Route::get('/editar/{id}', 'ClienteController@vistaEditar')->name('editar'); //VISTA clientes_editar.blade con <clientes_editar>

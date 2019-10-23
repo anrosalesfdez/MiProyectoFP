@@ -10,7 +10,7 @@
         </div> 
                 
         <!-- tabla que muestra todos los clientes -->
-            <div id="people">
+        <!-- <div id="people">
             <v-server-table url="/clientes/getClientesNonTrashed" :data="clientes" :columns="columns" :options="options">
                 <div slot="razon_social" slot-scope="props">
                     <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
@@ -24,8 +24,8 @@
                     </button>
                 </div>
             </v-server-table>
-        </div>
-        <!-- <v-client-table class="col-md-12" :data="clientes" :columns="columns" :options="options">
+        </div> -->
+        <v-client-table ref="tabla" class="col-md-12" :data="clientes" :columns="columns" :options="options">
             <div slot="razon_social" slot-scope="props" style="display: inline">
                 <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
             </div>
@@ -37,7 +37,7 @@
                    <i class="material-icons" style="font-size: 18px; color:red">delete</i>
                 </button>
             </div>
-        </v-client-table>  -->
+        </v-client-table> 
 </div>
 </template>
 
@@ -48,19 +48,17 @@
 export default{
     data(){ //datos del componente
         return {
-            clientes: [],    //array de clientes recogidos de db. Coge el valor que le pasa blade
-            columns: ['id', 'razon_social', 'nif', 'niva', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
+            columns: ['id', 'razon_social', 'nif', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
             
             filterByColumn: true,
 
             options:{
-                sortable: ['id', 'razon_social', 'nif', 'niva', 'pais', 'ambito_cl', 'tipo_cl'],
+                sortable: ['id', 'razon_social', 'nif', 'pais', 'ambito_cl', 'tipo_cl'],
                 filterable: ['razon_social'],
                 headings: {
                         id: 'ID',
                         razon_social: 'RAZÓN SOCIAL',
                         nif: 'NIF',
-                        niva: 'NIVA',
                         pais: 'PAÍS',
                         ambito_cl: 'ÁMBITO',
                         tipo_cl: 'TIPO',
@@ -80,35 +78,46 @@ export default{
                     up: 'fa-sort-up',
                     down: 'fa-sort-down',
                 },
+                // sortIcon:{
+                //     is:'glyphicon-sort',
+                //     base:'glyphicon',
+                //     up: 'glyphicon-chevron-up',
+                //     down: 'glyphicon-chevron-down'
+                //     },
 
                 perPage:3,
 
                 texts: {
                         filter: "",
                         filterPlaceholder: "Filtrar resultados",
-                        filterBy: 'Filtrar por {razon_social}',
+                        // filterBy: 'Filtrar por {razon_social}',
                         count:' '
                     },
-                columnsDropdown: true, //permite que el user elija que columnas ver.
+                columnsDropdown: false, //permite que el user elija que columnas ver.
             }
         }
     },
-    created() {
-            // this.getClientesNonTrashed(); //carga datos BD
-    },
+    props:[
+        'clientes'
+    ],
     methods:{
-
         deleteCliente(id){   //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
-            var url='/clientes/delete/' + id;
-            axios.delete(url).then(response => {
-                console.log(response.error);
-                if(response.error){
-                    this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
-                }else{
-                    this.$notification.success("Cliente eliminado correctamente!", {  timer: 3, position:'topRigth' });
-                }
-                this.getClientes(); //recarga listado
-            });
+            if(confirm("Estás seguro de eliminar?")){
+
+                var url='/clientes/delete/' + id;
+                axios.delete(url).then(response => {
+                    console.log(response.error);
+                    if(response.error){
+                        this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
+                    }else{
+                        let vue = this;
+                        this.$notification.success("Cliente eliminado correctamente!", {  timer: 3, position:'topRigth' });
+                        vue.clientes = _.remove(vue.clientes, user => {
+                            return user.id != id;
+                        });
+                    }
+                });
+            }
         }
     }
 }

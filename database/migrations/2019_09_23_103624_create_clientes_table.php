@@ -18,7 +18,7 @@ class CreateClientesTable extends Migration
             //incluimos los atributos básicos de la tabla producto
             $table->string('razon_social');
             $table->string('nif');
-            $table->string('niva');
+            $table->string('niva')->nullable();
             $table->string('direccion')->nullable();
             $table->string('provincia')->nullable();
             $table->string('pais');

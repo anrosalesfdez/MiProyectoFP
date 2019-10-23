@@ -5674,18 +5674,15 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     //datos del componente
     return {
-      clientes: [],
-      //array de clientes recogidos de db. Coge el valor que le pasa blade
-      columns: ['id', 'razon_social', 'nif', 'niva', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
+      columns: ['id', 'razon_social', 'nif', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
       filterByColumn: true,
       options: {
-        sortable: ['id', 'razon_social', 'nif', 'niva', 'pais', 'ambito_cl', 'tipo_cl'],
+        sortable: ['id', 'razon_social', 'nif', 'pais', 'ambito_cl', 'tipo_cl'],
         filterable: ['razon_social'],
         headings: {
           id: 'ID',
           razon_social: 'RAZÓN SOCIAL',
           nif: 'NIF',
-          niva: 'NIVA',
           pais: 'PAÍS',
           ambito_cl: 'ÁMBITO',
           tipo_cl: 'TIPO',
@@ -5707,44 +5704,54 @@ __webpack_require__.r(__webpack_exports__);
           up: 'fa-sort-up',
           down: 'fa-sort-down'
         },
+        // sortIcon:{
+        //     is:'glyphicon-sort',
+        //     base:'glyphicon',
+        //     up: 'glyphicon-chevron-up',
+        //     down: 'glyphicon-chevron-down'
+        //     },
         perPage: 3,
         texts: {
           filter: "",
           filterPlaceholder: "Filtrar resultados",
-          filterBy: 'Filtrar por {razon_social}',
+          // filterBy: 'Filtrar por {razon_social}',
           count: ' '
         },
-        columnsDropdown: true //permite que el user elija que columnas ver.
+        columnsDropdown: false //permite que el user elija que columnas ver.
 
       }
     };
   },
-  created: function created() {// this.getClientesNonTrashed(); //carga datos BD
-  },
+  props: ['clientes'],
   methods: {
     deleteCliente: function deleteCliente(id) {
       var _this = this;
 
       //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
-      var url = '/clientes/delete/' + id;
-      axios["delete"](url).then(function (response) {
-        console.log(response.error);
+      if (confirm("Estás seguro de eliminar?")) {
+        var url = '/clientes/delete/' + id;
+        axios["delete"](url).then(function (response) {
+          console.log(response.error);
 
-        if (response.error) {
-          _this.$notification.error("response.error", {
-            timer: 3,
-            position: 'topRigth'
-          });
-        } else {
-          _this.$notification.success("Cliente eliminado correctamente!", {
-            timer: 3,
-            position: 'topRigth'
-          });
-        }
+          if (response.error) {
+            _this.$notification.error("response.error", {
+              timer: 3,
+              position: 'topRigth'
+            });
+          } else {
+            var vue = _this;
 
-        _this.getClientes(); //recarga listado
+            _this.$notification.success("Cliente eliminado correctamente!", {
+              timer: 3,
+              position: 'topRigth'
+            });
 
-      });
+            vue.clientes = _.remove(vue.clientes, function (user) {
+              return user.id != id;
+            });
+          }
+        });
+      }
     }
   }
 });
@@ -5760,6 +5767,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -6047,35 +6055,46 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  //FIXME: No funciona la directiva de pintar en mayusc
   data: function data() {
     //datos del componente
     return {
-      errores: [],
-      //array para recoger errores en validación
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     };
   },
   props: ['editadocliente' //prop que envía clientes_editar.blade ---- YA SE PUEDE USAR COMO UN DATA
   ],
-  created: function created() {
+  mounted: function mounted() {
+    console.log(this.editadocliente.razon_social);
     console.log(this.editadocliente);
   },
   methods: {
-    updateCliente: function updateCliente() {
-      //conecta con bd y actualiza cleinte seleccionado
-      if (this.editadocliente.razon_social == '' && this.editadocliente.pais == '' && this.editadocliente.ambito_cl == '' && this.editadocliente.tipo_cl == '') {
-        this.$notification.error("Faltan campos obligatorios", {
-          timer: 2,
-          position: 'topRigth'
-        });
-        console.log('Faltan campos obligatorios');
-        return false;
-      }
-    },
+    //validaciones
     controlRazonSocial: function controlRazonSocial(e, razon_social) {
       if (!razon_social) {
-        console.log(razon_social + 'Campo razón social es obligatorio');
+        // console.log(razon_social+'Campo razón social es obligatorio');
         $('#razon_social').focus();
         this.$notification.error("Campo razón social es obligatorio", {
           timer: 2,
@@ -6083,24 +6102,24 @@ __webpack_require__.r(__webpack_exports__);
         });
         return false;
       } else if (razon_social.length == 0 || razon_social.length > 50) {
-        console.log(razon_social + 'Campo razón social máximo de caracteres: 50');
+        // console.log(razon_social+'Campo razón social máximo de caracteres: 50');
         this.$notification.error("Campo razón social máximo de caracteres: 50", {
           timer: 2,
           position: 'topRigth'
         });
         return false;
       } else {
-        console.log('razon social ok: ' + razon_social);
+        // console.log('razon social ok: '+razon_social);
         return true;
       }
     },
     controlEmail: function controlEmail(e, email) {
-      if (this.editadocliente.email) {
+      if (this.nuevoCliente.email) {
         var emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         ;
 
         if (!emailPatron.test(email)) {
-          console.log(email + 'email formato invalido');
+          // console.log(email+'email formato invalido');
           $('#email').focus();
           this.$notification.error("Formato email inválido", {
             timer: 2,
@@ -6108,14 +6127,14 @@ __webpack_require__.r(__webpack_exports__);
           });
           return false;
         } else {
-          console.log(email + 'email oK');
+          // console.log(email+'email oK');
           return true;
         }
       }
     },
     controlPais: function controlPais(e, pais) {
       if (!pais) {
-        console.log(pais + ' pais es obligatorio');
+        // console.log(pais+' pais es obligatorio');
         $('#pais').focus();
         this.$notification.error("Campo pais obligatorio", {
           timer: 2,
@@ -6127,32 +6146,132 @@ __webpack_require__.r(__webpack_exports__);
         return true;
       }
     },
-    controlAmbito: function controlAmbito(e, ambito_cl) {
+    controlAmbito: function controlAmbito(e, ambito_cl, niva, pais) {
+      console.log(ambito_cl + ' - ' + niva + ' ' + pais);
+
       if (!ambito_cl) {
-        console.log(ambito_cl + ' ambito_cl es obligatorio');
+        // console.log(ambito_cl+' ambito_cl es obligatorio')
         $('#ambito_cl').focus();
         this.$notification.error("Campo ámbito obligatorio", {
           timer: 2,
           position: 'topRigth'
         });
         return false;
+      } else if (ambito_cl == 'NACIONAL' && pais !== 'ESPAÑA') {
+        $('#pais').focus();
+        this.$notification.error("Revise campo PAIS", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
+      } else if (ambito_cl == 'INTRACOMUNITARIO' && !niva) {
+        // console.log('niva necesario...');
+        $('#niva').focus();
+        this.$notification.error("NIVA es campo obligatorio", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
+      } else if (ambito_cl == 'EXTRACOMUNITARIO' && !niva) {
+        // console.log('niva necesario...');
+        $('#niva').focus();
+        this.$notification.error("NIVA es campo obligatorio", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
       } else {
-        console.log('ambito_cl ok: ' + ambito_cl);
+        // console.log('ambito_cl ok: '+ambito_cl);
         return true;
       }
     },
-    controlTipo: function controlTipo(e, tipo_cl) {
+    controlTipo: function controlTipo(e, tipo_cl, ambito_cl, nif) {
+      console.log('dentro 0');
+      console.log(ambito_cl + ' ' + tipo_cl);
+
       if (!tipo_cl) {
-        console.log(tipo_cl + ' tipo_cl es obligatorio');
         $('#tipo_cl').focus();
         this.$notification.error("Campo tipo cliente obligatorio", {
           timer: 2,
           position: 'topRigth'
         });
         return false;
-      } else {
-        console.log('tipo_cl ok: ' + tipo_cl);
-        return true;
+      } else if (ambito_cl == 'NACIONAL' && tipo_cl == 'PERSONA FISICA') {
+        console.log('dentro');
+        var dniPatron1 = /^\d{8}[a-zA-Z]$/; //personas físicas
+
+        var dniPatron2 = /[M|X-Z]^\d{7}[A-Z]$/; //extranjeros residentes
+
+        var letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
+        console.log(dniPatron1.test(nif));
+
+        if (dniPatron1.test(nif)) {
+          // pfisicas
+          console.log('dentro pfisica');
+          var numero = parseInt(nif.substr(0, nif.length - 1)) % 23; // console.log(numero);
+
+          var _letraTeorica = letras.substring(numero, numero + 1); // console.log(letraTeorica);
+
+
+          var _letra = nif.substr(nif.length - 1, 1); // console.log(letra);
+
+
+          if (_letra != _letraTeorica) {
+            // console.log("Formato NIF persona física inválido");
+            $('#nif').focus();
+            this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA inválido", {
+              timer: 10,
+              position: 'topRigth'
+            });
+            return false;
+          } else {
+            return true;
+          }
+        } else if (dniPatron2.test(nif)) {
+          //residentes extranjeros
+          console.log('dentro extranj resid');
+          var letra1 = nif.substr(0, 1);
+
+          var _numero = nif.substr(1, nif.length - 2);
+
+          var letraControl = nif.length - 1;
+
+          switch (letra1) {
+            case 'X':
+              _numero = str.concat('0', _numero);
+              break;
+
+            case 'Y':
+              _numero = str.concat('1', _numero);
+              break;
+
+            case 'Z':
+              _numero = str.concat('2', _numero);
+              break;
+
+            default:
+              break;
+          }
+
+          _numero = _numero % 23;
+          letraTeorica = letras.substring(_numero, _numero + 1);
+          letra = nif.substr(nif.length - 1, 1);
+
+          if (letra != letraTeorica) {
+            // console.log(nif+"Formato NIF residente extranjero inválido");
+            $('#nif').focus();
+            this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA (RESIDENTE EXTRANJERO) inválido");
+            return false;
+          } else {
+            return true;
+          }
+        } //fin extranjeros residentes
+        else {
+            console.log('error en nif pfisica nacional');
+            $('#nif').focus();
+            this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA inválido");
+            return false;
+          }
       }
     }
   }
@@ -6169,6 +6288,42 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -6313,49 +6468,22 @@ __webpack_require__.r(__webpack_exports__);
         dias_pago: '',
         observ: ''
       },
-      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content') // post: {
+      //     title: '',
+      //     body: '',
+      // },
+      // submitted: false,
+      // // array to hold form errors
+      // errors: [], 
+
     };
   },
-  created: function created() {
-    console.log(this.nuevoCliente == null ? 'created nuevoCliente: true' : 'created nuevoCliente: false');
-    console.log(this.clientes);
-  },
+  props: ['old'],
   methods: {
-    storeCliente: function storeCliente() {
-      var _this = this;
-
-      if (this.nuevoCliente.razon_social == '' && this.nuevoCliente.nif == '' && this.nuevoCliente.niva == '' && this.nuevoCliente.pais == '' && this.nuevoCliente.ambito_cl == '' && this.nuevoCliente.tipo_cl == '') {
-        this.$notification.error("Faltan campos obligatorios", {
-          timer: 2,
-          position: 'topRigth'
-        });
-        console.log('Faltan campos obligatorios');
-        return false;
-      } else {
-        var url = '/clientes/store';
-        console.log('dentro');
-        axios.post(url, this.nuevoCliente).then(function (response) {
-          if (response.error) {
-            _this.$notification.error("response.error", {
-              timer: 3,
-              position: 'topRigth'
-            });
-          } else {
-            _this.$notification.success("Cliente guardado correctamente!", {
-              timer: 2,
-              position: 'topRigth'
-            });
-
-            history.back(); //location.href()
-          }
-        })["catch"](function (error) {
-          console.log(error);
-        });
-      }
-    },
+    //validaciones
     controlRazonSocial: function controlRazonSocial(e, razon_social) {
       if (!razon_social) {
-        console.log(razon_social + 'Campo razón social es obligatorio');
+        // console.log(razon_social+'Campo razón social es obligatorio');
         $('#razon_social').focus();
         this.$notification.error("Campo razón social es obligatorio", {
           timer: 2,
@@ -6363,53 +6491,20 @@ __webpack_require__.r(__webpack_exports__);
         });
         return false;
       } else if (razon_social.length == 0 || razon_social.length > 50) {
-        console.log(razon_social + 'Campo razón social máximo de caracteres: 50');
+        // console.log(razon_social+'Campo razón social máximo de caracteres: 50');
         this.$notification.error("Campo razón social máximo de caracteres: 50", {
           timer: 2,
           position: 'topRigth'
         });
         return false;
       } else {
-        console.log('razon social ok: ' + razon_social);
+        // console.log('razon social ok: '+razon_social);
         return true;
       }
     },
     controlNif: function controlNif(e, dni) {
-      /**
-      * patrones de NIF
-      * persona fisica nacional: 99999999X => 8 dígitos + letra control
-      * persona fisica no residente sin DNI: L9999999X => L+ siete dígitos+ letra control
-      * persona fisica residente < 14 años sin DNI: K9999999X => K+ siete dígitos + letra control	
-      * personas residentes extranjeros con NIE: X ó Y ó Z9999999X => X ó Y ó Z+ siete dígitos+ letra control
-      * personas residentes extranjeros sin NIE: M9999999L => M + siete dígitos+ letra control
-      * personas jurídicas: OPPNNNNNC => O: Tipo de Organización; P: Código provincia; N: Número correlativo por provincia; C: Dígito o letra de control
-      *   A = sociedad anónima
-      *   B = sociedad responsabilidad limitada
-      *   C = sociedad colectiva
-      *   D = sociedad comanditaria
-      *   E = comunidad de bienes
-      *   F = sociedad cooperativa
-      *   G = Asociaciones y otros tipos no definidos
-      *   H = Comunidad de propietarios en régimen de propiedad horizontal
-      *   K,L,M = formato antiguo
-      *   N = entidades no residentes
-      *   P = corporacion local
-      *   Q = Organismo autónomo estatal o no, y asimilados, congregaciones e instituciones religiosas
-      *   S = Organos de la Administración del Estado y Comunidades Autónomas	
-      *   es letra control si la clave de la  organización es K, P, Q ó S
-      *   es número de control si la clave de la organización es A, B, E ó H
-      *   para el resto de claves indentificativas del tipo de organización podrá ser tanto número como letra.
-      */
-      var dniPatron1 = /^\d{8}[a-zA-Z]$/; //personas físicas
-
-      var dniPatron2 = /[M|X-Z]^\d{7}[A-Z]$/; //extranjeros residentes
-
-      var dniPatron3 = /[A-V]^\d{7}[a-zA-Z]$/; //personas jurídicas
-
-      var letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
-
       if (!dni) {
-        console.log(nif + 'nif es campo oblig');
+        // console.log(nif+'nif es campo oblig');
         $('#nif').focus();
         this.$notification.error("Campo NIF es obligatorio", {
           timer: 2,
@@ -6417,35 +6512,142 @@ __webpack_require__.r(__webpack_exports__);
         });
         return false;
       }
-      /*else if(dni){
-         //TODO: meter control si NIF ya existe. traer datos desde clientes.vue
+      /*else if(dni){p`'
+         //FIXME: meter control si NIF ya existe. traer datos desde clientes.vue
          return false
       }*/
-      else if (dniPatron1.test(dni)) {
+      else {
+          // console.log(nif+'no errores en nif, pero no se puede validar: '+dni);
+          this.$notification.warning("Asegure el dato en AEAT", {
+            timer: 2,
+            position: 'topRigth'
+          }); //TODO: meter link a la web de aeat¿?
+
+          return true;
+        }
+    },
+    controlEmail: function controlEmail(e, email) {
+      if (this.nuevoCliente.email) {
+        var emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        ;
+
+        if (!emailPatron.test(email)) {
+          // console.log(email+'email formato invalido');
+          $('#email').focus();
+          this.$notification.error("Formato email inválido", {
+            timer: 2,
+            position: 'topRigth'
+          });
+          return false;
+        } else {
+          // console.log(email+'email oK');
+          return true;
+        }
+      }
+    },
+    controlPais: function controlPais(e, pais) {
+      if (!pais) {
+        // console.log(pais+' pais es obligatorio');
+        $('#pais').focus();
+        this.$notification.error("Campo pais obligatorio", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        console.log('pais ok: ' + pais);
+        return true;
+      }
+    },
+    controlAmbito: function controlAmbito(e, ambito_cl, niva, pais) {
+      console.log(ambito_cl + ' - ' + niva + ' ' + pais);
+
+      if (!ambito_cl) {
+        // console.log(ambito_cl+' ambito_cl es obligatorio')
+        $('#ambito_cl').focus();
+        this.$notification.error("Campo ámbito obligatorio", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
+      } else if (ambito_cl == 'NACIONAL' && pais !== 'ESPAÑA') {
+        $('#pais').focus();
+        this.$notification.error("Revise campo PAIS", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
+      } else if (ambito_cl == 'INTRACOMUNITARIO' && !niva) {
+        // console.log('niva necesario...');
+        $('#niva').focus();
+        this.$notification.error("NIVA es campo obligatorio", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
+      } else if (ambito_cl == 'EXTRACOMUNITARIO' && !niva) {
+        // console.log('niva necesario...');
+        $('#niva').focus();
+        this.$notification.error("NIVA es campo obligatorio", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
+      } else {
+        // console.log('ambito_cl ok: '+ambito_cl);
+        return true;
+      }
+    },
+    controlTipo: function controlTipo(e, tipo_cl, ambito_cl, nif) {
+      console.log('dentro 0');
+      console.log(ambito_cl + ' ' + tipo_cl);
+
+      if (!tipo_cl) {
+        $('#tipo_cl').focus();
+        this.$notification.error("Campo tipo cliente obligatorio", {
+          timer: 2,
+          position: 'topRigth'
+        });
+        return false;
+      } else if (ambito_cl == 'NACIONAL' && tipo_cl == 'PERSONA FISICA') {
+        console.log('dentro');
+        var dniPatron1 = /^\d{8}[a-zA-Z]$/; //personas físicas
+
+        var dniPatron2 = /[M|X-Z]^\d{7}[A-Z]$/; //extranjeros residentes
+
+        var letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
+        console.log(dniPatron1.test(nif));
+
+        if (dniPatron1.test(nif)) {
           // pfisicas
-          var numero = parseInt(dni.substr(0, dni.length - 1)) % 23; // console.log(numero);
+          console.log('dentro pfisica');
+          var numero = parseInt(nif.substr(0, nif.length - 1)) % 23; // console.log(numero);
 
           var _letraTeorica = letras.substring(numero, numero + 1); // console.log(letraTeorica);
 
 
-          var _letra = dni.substr(dni.length - 1, 1); // console.log(letra);
-          // if(letra != letraTeorica){
-          //     console.log("Formato NIF persona física inválido");
-          //     this.$notification.error("Formato NIF persona física inválido", {  timer: 10, position:'topRigth' });
-          //     return false;
-          // }
-          //53117466R 53183401H
+          var _letra = nif.substr(nif.length - 1, 1); // console.log(letra);
 
 
-          console.log(nif + 'nif persona fisica ok');
-          return true;
-        } else if (dniPatron2.test(dni)) {
+          if (_letra != _letraTeorica) {
+            // console.log("Formato NIF persona física inválido");
+            $('#nif').focus();
+            this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA inválido", {
+              timer: 10,
+              position: 'topRigth'
+            });
+            return false;
+          } else {
+            return true;
+          }
+        } else if (dniPatron2.test(nif)) {
           //residentes extranjeros
-          var letra1 = dni.substr(0, 1);
+          console.log('dentro extranj resid');
+          var letra1 = nif.substr(0, 1);
 
-          var _numero = dni.substr(1, dni.length - 2);
+          var _numero = nif.substr(1, nif.length - 2);
 
-          var letraControl = dni.length - 1;
+          var letraControl = nif.length - 1;
 
           switch (letra1) {
             case 'X':
@@ -6466,132 +6668,24 @@ __webpack_require__.r(__webpack_exports__);
 
           _numero = _numero % 23;
           letraTeorica = letras.substring(_numero, _numero + 1);
-          letra = dni.substr(dni.length - 1, 1);
+          letra = nif.substr(nif.length - 1, 1);
 
           if (letra != letraTeorica) {
-            console.log(nif + "Formato NIF residente extranjero inválido");
+            // console.log(nif+"Formato NIF residente extranjero inválido");
             $('#nif').focus();
-            this.$notification.error("Formato NIF residente extranjero inválido");
+            this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA (RESIDENTE EXTRANJERO) inválido");
+            return false;
+          } else {
+            return true;
+          }
+        } //fin extranjeros residentes
+        else {
+            console.log('error en nif pfisica nacional');
+            $('#nif').focus();
+            this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA inválido");
             return false;
           }
-
-          console.log(nif + 'nif persona residente extranjero ok');
-          return true;
-        } else {
-          console.log(nif + 'no errores en nif, pero no se puede validar: ' + dni);
-          this.$notification.warning("Imposible validar NIF. Compruebe en AEAT", {
-            timer: 2,
-            position: 'topRigth'
-          }); //FIXME: meter link a la web de aeat¿?
-
-          return true;
-        }
-    },
-    controlNiva: function controlNiva(e, niva) {
-      // console.log(this.nuevoCliente.niva);
-      // console.log(this.nuevoCliente.niva.substr(2, (this.nuevoCliente.niva.length- 2)));
-      // console.log(this.nuevoCliente.nif);
-      if (!this.nuevoCliente.niva) {
-        console.log('niva necesario...');
-        $('#niva').focus();
-        this.$notification.error("NIVA es campo obligatorio", {
-          timer: 2,
-          position: 'topRigth'
-        });
-        return false;
-      } else if (this.nuevoCliente.niva.substr(2, this.nuevoCliente.niva.length - 2).toString() !== this.nuevoCliente.nif.toString()) {
-        console.log('niva no valido... ' + niva + ' ' + nif);
-        $('#niva').focus();
-        this.$notification.error("Formato NIVA inválido", {
-          timer: 2,
-          position: 'topRigth'
-        });
-        return false;
-      } else {
-        console.log('niva validado... ' + niva);
-        return true;
       }
-    },
-    controlEmail: function controlEmail(e, email) {
-      if (this.nuevoCliente.email) {
-        var emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        ;
-
-        if (!emailPatron.test(email)) {
-          console.log(email + 'email formato invalido');
-          $('#email').focus();
-          this.$notification.error("Formato email inválido", {
-            timer: 2,
-            position: 'topRigth'
-          });
-          return false;
-        } else {
-          console.log(email + 'email oK');
-          return true;
-        }
-      }
-    },
-    // controlTlfn: function (tlfn){
-    //     if(tlfn){
-    //         let patronTlfn = /^\+?([0-9]{2})\)?[-]?([0-9]{3})[ ]?([0-9]{2})[ ]?([0-9]{2})[ ]?([0-9]{2})$/;
-    //         if(!patronTlfn.test(tlfn)){
-    //             console.log('tlfn mal: '+tlfn);
-    //             $('#tlfn').focus();
-    //             this.$notification.error("Campo telefono incorrecto", {  timer: 10, position:'topRigth' });
-    //             return false;
-    //         }else{
-    //             console.log('tlfn ok: '+tlfn);
-    //             return true;
-    //         }
-    //     }
-    // },
-    controlPais: function controlPais(e, pais) {
-      if (!pais) {
-        console.log(pais + ' pais es obligatorio');
-        $('#pais').focus();
-        this.$notification.error("Campo pais obligatorio", {
-          timer: 2,
-          position: 'topRigth'
-        });
-        return false;
-      } else {
-        console.log('pais ok: ' + pais);
-        return true;
-      }
-    },
-    controlAmbito: function controlAmbito(e, ambito_cl) {
-      if (!ambito_cl) {
-        console.log(ambito_cl + ' ambito_cl es obligatorio');
-        $('#ambito_cl').focus();
-        this.$notification.error("Campo ámbito obligatorio", {
-          timer: 2,
-          position: 'topRigth'
-        });
-        return false;
-      } else {
-        console.log('ambito_cl ok: ' + ambito_cl);
-        return true;
-      }
-    },
-    controlTipo: function controlTipo(e, tipo_cl) {
-      if (!tipo_cl) {
-        console.log(tipo_cl + ' tipo_cl es obligatorio');
-        $('#tipo_cl').focus();
-        this.$notification.error("Campo tipo cliente obligatorio", {
-          timer: 2,
-          position: 'topRigth'
-        });
-        return false;
-      } else {
-        console.log('tipo_cl ok: ' + tipo_cl);
-        return true;
-      }
-    },
-    info: function info() {
-      //TODO: convertir en modal y unir al botón info
-      console.log('info');
-      var infoCrear = "Debes tener en cuenta que estos datos deben ser fiables!";
-      alert(infoCrear);
     }
   } //end methods
 
@@ -13310,7 +13404,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* mio */\n.espacios{\r\n    margin-top: 10px;\n}\r\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* mio */\n.espacios{\r\n    margin-top: 10px;\n}\r\n", ""]);
 
 // exports
 
@@ -13329,7 +13423,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* mio */\nespacios. {\r\n    margin-top: 10px;\r\n    margin-bottom: 10px;\n}\r\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/* mio */\nespacios. {\r\n    margin-top: 10px;\r\n    margin-bottom: 10px;\n}\r\n", ""]);
 
 // exports
 
@@ -77797,92 +77891,89 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row", attrs: { id: "clientes" } }, [
-    _vm._m(0),
-    _vm._v(" "),
-    _vm._m(1),
-    _vm._v(" "),
-    _c(
-      "div",
-      { attrs: { id: "people" } },
-      [
-        _c("v-server-table", {
-          attrs: {
-            url: "/clientes/getClientesNonTrashed",
-            data: _vm.clientes,
-            columns: _vm.columns,
-            options: _vm.options
-          },
-          scopedSlots: _vm._u([
-            {
-              key: "razon_social",
-              fn: function(props) {
-                return _c("div", {}, [
-                  _c(
-                    "a",
-                    { attrs: { href: "/clientes/ver/" + props.row.id } },
-                    [_vm._v(_vm._s(props.row.razon_social))]
-                  )
+  return _c(
+    "div",
+    { staticClass: "row", attrs: { id: "clientes" } },
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _vm._m(1),
+      _vm._v(" "),
+      _c("v-client-table", {
+        ref: "tabla",
+        staticClass: "col-md-12",
+        attrs: {
+          data: _vm.clientes,
+          columns: _vm.columns,
+          options: _vm.options
+        },
+        scopedSlots: _vm._u([
+          {
+            key: "razon_social",
+            fn: function(props) {
+              return _c("div", { staticStyle: { display: "inline" } }, [
+                _c("a", { attrs: { href: "/clientes/ver/" + props.row.id } }, [
+                  _vm._v(_vm._s(props.row.razon_social))
                 ])
-              }
-            },
-            {
-              key: "acciones",
-              fn: function(props) {
-                return _c("div", { staticStyle: { display: "inline" } }, [
-                  _c(
-                    "a",
-                    {
-                      staticClass: "btn btn-xs",
-                      attrs: {
-                        title: "editar",
-                        href: "/clientes/editar/" + props.row.id
-                      }
-                    },
-                    [
-                      _c(
-                        "i",
-                        {
-                          staticClass: "material-icons",
-                          staticStyle: { "font-size": "18px", color: "blue" }
-                        },
-                        [_vm._v("edit")]
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-xs",
-                      attrs: { title: "eliminar" },
-                      on: {
-                        click: function($event) {
-                          $event.preventDefault()
-                          return _vm.deleteCliente(props.row.id)
-                        }
-                      }
-                    },
-                    [
-                      _c(
-                        "i",
-                        {
-                          staticClass: "material-icons",
-                          staticStyle: { "font-size": "18px", color: "red" }
-                        },
-                        [_vm._v("delete")]
-                      )
-                    ]
-                  )
-                ])
-              }
+              ])
             }
-          ])
-        })
-      ],
-      1
-    )
-  ])
+          },
+          {
+            key: "acciones",
+            fn: function(props) {
+              return _c("div", { staticStyle: { display: "inline" } }, [
+                _c(
+                  "a",
+                  {
+                    staticClass: "btn btn-xs",
+                    attrs: {
+                      title: "editar",
+                      href: "/clientes/editar/" + props.row.id
+                    }
+                  },
+                  [
+                    _c(
+                      "i",
+                      {
+                        staticClass: "material-icons",
+                        staticStyle: { "font-size": "18px", color: "blue" }
+                      },
+                      [_vm._v("edit")]
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-xs",
+                    attrs: { title: "eliminar" },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.deleteCliente(props.row.id)
+                      }
+                    }
+                  },
+                  [
+                    _c(
+                      "i",
+                      {
+                        staticClass: "material-icons",
+                        staticStyle: { "font-size": "18px", color: "red" }
+                      },
+                      [_vm._v("delete")]
+                    )
+                  ]
+                )
+              ])
+            }
+          }
+        ])
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = [
   function() {
@@ -79107,10 +79198,12 @@ var render = function() {
                       staticClass: "form-control",
                       attrs: { name: "ambito_cl", id: "ambito_cl" },
                       on: {
-                        focusout: function($event) {
+                        blur: function($event) {
                           return _vm.controlAmbito(
                             $event,
-                            _vm.editadocliente.ambito_cl
+                            _vm.editadocliente.ambito_cl,
+                            _vm.editadocliente.niva,
+                            _vm.editadocliente.pais
                           )
                         },
                         change: function($event) {
@@ -79178,10 +79271,12 @@ var render = function() {
                       staticClass: "form-control",
                       attrs: { name: "tipo_cl", id: "tipo_cl" },
                       on: {
-                        focusout: function($event) {
+                        blur: function($event) {
                           return _vm.controlTipo(
                             $event,
-                            _vm.editadocliente.tipo_cl
+                            _vm.editadocliente.tipo_cl,
+                            _vm.editadocliente.ambito_cl,
+                            _vm.editadocliente.nif
                           )
                         },
                         change: function($event) {
@@ -79350,9 +79445,41 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(1),
+              _c("div", { staticClass: "form-group" }, [
+                _c(
+                  "label",
+                  { staticClass: "col-form-label", attrs: { for: "observ" } },
+                  [_vm._v("Observaciones")]
+                ),
+                _vm._v(" "),
+                _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.editadocliente.observ,
+                      expression: "editadocliente.observ"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { name: "observ", id: "observ" },
+                  domProps: { value: _vm.editadocliente.observ },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.editadocliente,
+                        "observ",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ]),
               _vm._v(" "),
-              _vm._m(2)
+              _vm._m(1)
             ])
           ]
         )
@@ -79380,21 +79507,6 @@ var staticRenderFns = [
         },
         [_vm._v("Cancelar")]
       )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c("label", { staticClass: "col-form-label", attrs: { for: "observ" } }, [
-        _vm._v("Observaciones")
-      ]),
-      _vm._v(" "),
-      _c("textarea", {
-        staticClass: "form-control",
-        attrs: { name: "observ", id: "observ" }
-      })
     ])
   },
   function() {
@@ -79489,6 +79601,7 @@ var render = function() {
                 attrs: {
                   type: "text",
                   name: "razon_social",
+                  old: _vm.nuevoCliente.razon_social,
                   id: "razon_social"
                 },
                 domProps: { value: _vm.nuevoCliente.razon_social },
@@ -79536,7 +79649,7 @@ var render = function() {
                     type: "text",
                     name: "nif",
                     id: "nif",
-                    placeholder: "Ejemplo: 12345678N"
+                    value: "nuevoCliente.nif"
                   },
                   domProps: { value: _vm.nuevoCliente.nif },
                   on: {
@@ -79574,9 +79687,6 @@ var render = function() {
                   attrs: { type: "text", name: "niva", id: "niva" },
                   domProps: { value: _vm.nuevoCliente.niva },
                   on: {
-                    focusout: function($event) {
-                      return _vm.controlNiva($event, _vm.nuevoCliente.niva)
-                    },
                     input: function($event) {
                       if ($event.target.composing) {
                         return
@@ -79815,10 +79925,12 @@ var render = function() {
                     staticClass: "form-control",
                     attrs: { name: "ambito_cl", id: "ambito_cl" },
                     on: {
-                      focusout: function($event) {
+                      blur: function($event) {
                         return _vm.controlAmbito(
                           $event,
-                          _vm.nuevoCliente.ambito_cl
+                          _vm.nuevoCliente.ambito_cl,
+                          _vm.nuevoCliente.niva,
+                          _vm.nuevoCliente.pais
                         )
                       },
                       change: function($event) {
@@ -79883,8 +79995,13 @@ var render = function() {
                     staticClass: "form-control",
                     attrs: { name: "tipo_cl", id: "tipo_cl" },
                     on: {
-                      focusout: function($event) {
-                        return _vm.controlTipo($event, _vm.nuevoCliente.tipo_cl)
+                      blur: function($event) {
+                        return _vm.controlTipo(
+                          $event,
+                          _vm.nuevoCliente.tipo_cl,
+                          _vm.nuevoCliente.ambito_cl,
+                          _vm.nuevoCliente.nif
+                        )
                       },
                       change: function($event) {
                         var $$selectedVal = Array.prototype.filter

@@ -2,6 +2,6 @@
 
 @section('contenidoDinamico')
 
-<clientes></clientes>
+<clientes :clientes="{{ $clientes }}"></clientes>
 
 @endsection

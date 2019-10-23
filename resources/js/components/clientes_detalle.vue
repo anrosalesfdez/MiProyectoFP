@@ -3,6 +3,7 @@
 
     <div class="col-sm-12">
         <div class="card">
+            
             <div class="card-header">
                 <h3 style="display: inline">Visualización cliente: <strong>{{ this.clMostrar.razon_social }}</strong></h3>
                 <div style="display: inline; float: right">
