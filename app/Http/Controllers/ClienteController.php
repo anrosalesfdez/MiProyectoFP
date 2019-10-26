@@ -7,12 +7,6 @@ use App\Cliente;
 
 class ClienteController extends Controller
 {
-    // Muestra vista de clientes
-    public function vistarClientes(){
-        
-        return view('clientes/listar'); //esta  vista tiene vue component <clientes>
-    }
-
     //recoge todos los clientes no eliminados de la BD
     public function getClientesNonTrashed(){
         $clientes = Cliente::get();
@@ -59,12 +53,7 @@ class ClienteController extends Controller
         // if they are available
         $nuevoCliente = Cliente::create($request->all());
 
-        // return redirect('/clientes/listar');
-        if($nuevoCliente){
-            return redirect('/clientes/listar');
-        }else{
-            return var_dump($errors);
-        }
+        return redirect('/clientes/listar');
 
     }
 

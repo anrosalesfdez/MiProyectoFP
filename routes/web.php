@@ -63,13 +63,16 @@ Route::prefix('/clientes')->group(function () {
     Route::delete('/delete/{id}', 'ClienteController@destroy'); // DATOS 
 });
 
+//PRODUCTOS
+Route::get('/productos', 'ProductoController@index')->name('productos');
+Route::post('/productos', 'ProductoController@store');
+Route::post('/productoeditar/{id}', 'ProductoController@update');
+Route::delete('/productos/{id}', 'ProductoController@destroy');
+
 Route::get('/facturacion', function(){
     return view('facturacion');
 })->name('facturacion');
 
-Route::get('/productos', function(){
-    return view('productos');
-})->name('productos');
 
 /**
  * Gestión de productos DB

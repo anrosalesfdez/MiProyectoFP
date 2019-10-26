@@ -71,6 +71,7 @@ Vue.component('clientes', require('./components/clientes.vue').default);
 Vue.component('clientes_nuevo', require('./components/clientes_nuevo.vue').default);
 Vue.component('clientes_editar', require('./components/clientes_editar.vue').default);
 Vue.component('clientes_detalle', require('./components/clientes_detalle.vue').default);
+Vue.component('productos', require('./components/productos.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

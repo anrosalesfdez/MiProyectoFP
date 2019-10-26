@@ -72,20 +72,14 @@ export default{
                 
                 pagination: { chunk:10,dropdown:false,nav: 'scroll'},
 
-                sortIcon: { //FIXME: no salen... ver css
-                    is: 'fa-sort',
-                    base: 'fa',
-                    up: 'fa-sort-up',
-                    down: 'fa-sort-down',
+                sortIcon: {
+                    base: 'icon',
+                    up: 'icon-sort-up',
+                    down: 'icon-sort-down',
+                    is: 'icon-sort'
                 },
-                // sortIcon:{
-                //     is:'glyphicon-sort',
-                //     base:'glyphicon',
-                //     up: 'glyphicon-chevron-up',
-                //     down: 'glyphicon-chevron-down'
-                //     },
 
-                perPage:3,
+                perPage:5,
 
                 texts: {
                         filter: "",
