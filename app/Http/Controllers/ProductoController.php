@@ -52,7 +52,7 @@ class ProductoController extends Controller
      * @param  \App\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Producto $producto)
+    public function actualizar(Request $request, $id)
     {
         //validar 
         $messages = [
@@ -67,9 +67,12 @@ class ProductoController extends Controller
         ];
         $this->validate($request, $rules, $messages);
 
+        $producto = Producto::find($id);
         $producto->update(request()->all()); //ya hace findOrFail por detrás
 
-        return redirect('/productos');
+        $productos = Producto::get();
+
+        return $productos;
     }
 
     /**

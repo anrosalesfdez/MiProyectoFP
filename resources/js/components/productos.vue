@@ -31,7 +31,7 @@
             </div>
 
         <div class="col-md-12 espacios">
-            <v-client-table ref="tabla" class="col-md-12" :data="productos" :columns="columns" :options="options">
+            <v-client-table ref="tabla" class="col-md-12" :data="productos" :columns="columns" :options="options" @loaded="onLoaded">
                 <div slot="acciones" slot-scope="props" style="display: inline">
                     <button title="editar" class="btn btn-xs" @click="editar(props.row.id)" >
                         <i class="material-icons" style="font-size: 18px; color:blue">edit</i>
@@ -52,6 +52,7 @@ export default {
     data(){
         return{
             // csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            // misProductos: this.productos,
 
             isActive: false,
 
@@ -113,10 +114,20 @@ export default {
     props: [
         'productos'
     ],
-    created() {
-        console.log('vue')
+    // computed:{
+    //     obtenerProductos(){
+    //         let misProductos = this.productos;
+    //         return misProductos;
+    //     }
+    // },
+    mounted() {
+        console.log('vue');
+        // this.misProductos = this.productos;
     },
     methods: {
+        onLoaded(){
+            
+        },
         toggler(){
             console.log('togglerrrr');
             this.isActive = !this.isActive;
@@ -140,7 +151,7 @@ export default {
                         this.$notification.error("mierda!", {  timer: 2, position:'topRigth' });
 
                     }else{
-                        this.productos = response.data;
+                        // this.misproductos = response.data;
                         this.$notification.success("Producto creado correctamente!", {  timer: 2, position:'topRigth' });
                         this.isActive = false;
                         this.nuevo.nombre = '';
@@ -165,21 +176,20 @@ export default {
             // console.log(this.editado.descripcion);
             // console.log(this.editado.precio);
             var url='/productoeditar/' + id;
-            // console.log(url);
+            console.log(url);
             
-            axios.patch(url, {
+            axios.post(url, {
                 id: this.editado.id,
                 nombre: this.editado.nombre,
                 descripcion: this.editado.descripcion,
-                precio: this.editado.precio,
-                _method: 'patch'
+                precio: this.editado.precio
             }).then(response => {
                 console.log(response.error);
                 if(response.error){
                     this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
                 }else{
                     this.$notification.success("Producto actualizado correctamente!", {  timer: 3, position:'topRigth' });
-                    // this.productos = response.data;
+                    // this.misproductos = response.data;
                     this.isEditing = false;
                     this.editado.nombre = '';
                     this.editado.descripcion = '';
@@ -231,16 +241,7 @@ export default {
   transition: all 0.5s linear;
 }
 
-.active {
-  width: 100%;
-  height: 300px;
-  background-color: #8BAFB5;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.5s linear;
-}
+
 .espacios {
     margin-top: 10px;
     margin-bottom: 10px;

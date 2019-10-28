@@ -5668,8 +5668,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     //datos del componente
@@ -6748,6 +6746,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       // csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      // misProductos: this.productos,
       isActive: false,
       isEditing: false,
       nuevo: {
@@ -6806,8 +6805,14 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   props: ['productos'],
-  created: function created() {
-    console.log('vue');
+  // computed:{
+  //     obtenerProductos(){
+  //         let misProductos = this.productos;
+  //         return misProductos;
+  //     }
+  // },
+  mounted: function mounted() {
+    console.log('vue'); // this.misProductos = this.productos;
   },
   methods: {
     toggler: function toggler() {
@@ -6837,8 +6842,7 @@ __webpack_require__.r(__webpack_exports__);
             position: 'topRigth'
           });
         } else {
-          _this.productos = response.data;
-
+          // this.misproductos = response.data;
           _this.$notification.success("Producto creado correctamente!", {
             timer: 2,
             position: 'topRigth'
@@ -6876,14 +6880,13 @@ __webpack_require__.r(__webpack_exports__);
       // console.log(this.editado.nombre);
       // console.log(this.editado.descripcion);
       // console.log(this.editado.precio);
-      var url = '/productoeditar/' + id; // console.log(url);
-
-      axios.patch(url, {
+      var url = '/productoeditar/' + id;
+      console.log(url);
+      axios.post(url, {
         id: this.editado.id,
         nombre: this.editado.nombre,
         descripcion: this.editado.descripcion,
-        precio: this.editado.precio,
-        _method: 'patch'
+        precio: this.editado.precio
       }).then(function (response) {
         console.log(response.error);
 
@@ -6896,7 +6899,7 @@ __webpack_require__.r(__webpack_exports__);
           _this2.$notification.success("Producto actualizado correctamente!", {
             timer: 3,
             position: 'topRigth'
-          }); // this.productos = response.data;
+          }); // this.misproductos = response.data;
 
 
           _this2.isEditing = false;
@@ -13685,7 +13688,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.VueTables__child-row-toggler {\r\n    width: 16px;\r\n    height: 16px;\r\n    line-height: 16px;\r\n    display: block;\r\n    margin: auto;\r\n    text-align: center;\n}\n.VueTables__child-row-toggler--closed::before {\r\n    content: \"+\";\n}\n.VueTables__child-row-toggler--open::before {\r\n    content: \"-\";\n}\n.menu-contain {\r\n  width: 100%;\r\n  height: 0px;\r\n  background-color: #09333C;\r\n  transition: all 0.5s linear;\n}\n.active {\r\n  width: 100%;\r\n  height: 300px;\r\n  background-color: #8BAFB5;\r\n  text-align: center;\r\n  display: flex;\r\n  justify-content: center;\r\n  align-items: center;\r\n  transition: all 0.5s linear;\n}\n.espacios {\r\n    margin-top: 10px;\r\n    margin-bottom: 10px;\n}\n.VueTables{\r\n    padding-left: 0px;\n}\r\n", ""]);
+exports.push([module.i, "\n.VueTables__child-row-toggler {\r\n    width: 16px;\r\n    height: 16px;\r\n    line-height: 16px;\r\n    display: block;\r\n    margin: auto;\r\n    text-align: center;\n}\n.VueTables__child-row-toggler--closed::before {\r\n    content: \"+\";\n}\n.VueTables__child-row-toggler--open::before {\r\n    content: \"-\";\n}\n.menu-contain {\r\n  width: 100%;\r\n  height: 0px;\r\n  background-color: #09333C;\r\n  transition: all 0.5s linear;\n}\n.espacios {\r\n    margin-top: 10px;\r\n    margin-bottom: 10px;\n}\n.VueTables{\r\n    padding-left: 0px;\n}\r\n", ""]);
 
 // exports
 
@@ -78189,8 +78192,6 @@ var render = function() {
     [
       _vm._m(0),
       _vm._v(" "),
-      _vm._m(1),
-      _vm._v(" "),
       _c("v-client-table", {
         ref: "tabla",
         staticClass: "col-md-12",
@@ -78272,34 +78273,20 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-6 espacios" }, [
+    return _c("div", { staticClass: "col-md-12 espacios" }, [
       _c("h3", { staticStyle: { display: "inline" } }, [
         _vm._v("Listado de Clientes")
-      ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "a",
+        {
+          staticClass: "btn btn-success",
+          attrs: { role: "button", href: "/clientes/crear" }
+        },
+        [_vm._v("Nuevo cliente")]
+      )
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "col-md-6",
-        staticStyle: { display: "inline", float: "rigth" }
-      },
-      [
-        _c(
-          "a",
-          {
-            staticClass: "btn btn-success",
-            staticStyle: { float: "right" },
-            attrs: { role: "button", href: "/clientes/crear" }
-          },
-          [_vm._v("Nuevo cliente")]
-        )
-      ]
-    )
   }
 ]
 render._withStripped = true

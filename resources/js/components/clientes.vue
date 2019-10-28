@@ -2,11 +2,9 @@
 <div class="row" id="clientes">
 
 
-        <div class="col-md-6 espacios">
+        <div class="col-md-12 espacios">
             <h3 style="display: inline">Listado de Clientes</h3>
-        </div>
-        <div class="col-md-6" style="display: inline; float:rigth">
-            <a style="float: right" class="btn btn-success" role="button" href="/clientes/crear">Nuevo cliente</a>
+            <a class="btn btn-success" role="button" href="/clientes/crear">Nuevo cliente</a>
         </div> 
                 
         <!-- tabla que muestra todos los clientes -->

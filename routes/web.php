@@ -66,7 +66,7 @@ Route::prefix('/clientes')->group(function () {
 //PRODUCTOS
 Route::get('/productos', 'ProductoController@index')->name('productos');
 Route::post('/productos', 'ProductoController@store');
-Route::post('/productoeditar/{id}', 'ProductoController@update');
+Route::post('/productoeditar/{id}', 'ProductoController@actualizar');
 Route::delete('/productos/{id}', 'ProductoController@destroy');
 
 Route::get('/facturacion', function(){
