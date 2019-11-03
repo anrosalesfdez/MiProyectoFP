@@ -110,7 +110,7 @@
                     </div>
                     <div class="form-group">
                         <label for="observ" class="col-form-label">Observaciones</label>
-                        <textarea class="form-control" disabled name="observ" id="observ"></textarea>
+                        <textarea class="form-control" disabled name="observ" id="observ" v-model="clMostrar.observ"></textarea>
                     </div>
 
                     <div class="modal-footer">

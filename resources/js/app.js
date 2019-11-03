@@ -14,7 +14,8 @@ window.Vue = require('vue');
 //Aplica a toda la aplicación
 Vue.directive( 'touppercase', {
     update (el) {
-        el.value = el.value.toUpperCase()
+        el.value = el.value.toLocaleUpperCase();
+        console.log(el.value)
     },
 })
 
@@ -39,7 +40,8 @@ Vue.use(VueNotification, {
   },
   error: {
     background: "red",
-    color: "white"
+    color: "white",
+    text: "error genérico"
   }
 });
 

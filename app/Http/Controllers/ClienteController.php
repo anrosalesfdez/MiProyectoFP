@@ -15,38 +15,34 @@ class ClienteController extends Controller
 
     // Recoge un cliente de la BD
     public function getCliente($id){
-
         $cliente = Cliente::findOrFail($id);
-
         return view('clientes/ver', ['cliente'=> $cliente]);
     } 
 
     // Show the form for creating a new resource.
     public function create() {
-
-        return view('clientes/crear');
+        return view('clientes/crear', ['olds' => json_encode(old())]); //errors pasa directamente
     }
 
     // Store a newly created resource in storage.
     public function store(Request $request) {
-
         //validar 
         $messages = [
-            'razon_social.required' => 'Es necesario introducir razón social.',
-            'razon_social.max' => 'La razon social no puede superar los 50 caracteres',
-            'nif.required' => 'Es necesario introducir NIF.',
-            'nif.unique' => 'Cliente ya existe.',
-            'ambito_cl.required' => 'Es necesario introducir un ámbito para el cliente.',
-            'tipo_cl.required' => 'Es necesario introducir un ámbito para el cliente.',
-            'email.xxxx' => 'Email mal formado.'
+            'razon_social.required' => 'Server: Es necesario introducir razón social.',
+            'razon_social.max' => 'Server: La razon social no puede superar los 50 caracteres',
+            'nif.required' => 'Server: Es necesario introducir NIF.',
+            'nif.unique' => 'Server: Cliente ya existe.',
+            'ambito_cl.required' => 'Server: Es necesario introducir un ámbito para el cliente.',
+            'tipo_cl.required' => 'Server: Es necesario introducir un ámbito para el cliente.',
+            'email.rfc,dns' => 'Server: Email mal formado.'
         ];
         $rules = [
             //need to mark your "optional" request fields as nullable 
-            'razon_social' => 'bail|required|max:50', //bail = stop if first validation fails
-            'nif' => 'bail|required|unique:clientes',
-            'ambito_cl' => 'bail|required',
-            'tipo_cl' => 'bail|required',
-            'email' => 'nullable|email:rfc,dns'
+            'razon_social' => 'required|max:50', //bail = stop if first validation fails
+            'nif' => 'required|unique:clientes',
+            'ambito_cl' => 'required',
+            'tipo_cl' => 'required',
+            'email' => 'nullable|email:rfc,dns' //necesita la extensión de php
         ];
         $this->validate($request, $rules, $messages);
         //Laravel will check for errors in the session data, and automatically bind them to the view
@@ -58,28 +54,24 @@ class ClienteController extends Controller
     }
 
     // Muestra vista de detalle
-    public function vistaEditar($id){
-
-        $editadoCliente = Cliente::findOrFail($id); //JSON
-
-        if($editadoCliente){
-            // var_dump($editadoCliente);
-            return view('clientes/editar', ['editadocliente' => $editadoCliente]);
+    public function vistaEditar($id){ //si le paso $id hay que hacer findOrFail
+                                      //si le paso Cliente $cliente ya lo hace internamente
+            $editadoCliente = Cliente::findOrFail($id);
+            // dd($editadoCliente->razon_social);
+            return view('clientes/editar', ['editadocliente' => $editadoCliente, 'olds' => json_encode(old()), 'razonvieja' => json_encode($editadoCliente->razon_social)]);
             //el helper view() permite enviar variables a blade. Aquí envía el objeto editadocliente
-        }
-
+            //The old function retrieves an old input value flashed into the session
     }
 
     // Update the specified resource in storage.
     public function update(Cliente $cliente) {
-
         //validar 
         $messages = [
-            'razon_social.required' => 'Es necesario introducir razón social.',
-            'razon_social.max' => 'La razon social no puede superar los 50 caracteres',
-            'ambito_cl.required' => 'Es necesario introducir un ámbito para el cliente.',
-            'tipo_cl.required' => 'Es necesario introducir un ámbito para el cliente.',
-            'email.xxxx' => 'Email mal formado.'
+            'razon_social.required' => 'Server: Es necesario introducir razón social.',
+            'razon_social.max' => 'Server: La razon social no puede superar los 50 caracteres',
+            'ambito_cl.required' => 'Server: Es necesario introducir un ámbito para el cliente.',
+            'tipo_cl.required' => 'Server: Es necesario introducir un ámbito para el cliente.',
+            'email.xxxx' => 'Server: Email mal formado.'
         ];
         $rules = [
             //need to mark your "optional" request fields as nullable 
@@ -88,9 +80,7 @@ class ClienteController extends Controller
             'tipo_cl' => 'bail|required',
             'email' => 'nullable|email:rfc,dns'
         ];
-        $this->validate($request, $rules, $messages);
-        //Laravel will check for errors in the session data, and automatically bind them to the view
-        // if they are available
+        $this->validate(request(), $rules, $messages);
         
         $cliente->update(request()->all()); //ya hace findOrFail por detrás
 

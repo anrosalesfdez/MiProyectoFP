@@ -8,10 +8,10 @@
         <div class="card">
         <!--formulario editado cliente-->
         
-        <form method="post" v-bind:action="'/clientes/update/'+editadocliente.id">
+        <form method="post" v-bind:action="'/clientes/update/'+editadocliente.id" @submit="validarForm($event)">
             
             <div class="card-header espacios">
-                <h3 style="display: inline">Actualizando cliente: <strong>{{ this.editadocliente.razon_social }}</strong></h3>
+                <h3 style="display: inline" v-html="this.razonvieja">Actualizando cliente: <strong></strong></h3>
                 <div style="display: inline; float: right">
                     <!-- <button class="btn btn-primary" @click="updateCliente">Actualizar</button> -->
                     <button type="submit" class="btn btn-success">Actualizar</button>
@@ -32,7 +32,7 @@
                         <div class="form-group col-md-11">
                             <label for="razon_social" class="col-form-label">Razón social</label>      
                             <input type="text" class="form-control" name="razon_social" id="razon_social"
-                                        @focusout="controlRazonSocial($event, editadocliente.razon_social)"
+                                        @focusout="controlRazonSocial($event, editadocliente.razon_social)" 
                                         v-model="editadocliente.razon_social"
                                         v-touppercase>
                         </div>
@@ -44,7 +44,8 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="niva" class="col-form-label">NIVA</label>      
-                            <input type="text" class="form-control" readonly name="niva" id="niva" v-model="editadocliente.niva">
+                            <input type="text" class="form-control" v-if="editadocliente.pais!=='ESPAÑA'" readonly name="niva" id="niva" v-model="editadocliente.niva">
+                            <input type="text" class="form-control" v-else name="niva" id="niva" v-model="editadocliente.niva">
                         </div>
                     </div>
                     <div class="form-group">
@@ -156,130 +157,146 @@
 <script>
 
 export default{
-    //FIXME: No funciona la directiva de pintar en mayusc
     data(){ //datos del componente
         return {
+            enviado: false,
             csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            errorcitos: []
         }
     },
     props:[
-        'editadocliente' //prop que envía clientes_editar.blade ---- YA SE PUEDE USAR COMO UN DATA
+        'editadocliente', //prop que envía clientes_editar.blade ---- YA SE PUEDE USAR COMO UN DATA
+        'olds',
+        'errors',
+        'razonvieja'
     ],
     mounted() {
-        console.log(this.editadocliente.razon_social);
-        console.log(this.editadocliente);
+        console.log(this.razonvieja);
+        console.log('hola');
+    },
+    created() {
+        //mostrar valores old si falla el envío en servidor
+        if('razon_social' in this.olds) { this.editadocliente.razon_social = this.olds.razon_social; }
+        if('nif' in this.olds) { this.editadocliente.nif = this.olds.nif; }
+        if('niva' in this.olds) { this.editadocliente.niva = this.olds.niva; }
+        if('direccion' in this.olds) { this.editadocliente.direccion = this.olds.direccion; }
+        if('pais' in this.olds) { this.editadocliente.pais = this.olds.pais; }
+        if('provincia' in this.olds) { this.editadocliente.provincia = this.olds.provincia; }
+        if('cp' in this.olds) { this.editadocliente.cp = this.olds.cp; }
+        if('tlfn' in this.olds) { this.editadocliente.tlfn = this.olds.tlfn; }
+        if('email' in this.olds) { this.editadocliente.email = this.olds.email; }
+        if('ambito_cl' in this.olds) { this.editadocliente.ambito_cl = this.olds.ambito_cl; }
+        if('tipo_cl' in this.olds) { this.editadocliente.tipo_cl = this.olds.tipo_cl; }
+        if('forma_pago' in this.olds) { this.editadocliente.forma_pago = this.olds.forma_pago; }
+        if('dias_pago' in this.olds) { this.editadocliente.dias_pago = this.olds.dias_pago; }
+        if('observ' in this.olds) { this.editadocliente.observ = this.olds.observ; }
+
+        console.log('enviado en created: '+this.enviado);
+        //si form validado en cliente pero falla en servidor.
+        if(this.enviado){
+            console.log('enviado true, devuelve errors: '+this.errors);
+            this.$notification.error(this.errors[0], {  timer: 2, position:'topRigth' });
+        }
     },
     methods:{
         //validaciones
+        validarForm(e){
+            console.log('validando form')
+            // if(!this.controlRazonSocial(null, this.editadocliente.razon_social) ||
+            //     !this.controlPais(null, this.editadocliente.pais) ||
+            //     !this.controlAmbito(null, this.editadocliente.ambito_cl, this.editadocliente.niva, this.editadocliente.pais) ||
+            //     !this.controlTipo(null, this.editadocliente.tipo_cl, this.editadocliente.ambito_cl, this.editadocliente.nif)){
+            //         e.preventDefault();
+            // }else{
+            //     this.enviado = true;
+            // }
+            // if(!this.controlRazonSocial(null, this.editadocliente.razon_social)){ this.errorcitos = '1'}
+            // if(!this.controlPais(null, this.editadocliente.pais)){ this.errorcitos.push("2") }
+            // console.log(this.errorcitos);
+            //     !this.controlPais(null, this.editadocliente.pais) ||
+            //     !this.controlAmbito(null, this.editadocliente.ambito_cl, this.editadocliente.niva, this.editadocliente.pais) ||
+            //     !this.controlTipo(null, this.editadocliente.tipo_cl, this.editadocliente.ambito_cl, this.editadocliente.nif)){
+        },
         controlRazonSocial(e, razon_social){
             
             if(!razon_social){
-                // console.log(razon_social+'Campo razón social es obligatorio');
                 $('#razon_social').focus();
                 this.$notification.error("Campo razón social es obligatorio", {  timer: 2, position:'topRigth' });
                 return false;
             }else if (razon_social.length == 0 || razon_social.length > 50){
-                // console.log(razon_social+'Campo razón social máximo de caracteres: 50');
+                $('#razon_social').focus();
                 this.$notification.error("Campo razón social máximo de caracteres: 50", {  timer: 2, position:'topRigth' });
                 return false;
             }else{
-                // console.log('razon social ok: '+razon_social);
                 return true;
             }
         },
         controlEmail(e, email) {
             if(this.nuevoCliente.email){
                 let emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-;
                 if(!emailPatron.test(email)){
-                    // console.log(email+'email formato invalido');
                     $('#email').focus();
                     this.$notification.error("Formato email inválido", {  timer: 2, position:'topRigth' });
                     return false;
-
                 }else{
-                    // console.log(email+'email oK');
                     return true;
                 }
             }
         },
         controlPais(e, pais){
             if(!pais){
-                // console.log(pais+' pais es obligatorio');
                 $('#pais').focus();
                 this.$notification.error("Campo pais obligatorio", {  timer: 2, position:'topRigth' });
                 return false;
             }
             else{
-                console.log('pais ok: '+pais)
                 return true;
             }
         },
         controlAmbito(e, ambito_cl, niva, pais){
-            console.log(ambito_cl + ' - ' + niva + ' ' + pais);
             if(!ambito_cl){
-                // console.log(ambito_cl+' ambito_cl es obligatorio')
                 $('#ambito_cl').focus();
                 this.$notification.error("Campo ámbito obligatorio", {  timer: 2, position:'topRigth' });
                 return false;
             
-            }else if(ambito_cl == 'NACIONAL' && pais!=='ESPAÑA'){
+            }if((ambito_cl == 'NACIONAL' && pais!=='ESPAÑA')||(ambito_cl !== 'NACIONAL' && pais=='ESPAÑA')){
                 $('#pais').focus();
                 this.$notification.error("Revise campo PAIS", {  timer: 2, position:'topRigth' });
                 return false;
-            
-            }else if(ambito_cl == 'INTRACOMUNITARIO' && !niva){
-                // console.log('niva necesario...');
-                $('#niva').focus();
-                this.$notification.error("NIVA es campo obligatorio", {  timer: 2, position:'topRigth' });
-                return false;
-
-            }else if((ambito_cl == 'EXTRACOMUNITARIO') && !niva){
-                // console.log('niva necesario...');
-                $('#niva').focus();
-                this.$notification.error("NIVA es campo obligatorio", {  timer: 2, position:'topRigth' });
-                return false;
-
-            }else{
-                // console.log('ambito_cl ok: '+ambito_cl);
-                return true;
             }
+            
+            if((ambito_cl == 'INTRACOMUNITARIO' && !niva)||(ambito_cl == 'EXTRACOMUNITARIO' && !niva)){
+                $('#niva').focus();
+                this.$notification.error("NIVA es campo obligatorio", {  timer: 2, position:'topRigth' });
+                return false;
+            }
+            
+            return true;
         },
         controlTipo(e, tipo_cl, ambito_cl, nif){
-            console.log('dentro 0');
-            console.log(ambito_cl + ' ' + tipo_cl);
             if(!tipo_cl){
                 $('#tipo_cl').focus();
                 this.$notification.error("Campo tipo cliente obligatorio", {  timer: 2, position:'topRigth' });
                 return false;
 
             }else if(ambito_cl == 'NACIONAL' && tipo_cl == 'PERSONA FISICA'){
-                console.log('dentro');
                 var dniPatron1 = /^\d{8}[a-zA-Z]$/; //personas físicas
                 var dniPatron2 = /[M|X-Z]^\d{7}[A-Z]$/; //extranjeros residentes
                 var letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
-                console.log(dniPatron1.test(nif));
                 if(dniPatron1.test(nif)){ // pfisicas
-                console.log('dentro pfisica');
                     let numero = parseInt(nif.substr(0, nif.length - 1)) % 23;
-                    // console.log(numero);
                     let letraTeorica = letras.substring(numero, numero +1);
-                    // console.log(letraTeorica);
                     let letra = nif.substr(nif.length - 1, 1);
-                    // console.log(letra);
                     
                     if(letra != letraTeorica){
-                        // console.log("Formato NIF persona física inválido");
                         $('#nif').focus();
                         this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA inválido", {  timer: 10, position:'topRigth' });
                         return false;
-                    
                     }else{
                         return true;
                     }
 
                 }else if(dniPatron2.test(nif)){ //residentes extranjeros
-                console.log('dentro extranj resid');
                     let letra1 = nif.substr(0,1);
                     let numero = nif.substr(1, nif.length-2);
                     let letraControl = (nif.length-1)
@@ -303,7 +320,6 @@ export default{
                     letra = nif.substr(nif.length - 1, 1);
                     
                     if(letra != letraTeorica){
-                        // console.log(nif+"Formato NIF residente extranjero inválido");
                         $('#nif').focus();
                         this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA (RESIDENTE EXTRANJERO) inválido");
                         return false;
@@ -314,7 +330,6 @@ export default{
                 
                 }//fin extranjeros residentes
                 else{
-                    console.log('error en nif pfisica nacional');
                     $('#nif').focus();
                     this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA inválido");
                     return false;

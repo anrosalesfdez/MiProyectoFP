@@ -18,7 +18,11 @@ class CreateProductosTable extends Migration
             $table->string('nombre');
             $table->string('descripcion');
             $table->double('precio');
-            $table->timestamps();
+            $table->string('unidad');
+             //fecha de creacion
+             $table->timestamps();
+             //trabaja con eliminación en vistas, no en tabla
+             $table->softDeletes();
         });
     }
 

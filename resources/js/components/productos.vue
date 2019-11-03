@@ -7,37 +7,71 @@
                 <span class="oi oi-plus"></span>
             </button>
         </div>
+        
+        <div class="col-md-12 espacios" v-if="isActive">
+            <label><strong>Nuevo producto:</strong></br>
+                <input type="text" name="nombre" id="nombre" 
+                                    v-model="nuevo.nombre"
+                                    placeholder="nombre"
+                                    @focusout="controlNombre(nuevo.nombre)">
+                <input type="text" name="descripcion" id="descripcion"
+                                    v-model="nuevo.descripcion"
+                                    placeholder="descripcion"
+                                    @focusout="controlDescripcion(nuevo.descripcion)">
+                <input type="number" name="precio" id="precio"
+                                    v-model="nuevo.precio"
+                                    placeholder="precio"
+                                    @focusout="controlPrecio(nuevo.precio)"
+                                    step="0.01"
+                                    min="0.00"
+                                    value="0.00">
+                <input type="text" name="unidadv" id="unidad"
+                                    v-model="nuevo.unidad"
+                                    placeholder="unidad precio"
+                                    @focusout="controlUnidad(nuevo.unidad)">
+                <button title="crear" class="btn btn-success" @click="crear" >Crear</button>
+                <button title="crear" class="btn btn-danger" @click="isActive = !isActive" >Cancelar</button>
+            </label>
+        </div>
 
-            <div class="col-md-12 espacios" v-if="isActive">
-                <label><strong>Nuevo producto:</strong></br>
-                    <input type="text" id="nombre" v-model="nuevo.nombre" placeholder="nombre">
-                    <!-- FIXME: no consigo darle foco! -->
-                    <input type="text" v-model="nuevo.descripcion" placeholder="descripcion">
-                    <input type="number" v-model="nuevo.precio" step="0.01" value="0.00" placeholder="precio">
-                    <button title="crear" class="btn btn-success" @click="crear" >Crear</button>
-                </label>
-            </div>
-
-            <div class="col-md-12 espacios" v-if="isEditing">
-                <label><strong>Editando producto:</strong></br>
-                    <input type="text" id="id" v-model="editado.id" value="this.editado.id" readonly disabled>
-                    <input type="text" id="nombre" v-model="editado.nombre" value="this.editado.nombre">
-                    <!-- FIXME: no consigo darle foco! -->
-                    <input type="text" v-model="editado.descripcion" value="this.editado.descripcion">
-                    <input type="number" v-model="editado.precio" step="0.01" value="this.editado.precio">
-                    <button title="crear" class="btn btn-success" @click="actualizar(editado.id)" >Actualizar</button>
-                    <button title="crear" class="btn btn-danger" @click="toggler2" >Cancelar</button>
-                </label>
-            </div>
+    <div class="col-md-12 espacios" v-if="isEditing">
+        <label><strong>Editando producto:</strong></br>
+            <input type="text" name="idEdit" id="idEdit"
+                                v-model="editado.id"
+                                value="editado.id"
+                                readonly
+                                disabled>
+            <input type="text" name="nombreEdit" id="nombre"
+                                v-model="editado.nombre"
+                                value="editado.nombre"
+                                @focusout="controlNombre(editado.nombre)">
+            <input type="text" name="descripcion" id="descripcion"
+                                v-model="editado.descripcion"
+                                value="editado.descripcion"
+                                @focusout="controlDescripcion(editado.descripcion)">
+            <input type="number" name="precio" id="precio"
+                                v-model="editado.precio"
+                                value="editado.precio"
+                                @focusout="controlPrecio(editado.precio)"
+                                step="0.01"
+                                min="0.00">
+            <input type="text" name="unidad" id="unidad"
+                                v-model="editado.unidad"
+                                value="editado.unidad"
+                                @focusout="controlUnidad(editado.unidad)">
+            <button title="crear" class="btn btn-success" @click="actualizar(editado.id)" >Actualizar</button>
+            <button title="crear" class="btn btn-danger" @click="isEditing = !isEditing" >Cancelar</button>
+        </label>
+    </div>
 
         <div class="col-md-12 espacios">
-            <v-client-table ref="tabla" class="col-md-12" :data="productos" :columns="columns" :options="options" @loaded="onLoaded">
+            <v-client-table ref="tabla" class="col-md-12" :data="misProductos" :columns="columns" :options="options">
                 <div slot="acciones" slot-scope="props" style="display: inline">
                     <button title="editar" class="btn btn-xs" @click="editar(props.row.id)" >
                         <i class="material-icons" style="font-size: 18px; color:blue">edit</i>
                     </button>
                     <button title="eliminar" class="btn btn-xs" @click.prevent="eliminar(props.row.id)">
-                    <i class="material-icons" style="font-size: 18px; color:red">delete</i>
+                        <i class="material-icons" style="font-size: 18px; color:red">delete</i>
                     </button>
                 </div>
             </v-client-table> 
@@ -51,27 +85,25 @@
 export default {
     data(){
         return{
-            // csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            // misProductos: this.productos,
-
+            misProductos: this.productos, //necesario pq no se puede modif la prop de padre por hijo
             isActive: false,
-
             isEditing: false,
-
             nuevo: {
                 nombre: '',
                 descripcion:'',
-                precio:''
+                precio:'',
+                unidad:''
             },
-
             editado: {
                 id: '',
                 nombre: '',
                 descripcion:'',
-                precio:''
+                precio:'',
+                unidad:''
             },
-
-            columns: ['id', 'nombre', 'descripcion', 'precio', 'created_at', 'updated_at', 'acciones'],
+            errors: '',
+            //para la tabla
+            columns: ['id', 'nombre', 'descripcion', 'precio', 'unidad', 'created_at', 'updated_at', 'acciones'],
             
             filterByColumn: false,
 
@@ -85,6 +117,7 @@ export default {
                         nombre: 'NOMBRE',
                         descripcion: 'DESCRIPCION',
                         precio: 'PRECIO €',
+                        unidad: 'UNIDAD',
                         'created_at': 'CREACIÓN',
                         'updated_at': 'ACTUALIZACIÓN',
                         'acciones': 'ACCIONES'
@@ -101,12 +134,12 @@ export default {
                     is: 'icon-sort'
                 },
                 perPage:10,
-                // texts: {
-                //         filter: "",
-                //         filterPlaceholder: "Filtrar resultados",
-                //         // filterBy: 'Filtrar por {razon_social}',
-                //         count:' '
-                //     },
+                texts: {
+                        // filter: "",
+                        // filterPlaceholder: "Filtrar resultados",
+                        // filterBy: 'Filtrar por {razon_social}',
+                        count:' ' //oculta contador
+                    },
                 columnsDropdown: false, //permite que el user elija que columnas ver.
             }
         }
@@ -114,86 +147,142 @@ export default {
     props: [
         'productos'
     ],
-    // computed:{
-    //     obtenerProductos(){
-    //         let misProductos = this.productos;
-    //         return misProductos;
-    //     }
-    // },
-    mounted() {
-        console.log('vue');
-        // this.misProductos = this.productos;
-    },
     methods: {
-        onLoaded(){
-            
+        //VALIDACIONES
+        controlNombre(nombre){
+            if(!nombre){
+                this.$notification.error("NOMBRE: Campo obligatorio", {  timer: 2, position:'topRigth' });
+                $('#nombre').focus();
+            }
+            if(nombre.length > 20){
+                this.$notification.error("NOMBRE: Máximo 20 caracteres", {  timer: 2, position:'topRigth' });
+                $('#nombre').focus();
+            }
         },
+        controlDescripcion(descripcion){
+            if(descripcion.length > 50){
+                this.$notification.error("DESCRIPCION: Máximo 50 caracteres", {  timer: 2, position:'topRigth' });
+                $('#descripcion').focus();
+            }
+        },
+        controlPrecio(precio){
+            if(!precio){
+                this.$notification.error("PRECIO: Campo obligatorio", {  timer: 2, position:'topRigth' });
+                $('#precio').focus();
+            }
+        },
+        controlUnidad(unidad){
+            if(unidad.length > 10){
+                this.$unidad.error("UNIDAD: Máximo 10 caracteres", {  timer: 2, position:'topRigth' });
+                $('#unidad').focus();
+            }
+        },
+        //CONTROL PARA DATOS NUEVO
         toggler(){
-            console.log('togglerrrr');
             this.isActive = !this.isActive;
             this.nuevo.nombre = '';
             this.nuevo.descripcion = '';
             this.nuevo.precio = '';
-            $('#nombre').focus();
+            this.nuevo.unidad = '';
         },
-        toggler2(){
-            this.isEditing = !this.isEditing;
-        },
+        //ENVÍO DATOS NUEVOS PARA GUARDAR EN BD
         crear(){
-            console.log(this.nuevo.nombre + ' ' + this.nuevo.descripcion + ' ' + this.nuevo.precio)
+            console.log(this.nuevo.nombre + ' ' + this.nuevo.descripcion + ' ' + this.nuevo.precio + ' ' + this.nuevo.unidad)
             var url='/productos/';
                 axios.post(url, {
                     nombre: this.nuevo.nombre,
                     descripcion: this.nuevo.descripcion,
                     precio: this.nuevo.precio,
+                    unidad: this.nuevo.unidad
                 }).then(response => {
-                    if(response.errors){
-                        this.$notification.error("mierda!", {  timer: 2, position:'topRigth' });
-
-                    }else{
-                        // this.misproductos = response.data;
-                        this.$notification.success("Producto creado correctamente!", {  timer: 2, position:'topRigth' });
-                        this.isActive = false;
-                        this.nuevo.nombre = '';
-                        this.nuevo.descripcion = '';
-                        this.nuevo.precio = '';
+                    console.log(response);
+                    this.$notification.success("Producto creado correctamente!", {  timer: 2, position:'topRigth' });
+                    this.misProductos = response.data;
+                    this.errors=[];
+                    this.toggler();
+                }).catch((error) => {
+                    console.log(typeof error); // error = Error object
+                    if(error.response.status == 422){
+                        this.errors = error.response.data.errors;
+                        console.log(this.errors);
+                        if(this.errors.nombre) {
+                            this.errors.nombre.forEach(element => {
+                                this.$notification.error(element, {  timer: 4, position:'topRigth' });
+                            });
+                        }
+                        if(this.errors.descripcion) {
+                            this.errors.descripcion.forEach(element => {
+                                this.$notification.error(element, {  timer: 4, position:'topRigth' });
+                            });
+                        }
+                        if(this.errors.precio) {
+                            this.errors.precio.forEach(element => {
+                                this.$notification.error(element, {  timer: 4, position:'topRigth' });
+                            });
+                        }
+                        if(this.errors.unidad) {
+                            this.errors.unidad.forEach(element => {
+                                this.$notification.error(element, {  timer: 4, position:'topRigth' });
+                            });
+                        }
                     }
                 });
         },
+        //MOSTRAR DATOS A EDITAR
         editar(id){
-            console.log('editttt');
-            console.log(id);
-            this.isEditing = !this.isEditing;
+            console.log(this.editado)
+            // this.isEditing = !this.isEditing; NO VALE! PORQUE SI PULSA EDITAR UNO, Y LUEGO OTRO, LO QUE HACE ES OCULTAR EL 2º.... :/
+            this.isEditing = true;
             this.editado.id = this.productos.find(x => x.id === id).id;
             this.editado.nombre = this.productos.find(x => x.id === id).nombre;
-            console.log(this.editado.id);
             this.editado.descripcion = this.productos.find(x => x.id === id).descripcion;
             this.editado.precio = this.productos.find(x => x.id === id).precio;
+            this.editado.unidad = this.productos.find(x => x.id === id).unidad;
         },
+        //ENVÍO DATOS EDITADOS PARA GUARDAR EN BD
         actualizar(id){
-            // console.log(this.editado.id);
-            // console.log(this.editado.nombre);
-            // console.log(this.editado.descripcion);
-            // console.log(this.editado.precio);
             var url='/productoeditar/' + id;
-            console.log(url);
-            
             axios.post(url, {
                 id: this.editado.id,
                 nombre: this.editado.nombre,
                 descripcion: this.editado.descripcion,
-                precio: this.editado.precio
+                precio: this.editado.precio,
+                unidad: this.editado.unidad
             }).then(response => {
-                console.log(response.error);
-                if(response.error){
-                    this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
-                }else{
-                    this.$notification.success("Producto actualizado correctamente!", {  timer: 3, position:'topRigth' });
-                    // this.misproductos = response.data;
-                    this.isEditing = false;
-                    this.editado.nombre = '';
-                    this.editado.descripcion = '';
-                    this.editado.precio = '';
+                console.log(response);
+                this.$notification.success("Producto actualizado correctamente!", {  timer: 2, position:'topRigth' });
+                this.misProductos = response.data;
+                this.errors=[];
+                this.isEditing = !this.isEditing;
+                this.editado.nombre = '';
+                this.editado.descripcion = '';
+                this.editado.precio = '';
+                this.editado.unidad = '';
+            }).catch((error) => {
+                console.log(typeof error); // error = Error object
+                if(error.response.status == 422){
+                    this.errors = error.response.data.errors;
+                    console.log(this.errors);
+                    if(this.errors.nombre) {
+                        this.errors.nombre.forEach(element => {
+                            this.$notification.error(element, {  timer: 4, position:'topRigth' });
+                        });
+                    }
+                    if(this.errors.descripcion) {
+                        this.errors.descripcion.forEach(element => {
+                            this.$notification.error(element, {  timer: 4, position:'topRigth' });
+                        });
+                    }
+                    if(this.errors.precio) {
+                        this.errors.precio.forEach(element => {
+                            this.$notification.error(element, {  timer: 4, position:'topRigth' });
+                        });
+                    }
+                    if(this.errors.unidad) {
+                        this.errors.unidad.forEach(element => {
+                            this.$notification.error(element, {  timer: 4, position:'topRigth' });
+                        });
+                    }
                 }
             });
         },
@@ -201,15 +290,15 @@ export default {
             if(confirm("Estás seguro de eliminar?")){
 
                 var url='/productos/' + id;
-                axios.delete(url).then(response => {
-                    console.log(response.error);
-                    if(response.error){
-                        this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
-                    }else{
-                        this.$notification.success("Producto eliminado correctamente!", {  timer: 3, position:'topRigth' });
-                        this.productos = response.data;
-
-                    }
+                console.log('eliminando: '+id)
+                axios.delete(url)
+                .then(response => {
+                    console.log(response);
+                    this.$notification.success("Producto eliminado correctamente!", {  timer: 2, position:'topRigth' });
+                    this.misProductos = response.data;
+                }).catch((error) => {
+                    console.log(error);
+                    this.$notification.error(error, {  timer: 4, position:'topRigth' });
                 });
             }
         }
@@ -240,8 +329,11 @@ export default {
   background-color: #09333C;
   transition: all 0.5s linear;
 }
+.VueTables__limit {
+display: none;
+}
 
-
+/* mío */
 .espacios {
     margin-top: 10px;
     margin-bottom: 10px;
