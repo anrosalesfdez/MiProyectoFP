@@ -32,7 +32,6 @@
                         <div class="form-group col-md-11">
                             <label for="razon_social" class="col-form-label">Razón social</label>      
                             <input type="text" class="form-control" name="razon_social" id="razon_social"
-                                        @focusout="controlRazonSocial($event, editadocliente.razon_social)" 
                                         v-model="editadocliente.razon_social"
                                         v-touppercase>
                         </div>
@@ -64,7 +63,6 @@
                         <div class="form-group col-md-5">
                             <label for="pais" class="col-form-label">Pais</label>      
                             <input type="text" class="form-control" name="pais" id="pais" 
-                                    @focusout="controlPais($event, editadocliente.pais)" 
                                     v-model="editadocliente.pais" 
                                     v-touppercase>
                         </div>
@@ -83,7 +81,6 @@
                         <div class="form-group col-md-6">
                             <label for="email" class="col-form-label">Email</label>      
                             <input type="email" class="form-control" name="email" id="email"  
-                                    @focusout="controlEmail($event, editadocliente.email)" 
                                     v-model="editadocliente.email">
                         </div>
                     </div>
@@ -91,7 +88,6 @@
                         <div class="form-group col-md-6">
                             <label for="ambito_cl" class="col-form-label">Ámbito cliente</label>
                             <select class="form-control" name="ambito_cl" id="ambito_cl" 
-                                    @blur="controlAmbito($event, editadocliente.ambito_cl, editadocliente.niva, editadocliente.pais)"  
                                     v-model="editadocliente.ambito_cl">
                                 <option disabled selected value="">Ámbito de cliente...</option>
                                 <option value="NACIONAL">NACIONAL</option>
@@ -102,7 +98,6 @@
                         <div class="form-group col-md-6">
                             <label for="tipo_cl" class="col-form-label">Tipo cliente</label>
                             <select class="form-control" name="tipo_cl" id="tipo_cl"
-                                    @blur="controlTipo($event, editadocliente.tipo_cl, editadocliente.ambito_cl, editadocliente.nif)"  
                                     v-model="editadocliente.tipo_cl">
                                 <option disabled selected value="">Tipo de cliente...</option>
                                 <option value="PERSONA FISICA">PERSONA FISICA</option>
@@ -159,21 +154,16 @@
 export default{
     data(){ //datos del componente
         return {
-            enviado: false,
             csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            errorcitos: []
+            validado: '' //mensajes errores
         }
     },
     props:[
         'editadocliente', //prop que envía clientes_editar.blade ---- YA SE PUEDE USAR COMO UN DATA
         'olds',
-        'errors',
-        'razonvieja'
+        'razonvieja',
+        'errors'
     ],
-    mounted() {
-        console.log(this.razonvieja);
-        console.log('hola');
-    },
     created() {
         //mostrar valores old si falla el envío en servidor
         if('razon_social' in this.olds) { this.editadocliente.razon_social = this.olds.razon_social; }
@@ -191,112 +181,87 @@ export default{
         if('dias_pago' in this.olds) { this.editadocliente.dias_pago = this.olds.dias_pago; }
         if('observ' in this.olds) { this.editadocliente.observ = this.olds.observ; }
 
-        console.log('enviado en created: '+this.enviado);
         //si form validado en cliente pero falla en servidor.
-        if(this.enviado){
-            console.log('enviado true, devuelve errors: '+this.errors);
-            this.$notification.error(this.errors[0], {  timer: 2, position:'topRigth' });
+        console.log('enviado true, devuelve errors: '+this.errors);
+        if(this.errors.length !== 0){
+            this.validado = '';
+            for(let i=0; i < this.errors.length; i++){
+                this.validado += this.errors[i];
+            }
+            
+            this.$notification.error(this.validado, {  timer: 2, position:'topRigth' });
         }
     },
     methods:{
         //validaciones
         validarForm(e){
-            console.log('validando form')
-            // if(!this.controlRazonSocial(null, this.editadocliente.razon_social) ||
-            //     !this.controlPais(null, this.editadocliente.pais) ||
-            //     !this.controlAmbito(null, this.editadocliente.ambito_cl, this.editadocliente.niva, this.editadocliente.pais) ||
-            //     !this.controlTipo(null, this.editadocliente.tipo_cl, this.editadocliente.ambito_cl, this.editadocliente.nif)){
-            //         e.preventDefault();
-            // }else{
-            //     this.enviado = true;
-            // }
-            // if(!this.controlRazonSocial(null, this.editadocliente.razon_social)){ this.errorcitos = '1'}
-            // if(!this.controlPais(null, this.editadocliente.pais)){ this.errorcitos.push("2") }
-            // console.log(this.errorcitos);
-            //     !this.controlPais(null, this.editadocliente.pais) ||
-            //     !this.controlAmbito(null, this.editadocliente.ambito_cl, this.editadocliente.niva, this.editadocliente.pais) ||
-            //     !this.controlTipo(null, this.editadocliente.tipo_cl, this.editadocliente.ambito_cl, this.editadocliente.nif)){
+            //Ejecuta validaciones en cliente
+            this.validado=''; //blanquea
+            this.controlRazonSocial(e, this.editadocliente.razon_social);
+            this.controlPais(e, this.editadocliente.pais);
+            this.controlAmbito(e, this.editadocliente.ambito_cl, this.editadocliente.niva, this.editadocliente.pais);
+            this.controlTipo(e, this.editadocliente.tipo_cl, this.editadocliente.ambito_cl, this.editadocliente.nif);
+            this.controlEmail(e, this.editadocliente.email);
+
+            if(this.validado !== ''){
+                this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
+                e.preventDefault();
+                return;
+            }          
         },
+        //VALIDA EN CLIENTE. Se ejecutan todas de golpe al click en crear/actualizar
         controlRazonSocial(e, razon_social){
-            
-            if(!razon_social){
-                $('#razon_social').focus();
-                this.$notification.error("Campo razón social es obligatorio", {  timer: 2, position:'topRigth' });
-                return false;
-            }else if (razon_social.length == 0 || razon_social.length > 50){
-                $('#razon_social').focus();
-                this.$notification.error("Campo razón social máximo de caracteres: 50", {  timer: 2, position:'topRigth' });
-                return false;
-            }else{
-                return true;
-            }
+            if(!razon_social)
+                this.validado += "RAZÓN SOCIAL es campo obligatorio\n";
+            else if(razon_social.length > 50)
+                this.validado += "RAZÓN SOCIAL máximo de caracteres: 50\n";
         },
         controlEmail(e, email) {
-            if(this.nuevoCliente.email){
-                let emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                if(!emailPatron.test(email)){
-                    $('#email').focus();
-                    this.$notification.error("Formato email inválido", {  timer: 2, position:'topRigth' });
-                    return false;
-                }else{
-                    return true;
-                }
+            if(email){
+               let emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if(!emailPatron.test(email))
+                    this.validado += "Formato email inválido\n";
             }
         },
         controlPais(e, pais){
-            if(!pais){
-                $('#pais').focus();
-                this.$notification.error("Campo pais obligatorio", {  timer: 2, position:'topRigth' });
-                return false;
-            }
-            else{
-                return true;
-            }
+            if(!pais)
+                this.validado += "Campo pais obligatorio\n";
         },
         controlAmbito(e, ambito_cl, niva, pais){
-            if(!ambito_cl){
-                $('#ambito_cl').focus();
-                this.$notification.error("Campo ámbito obligatorio", {  timer: 2, position:'topRigth' });
-                return false;
+            if(!ambito_cl)
+                this.validado += "ÁMBITO es campo obligatorio\n";
+
+            if(ambito_cl == 'NACIONAL' && pais!=='ESPAÑA')
+                this.validado += "ÁMBITO: "+ambito_cl+ " incorrecto para PAÏS: "+pais+"\n";
             
-            }if((ambito_cl == 'NACIONAL' && pais!=='ESPAÑA')||(ambito_cl !== 'NACIONAL' && pais=='ESPAÑA')){
-                $('#pais').focus();
-                this.$notification.error("Revise campo PAIS", {  timer: 2, position:'topRigth' });
-                return false;
-            }
-            
-            if((ambito_cl == 'INTRACOMUNITARIO' && !niva)||(ambito_cl == 'EXTRACOMUNITARIO' && !niva)){
-                $('#niva').focus();
-                this.$notification.error("NIVA es campo obligatorio", {  timer: 2, position:'topRigth' });
-                return false;
-            }
-            
-            return true;
+            if(ambito_cl !== 'NACIONAL' && pais =='ESPAÑA')
+                this.validado += "ÁMBITO: "+ambito_cl+ " incorrecto para PAÏS: "+pais+"\n";
+
+            if(ambito_cl == 'INTRACOMUNITARIO' && !niva)
+                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito_cl+"\n";
+
+            if((ambito_cl == 'EXTRACOMUNITARIO') && !niva)
+                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito_cl+"\n";
         },
         controlTipo(e, tipo_cl, ambito_cl, nif){
-            if(!tipo_cl){
-                $('#tipo_cl').focus();
-                this.$notification.error("Campo tipo cliente obligatorio", {  timer: 2, position:'topRigth' });
-                return false;
+            if(!tipo_cl)
+                this.validado += "TIPO es campo obligatorio\n";
 
-            }else if(ambito_cl == 'NACIONAL' && tipo_cl == 'PERSONA FISICA'){
-                var dniPatron1 = /^\d{8}[a-zA-Z]$/; //personas físicas
-                var dniPatron2 = /[M|X-Z]^\d{7}[A-Z]$/; //extranjeros residentes
-                var letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
+            if(ambito_cl == 'NACIONAL' && tipo_cl == 'PERSONA FISICA'){
+                let dniPatron1 = /^\d{8}[a-zA-Z]$/; //personas físicas
+                let dniPatron2 = /[M|X-Z]^\d{7}[A-Z]$/; //extranjeros residentes
+                let letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
+                
                 if(dniPatron1.test(nif)){ // pfisicas
                     let numero = parseInt(nif.substr(0, nif.length - 1)) % 23;
                     let letraTeorica = letras.substring(numero, numero +1);
                     let letra = nif.substr(nif.length - 1, 1);
                     
-                    if(letra != letraTeorica){
-                        $('#nif').focus();
-                        this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA inválido", {  timer: 10, position:'topRigth' });
-                        return false;
-                    }else{
-                        return true;
-                    }
-
-                }else if(dniPatron2.test(nif)){ //residentes extranjeros
+                    if(letra != letraTeorica)
+                        this.validado += "Formato NIF para NACIONAL + PERSONA FÍSICA inválido\n";
+                }
+                
+                if(dniPatron2.test(nif)){ //residentes extranjeros
                     let letra1 = nif.substr(0,1);
                     let numero = nif.substr(1, nif.length-2);
                     let letraControl = (nif.length-1)
@@ -319,21 +284,9 @@ export default{
                     letraTeorica = letras.substring(numero, numero +1);
                     letra = nif.substr(nif.length - 1, 1);
                     
-                    if(letra != letraTeorica){
-                        $('#nif').focus();
-                        this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA (RESIDENTE EXTRANJERO) inválido");
-                        return false;
-                    
-                    }else{
-                        return true;
-                    }
-                
-                }//fin extranjeros residentes
-                else{
-                    $('#nif').focus();
-                    this.$notification.error("Formato NIF para NACIONAL + PERSONA FÍSICA inválido");
-                    return false;
-                }
+                    if(letra != letraTeorica)
+                        this.validado += "Formato NIF para NACIONAL + PERSONA FÍSICA (RESIDENTE EXTRANJERO) inválido\n";
+                }   
             }
         }
     }

@@ -1,5 +1,7 @@
 <?php
 
+//FIXME: notificacion de errores personalizados (ej. nacional != españa)
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -12,8 +14,9 @@ class ClienteController extends Controller
         
         $clientes = Cliente::get();
         
-        return view('clientes/listar', ['clientes'=> $clientes]);
+        return view('clientes/listar', ['clientes'=> $clientes]); //el helper view() permite enviar variables a blade
     }    
+
 
     // Recoge un cliente de la BD y lo envía a la vista
     public function getCliente($id){
@@ -23,39 +26,49 @@ class ClienteController extends Controller
         return view('clientes/ver', ['cliente'=> $cliente]);
     } 
 
-    // Show the form for creating a new resource
+
+    // Muestra la vista para crear nuevo cliente.
+    //Envía dato OLD a la vista en caso de que el envío del form hay dado error en el server.
+    //Laravel will check for errors in the session data, and automatically bind them to the view
     public function create() {
 
-        return view('clientes/crear', ['olds' => json_encode(old())]); //errors pasa directamente
+        return view('clientes/crear', ['olds' => json_encode(old())]);
     }
 
-    // Store a newly created resource in storage
+
+    // Validate and Store a newly created resource in storage
     public function store(Request $request) {
         
         $this->validate($request, $this->rules(), $this->messages());
-        //Laravel will check for errors in the session data, and automatically bind them to the view
-        // if they are available
-
-        $nuevoCliente = Cliente::create($request->all());
+        Cliente::create($request->all());
 
         return redirect('/clientes/listar');
 
     }
 
-    // Muestra vista de detalle
-    public function vistaEditar($id){ //si le paso $id hay que hacer findOrFail
-                                      //si le paso Cliente $cliente ya lo hace internamente
-            $editadoCliente = Cliente::findOrFail($id);
-            // dd($editadoCliente->razon_social);
-            return view('clientes/editar', ['editadocliente' => $editadoCliente, 'olds' => json_encode(old()), 'razonvieja' => json_encode($editadoCliente->razon_social)]);
-            //el helper view() permite enviar variables a blade. Aquí envía el objeto editadocliente
-            //The old function retrieves an old input value flashed into the session
+    // Muestra la vista para editar un cliente ya existente.
+    //Envía dato OLD a la vista en caso de que el envío del form hay dado error en el server.
+    //Laravel will check for errors in the session data, and automatically bind them to the view
+    public function vistaEditar($id){ 
+                                    //si le paso $id hay que hacer findOrFail
+                                    //si le paso Cliente $cliente ya lo hace internamente
+        $editadoCliente = Cliente::findOrFail($id);
+        // dd($editadoCliente->razon_social);
+        
+        return view('clientes/editar', ['editadocliente' => $editadoCliente, 'olds' => json_encode(old()), 'razonvieja' => json_encode($editadoCliente->razon_social)]);
     }
 
     // Update the specified resource in storage.
     public function update(Cliente $cliente) {
         
-        $this->validate(request(), $this->rules(), $this->messages());
+        $rules = [
+            //need to mark your "optional" request fields as nullable 
+            'razon_social' => 'required|max:50', //bail = stop if first validation fails
+            'ambito_cl' => 'required',
+            'tipo_cl' => 'required',
+            'email' => 'nullable|email:rfc,dns' //necesita la extensión de php
+        ];
+        $this->validate(request(), $rules, $this->messages());
         
         $cliente->update(request()->all()); //ya hace findOrFail por detrás
 
@@ -70,15 +83,11 @@ class ClienteController extends Controller
         $cliente->delete(); //soft delete
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
+    //Get the validation rules that apply to the request.
     public function rules(){
         return [
             //need to mark your "optional" request fields as nullable 
-            'razon_social' => 'required|max:50', //bail = stop if first validation fails
+            'razon_social' => 'required|min:50', //bail = stop if first validation fails
             'nif' => 'required|unique:clientes',
             'ambito_cl' => 'required',
             'tipo_cl' => 'required',
@@ -86,11 +95,7 @@ class ClienteController extends Controller
         ];
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
+    //Get the error messages for the defined validation rules.
     public function messages(){
         return [
             'razon_social.required' => 'Server: Es necesario introducir razón social.',
