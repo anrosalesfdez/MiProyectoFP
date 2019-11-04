@@ -7,13 +7,11 @@ use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
-    //TODO: mensajes personalizados de error...
-
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function index(){
+        
         $productos = Producto::get();
         
         return view('productos', ['productos' => $productos]);
@@ -25,15 +23,9 @@ class ProductoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //validador de LaRAVEL
-        $this->validate($request, [
-            'nombre' => 'required|string|max:20',
-            'descripcion' => 'nullable|string|max:50',
-            'precio' => 'required|numeric',
-            'unidad' => 'required|max:10'
-        ]);
+    public function store(Request $request) {
+        
+        $this->validate($request, $this->rules(), $this->messages());
 
         Producto::create($request->all());
         $productos = Producto::get();
@@ -49,15 +41,9 @@ class ProductoController extends Controller
      * @param  \App\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function actualizar(Request $request, $id)
-    {
-        //validador de LaRAVEL
-        $this->validate($request, [
-            'nombre' => 'required|string|max:20',
-            'descripcion' => 'nullable|string|max:50',
-            'precio' => 'required|numeric',
-            'unidad' => 'required|max:10'
-        ]);
+    public function actualizar(Request $request, $id){
+        
+        $this->validate($request, $this->rules(), $this->messages());
 
         $producto = Producto::findOrFail($id)->update(request()->all()); //ya hace findOrFail por detrás
         $productos = Producto::get();
@@ -71,11 +57,44 @@ class ProductoController extends Controller
      * @param  \App\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
+
         $producto = Producto::findOrFail($id)->delete(); //soft delete
         $productos = Producto::get();
 
         return $productos;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules(){
+        return [
+            'nombre' => 'required|string|max:20',
+            'descripcion' => 'nullable|string|max:50',
+            'precio' => 'required|numeric',
+            'unidad' => 'required|max:10'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages(){
+        return [
+            'nombre.required' => 'Server: NOMBRE es campo obligatorio.',
+            'nombre.string' => 'Server: NOMBRE, campo texto.',
+            'nombre.min' => 'Server: NOMBRE, logitud máxima de 20 caracteres.',
+            'descripcion.string' => 'Server: DESCRIPCION, campo texto.',
+            'descripcion.min' => 'Server: DESCRIPCION, logitud máxima de 50 caracteres.',
+            'precio.required' => 'Server: PRECIO es campo obligatorio.',
+            'precio.numeric' => 'Server: PRECIO, campo numérico.',
+            'unidad.required' => 'Server: UNIDAD es campo obligatorio.',
+            'unidad.min' => 'Server: UNIDAD, longitud máxima de 10 caracteres.'
+        ];
     }
 }

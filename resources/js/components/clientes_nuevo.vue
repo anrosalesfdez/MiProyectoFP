@@ -25,6 +25,7 @@
                                 v-model="nuevoCliente.razon_social"
                                 v-touppercase>
                     </div>
+
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="nif" class="col-form-label">NIF</label>      

@@ -9,33 +9,28 @@
         </div>
         
         <div class="col-md-12 espacios" v-if="isActive">
-            <label><strong>Nuevo producto:</strong></br>
-                <input type="text" name="nombre" id="nombre" 
-                                    v-model="nuevo.nombre"
-                                    placeholder="nombre"
-                                    @focusout="controlNombre(nuevo.nombre)">
-                <input type="text" name="descripcion" id="descripcion"
-                                    v-model="nuevo.descripcion"
-                                    placeholder="descripcion"
-                                    @focusout="controlDescripcion(nuevo.descripcion)">
-                <input type="number" name="precio" id="precio"
-                                    v-model="nuevo.precio"
-                                    placeholder="precio"
-                                    @focusout="controlPrecio(nuevo.precio)"
-                                    step="0.01"
-                                    min="0.00"
-                                    value="0.00">
-                <input type="text" name="unidadv" id="unidad"
-                                    v-model="nuevo.unidad"
-                                    placeholder="unidad precio"
-                                    @focusout="controlUnidad(nuevo.unidad)">
-                <button title="crear" class="btn btn-success" @click="crear" >Crear</button>
-                <button title="crear" class="btn btn-danger" @click="isActive = !isActive" >Cancelar</button>
-            </label>
+            <p><strong>Nuevo producto:</strong></p>
+            <input type="text" name="nombre" id="nombre" 
+                                v-model="nuevo.nombre"
+                                placeholder="nombre">
+            <input type="text" name="descripcion" id="descripcion"
+                                v-model="nuevo.descripcion"
+                                placeholder="descripcion">
+            <input type="number" name="precio" id="precio"
+                                v-model="nuevo.precio"
+                                placeholder="precio"
+                                step="0.01"
+                                min="0.00"
+                                value="0.00">
+            <input type="text" name="unidadv" id="unidad"
+                                v-model="nuevo.unidad"
+                                placeholder="unidad precio">
+            <button title="crear" class="btn btn-success" @click="crear" >Crear</button>
+            <button title="crear" class="btn btn-danger" @click="isActive = !isActive" >Cancelar</button>
         </div>
 
-    <div class="col-md-12 espacios" v-if="isEditing">
-        <label><strong>Editando producto:</strong></br>
+        <div class="col-md-12 espacios" v-if="isEditing">
+            <p><strong>Editando producto:</strong></p>
             <input type="text" name="idEdit" id="idEdit"
                                 v-model="editado.id"
                                 value="editado.id"
@@ -43,26 +38,21 @@
                                 disabled>
             <input type="text" name="nombreEdit" id="nombre"
                                 v-model="editado.nombre"
-                                value="editado.nombre"
-                                @focusout="controlNombre(editado.nombre)">
+                                value="editado.nombre">
             <input type="text" name="descripcion" id="descripcion"
                                 v-model="editado.descripcion"
-                                value="editado.descripcion"
-                                @focusout="controlDescripcion(editado.descripcion)">
+                                value="editado.descripcion">
             <input type="number" name="precio" id="precio"
                                 v-model="editado.precio"
                                 value="editado.precio"
-                                @focusout="controlPrecio(editado.precio)"
                                 step="0.01"
                                 min="0.00">
             <input type="text" name="unidad" id="unidad"
                                 v-model="editado.unidad"
-                                value="editado.unidad"
-                                @focusout="controlUnidad(editado.unidad)">
+                                value="editado.unidad">
             <button title="crear" class="btn btn-success" @click="actualizar(editado.id)" >Actualizar</button>
             <button title="crear" class="btn btn-danger" @click="isEditing = !isEditing" >Cancelar</button>
-        </label>
-    </div>
+        </div>
 
         <div class="col-md-12 espacios">
             <v-client-table ref="tabla" class="col-md-12" :data="misProductos" :columns="columns" :options="options">
@@ -70,18 +60,19 @@
                     <button title="editar" class="btn btn-xs" @click="editar(props.row.id)" >
                         <i class="material-icons" style="font-size: 18px; color:blue">edit</i>
                     </button>
-                    <button title="eliminar" class="btn btn-xs" @click.prevent="eliminar(props.row.id)">
+                    <button title="eliminar" class="btn btn-xs" @click="eliminar(props.row.id)">
                         <i class="material-icons" style="font-size: 18px; color:red">delete</i>
                     </button>
                 </div>
             </v-client-table> 
         </div>
         
-        
     </div>
 </template>
 
 <script>
+//TODO:salto de línea en errores servidorbundleRenderer.renderToStream
+//TODO: fechas en tabla, no aplica la mascara cuando no recarga del server
 export default {
     data(){
         return{
@@ -101,7 +92,7 @@ export default {
                 precio:'',
                 unidad:''
             },
-            errors: '',
+            validado: '', //recoge mensajes de errores front end y back end en caso de haberlos.
             //para la tabla
             columns: ['id', 'nombre', 'descripcion', 'precio', 'unidad', 'created_at', 'updated_at', 'acciones'],
             
@@ -148,36 +139,43 @@ export default {
         'productos'
     ],
     methods: {
-        //VALIDACIONES
+        //VALIDA EN CLIENTE. Se ejecutan todas de golpe al click en crear/actualizar
+        //si se superan (this.validado =''), se envía la petición AJAX
         controlNombre(nombre){
-            if(!nombre){
-                this.$notification.error("NOMBRE: Campo obligatorio", {  timer: 2, position:'topRigth' });
-                $('#nombre').focus();
-            }
-            if(nombre.length > 20){
-                this.$notification.error("NOMBRE: Máximo 20 caracteres", {  timer: 2, position:'topRigth' });
-                $('#nombre').focus();
-            }
+            if(!nombre)
+                this.validado = "NOMBRE: Campo obligatorio\n";
+            if(nombre.length > 20)
+                this.validado += "NOMBRE: Máximo 20 caracteres\n";
         },
         controlDescripcion(descripcion){
-            if(descripcion.length > 50){
-                this.$notification.error("DESCRIPCION: Máximo 50 caracteres", {  timer: 2, position:'topRigth' });
-                $('#descripcion').focus();
-            }
+            if(descripcion.length > 50)
+                this.validado += "DESCRIPCION: Máximo 50 caracteres\n";
         },
         controlPrecio(precio){
-            if(!precio){
-                this.$notification.error("PRECIO: Campo obligatorio", {  timer: 2, position:'topRigth' });
-                $('#precio').focus();
-            }
+            if(!precio)
+                this.validado += "PRECIO: Campo obligatorio\n";
         },
         controlUnidad(unidad){
-            if(unidad.length > 10){
-                this.$unidad.error("UNIDAD: Máximo 10 caracteres", {  timer: 2, position:'topRigth' });
-                $('#unidad').focus();
-            }
+            if(!unidad)
+                this.validado += "UNIDAD: Campo obligatorio\n";
+            if(unidad.length > 10)
+                this.validado += "UNIDAD: Máximo 10 caracteres\n";
         },
-        //CONTROL PARA DATOS NUEVO
+        //VALIDA EN SERVIDOR. Se ejecutan en caso de que el servidor devuelva un error 422
+        validarServer(errors){
+            let campos = ['nombre', 'descripcion', 'precio', 'unidad'];
+            let validadoServer = '';
+            campos.forEach(element =>{
+                if(errors[element]) {
+                    errors[element].forEach(element => {
+                        console.log(element)
+                        validadoServer += element+"\n";
+                    })
+                }
+            })
+            return validadoServer;
+        },
+        //MUESTRA u OCULTA DIV CON INPUTS PARA NUEVO PRODUCTO
         toggler(){
             this.isActive = !this.isActive;
             this.nuevo.nombre = '';
@@ -185,62 +183,67 @@ export default {
             this.nuevo.precio = '';
             this.nuevo.unidad = '';
         },
-        //ENVÍO DATOS NUEVOS PARA GUARDAR EN BD
+        //ENVÍA A SERVIDOR PETICIÓN AJAX CON DATOS DE NUEVO PRODUCTO PARA GUARDAR EN BD
         crear(){
             console.log(this.nuevo.nombre + ' ' + this.nuevo.descripcion + ' ' + this.nuevo.precio + ' ' + this.nuevo.unidad)
-            var url='/productos/';
-                axios.post(url, {
-                    nombre: this.nuevo.nombre,
-                    descripcion: this.nuevo.descripcion,
-                    precio: this.nuevo.precio,
-                    unidad: this.nuevo.unidad
-                }).then(response => {
-                    console.log(response);
-                    this.$notification.success("Producto creado correctamente!", {  timer: 2, position:'topRigth' });
-                    this.misProductos = response.data;
-                    this.errors=[];
-                    this.toggler();
-                }).catch((error) => {
-                    console.log(typeof error); // error = Error object
-                    if(error.response.status == 422){
-                        this.errors = error.response.data.errors;
-                        console.log(this.errors);
-                        if(this.errors.nombre) {
-                            this.errors.nombre.forEach(element => {
-                                this.$notification.error(element, {  timer: 4, position:'topRigth' });
-                            });
-                        }
-                        if(this.errors.descripcion) {
-                            this.errors.descripcion.forEach(element => {
-                                this.$notification.error(element, {  timer: 4, position:'topRigth' });
-                            });
-                        }
-                        if(this.errors.precio) {
-                            this.errors.precio.forEach(element => {
-                                this.$notification.error(element, {  timer: 4, position:'topRigth' });
-                            });
-                        }
-                        if(this.errors.unidad) {
-                            this.errors.unidad.forEach(element => {
-                                this.$notification.error(element, {  timer: 4, position:'topRigth' });
-                            });
-                        }
-                    }
-                });
+            //Ejecuta validaciones en cliente
+            this.validado=''; //blanquea
+            this.controlNombre(this.nuevo.nombre);
+            this.controlDescripcion(this.nuevo.descripcion);
+            this.controlPrecio(this.nuevo.precio);
+            this.controlUnidad(this.nuevo.unidad);
+            if(this.validado !== ''){
+                this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
+                return;
+            }
+            //si no hubo errores, envía AJAX
+            let url='/productos/';
+            axios.post(url, {
+                nombre: this.nuevo.nombre,
+                descripcion: this.nuevo.descripcion,
+                precio: this.nuevo.precio,
+                unidad: this.nuevo.unidad
+            }).then(response => {
+                console.log(response);
+                this.$notification.success("Producto creado correctamente!", {  timer: 4, position:'topRigth' });
+                this.misProductos = response.data;
+                this.toggler();
+            }).catch((error) => { //(error) es el param que le paso a la funcion anónima
+                console.log(error); // error = Error object
+                if(error.response.status == 422){
+                    let validadoServer = this.validarServer(error.response.data.errors);
+                    if(validadoServer!=='')
+                        this.$notification.error(validadoServer, {  timer: 4, position:'topRigth' });
+                }else{
+                    this.$notification.error(error.response.data.errors, {  timer: 4, position:'topRigth' });
+                }
+            });
         },
-        //MOSTRAR DATOS A EDITAR
+        
+        //MUESTRA DIV CON DATOS DEL PRODUCTO A EDITAR
         editar(id){
             console.log(this.editado)
             // this.isEditing = !this.isEditing; NO VALE! PORQUE SI PULSA EDITAR UNO, Y LUEGO OTRO, LO QUE HACE ES OCULTAR EL 2º.... :/
             this.isEditing = true;
-            this.editado.id = this.productos.find(x => x.id === id).id;
-            this.editado.nombre = this.productos.find(x => x.id === id).nombre;
-            this.editado.descripcion = this.productos.find(x => x.id === id).descripcion;
-            this.editado.precio = this.productos.find(x => x.id === id).precio;
-            this.editado.unidad = this.productos.find(x => x.id === id).unidad;
+            this.editado.id = this.misProductos.find(x => x.id === id).id;
+            this.editado.nombre = this.misProductos.find(x => x.id === id).nombre;
+            this.editado.descripcion = this.misProductos.find(x => x.id === id).descripcion;
+            this.editado.precio = this.misProductos.find(x => x.id === id).precio;
+            this.editado.unidad = this.misProductos.find(x => x.id === id).unidad;
         },
-        //ENVÍO DATOS EDITADOS PARA GUARDAR EN BD
+        //ENVÍA A SERVIDOR PETICIÓN AJAX CON DATOS DE PRODUCTO EDITADO PARA GUARDAR EN BD
         actualizar(id){
+            //Ejecuta validaciones en cliente
+            this.validado=''; //blanquea
+            this.controlNombre(this.editado.nombre);
+            this.controlDescripcion(this.editado.descripcion);
+            this.controlPrecio(this.editado.precio);
+            this.controlUnidad(this.editado.unidad);
+            if(this.validado !== ''){
+                this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
+                return;
+            }
+            //si no hubo errores, envía AJAX
             var url='/productoeditar/' + id;
             axios.post(url, {
                 id: this.editado.id,
@@ -250,51 +253,33 @@ export default {
                 unidad: this.editado.unidad
             }).then(response => {
                 console.log(response);
-                this.$notification.success("Producto actualizado correctamente!", {  timer: 2, position:'topRigth' });
+                this.$notification.success("Producto actualizado correctamente!", {  timer: 4, position:'topRigth' });
                 this.misProductos = response.data;
-                this.errors=[];
                 this.isEditing = !this.isEditing;
                 this.editado.nombre = '';
                 this.editado.descripcion = '';
                 this.editado.precio = '';
                 this.editado.unidad = '';
             }).catch((error) => {
-                console.log(typeof error); // error = Error object
                 if(error.response.status == 422){
-                    this.errors = error.response.data.errors;
-                    console.log(this.errors);
-                    if(this.errors.nombre) {
-                        this.errors.nombre.forEach(element => {
-                            this.$notification.error(element, {  timer: 4, position:'topRigth' });
-                        });
-                    }
-                    if(this.errors.descripcion) {
-                        this.errors.descripcion.forEach(element => {
-                            this.$notification.error(element, {  timer: 4, position:'topRigth' });
-                        });
-                    }
-                    if(this.errors.precio) {
-                        this.errors.precio.forEach(element => {
-                            this.$notification.error(element, {  timer: 4, position:'topRigth' });
-                        });
-                    }
-                    if(this.errors.unidad) {
-                        this.errors.unidad.forEach(element => {
-                            this.$notification.error(element, {  timer: 4, position:'topRigth' });
-                        });
-                    }
+                    let validadoServer = this.validarServer(error.response.data.errors);
+                    if(validadoServer!=='')
+                        this.$notification.error(validadoServer, {  timer: 4, position:'topRigth' });
+                }else{
+                    this.$notification.error(error.response.data.errors, {  timer: 4, position:'topRigth' });
                 }
+             
             });
         },
-        eliminar(id){   //Envía http request a la URL dada. Le envía el id del cliente seleccionado para que el método del controlador lo elimine (soft) de la bd
+        //ENVÍA PETICIÓN AJAX PARA ELIMINAR PRODUCTO SELECCIONADO.
+        eliminar(id){   
             if(confirm("Estás seguro de eliminar?")){
-
-                var url='/productos/' + id;
+                let url='/productos/' + id;
                 console.log('eliminando: '+id)
                 axios.delete(url)
                 .then(response => {
                     console.log(response);
-                    this.$notification.success("Producto eliminado correctamente!", {  timer: 2, position:'topRigth' });
+                    this.$notification.success("Producto eliminado correctamente!", {  timer: 4, position:'topRigth' });
                     this.misProductos = response.data;
                 }).catch((error) => {
                     console.log(error);
