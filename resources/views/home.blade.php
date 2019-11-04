@@ -52,7 +52,7 @@
                     </li>
                     <li class="nav-item">
                     <a class="{{ request()->route()->getName() === 'productos' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('productos') }}">
-                        <i class="material-icons">add</i>
+                        <i class="material-icons">book</i>
                         Productos
                         </a>
                     </li>

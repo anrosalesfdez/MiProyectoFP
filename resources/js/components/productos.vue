@@ -4,7 +4,8 @@
         <div class="col-md-12 espacios">
             <h3 style="display: inline">Mantenimiento de Productos</h3>
             <button class="btn btn-success" @click="toggler">
-                <span class="oi oi-plus"></span>
+                Nuevo producto
+                <!-- <span class="oi oi-plus"></span> -->
             </button>
         </div>
         

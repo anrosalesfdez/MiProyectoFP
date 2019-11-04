@@ -6693,6 +6693,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 //TODO:salto de línea en errores servidorbundleRenderer.renderToStream
 //TODO: fechas en tabla, no aplica la mascara cuando no recarga del server
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -80595,7 +80596,7 @@ var render = function() {
       _c(
         "button",
         { staticClass: "btn btn-success", on: { click: _vm.toggler } },
-        [_c("span", { staticClass: "oi oi-plus" })]
+        [_vm._v("\n            Nuevo producto\n            ")]
       )
     ]),
     _vm._v(" "),
