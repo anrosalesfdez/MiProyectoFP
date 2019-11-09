@@ -51,7 +51,7 @@
             <input type="text" name="unidad" id="unidad"
                                 v-model="editado.unidad"
                                 value="editado.unidad">
-            <button title="crear" class="btn btn-success" @click="actualizar(editado.id)" >Actualizar</button>
+            <button title="crear" class="btn btn-success" @click="(editado.actualizarid)" >Actualizar</button>
             <button title="crear" class="btn btn-danger" @click="isEditing = !isEditing" >Cancelar</button>
         </div>
 

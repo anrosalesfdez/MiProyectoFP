@@ -28,9 +28,10 @@
         <!--Define la nav lateral-->
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky">
+                    
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                     <span>GESTIÓN GENERAL</span>
-                    </h6>
+                </h6>
                 <ul class="nav flex-column nav-pills">
                     <li class='nav-item'>
                         <a class="{{ request()->route()->getName() === 'dashboard' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('dashboard') }}">
@@ -81,6 +82,27 @@
                     </a>
                 </li>
                 </ul>
+
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>CONFIGURACIÓN</span>
+                </h6>
+                <ul class="nav flex-column nav-pills">
+                    <li class='nav-item'>
+                        <a class="{{ request()->route()->getName() === 'settingsuser' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('settingsuser') }}">
+                            <i class="material-icons">settings_applications</i>
+                            Configuración usuario
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav flex-column nav-pills">
+                    <li class='nav-item'>
+                        <a class="{{ request()->route()->getName() === 'settingsfact' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('settingsfact') }}">
+                            <i class="material-icons">settings_applications</i>
+                            Configuración facturas
+                        </a>
+                    </li>
+                </ul>
+
             </div>
         </nav>
 

@@ -69,15 +69,12 @@ Route::post('/productos', 'ProductoController@store');
 Route::post('/productoeditar/{id}', 'ProductoController@actualizar');
 Route::delete('/productos/{id}', 'ProductoController@destroy');
 
+//FACTURACIÓN
 Route::get('/facturacion', function(){
     return view('facturacion');
 })->name('facturacion');
 
+//CONFIGURACIONES
+Route::get('/settingsuser', 'UserController@index')->name('settingsuser');
+Route::get('/settingsfact', 'UsuarioFacturaController@index')->name('settingsfact');
 
-/**
- * Gestión de productos DB
- */
-
- /**
- * Gestión de facturas DB
- */
