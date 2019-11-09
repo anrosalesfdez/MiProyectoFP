@@ -1,6 +1,6 @@
 @extends('home')
 
 @section('contenidoDinamico')
-    <settingsuser :usuariobd="{{ $usuario }}"></settingsuser>
+    <settingsuser :usuariobd="{{ $usuariobd }}"></settingsuser>
 
 @endsection
