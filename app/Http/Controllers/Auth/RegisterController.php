@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use DB;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -63,6 +64,9 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        //crea también un insert de UsuarioFactura
+        DB::insert('insert into usuario_facturas (nombrecomercial, email) values (?, ?)', array($data['name'], $data['email']));
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],

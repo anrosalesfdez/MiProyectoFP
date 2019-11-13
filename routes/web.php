@@ -76,5 +76,8 @@ Route::get('/facturacion', function(){
 
 //CONFIGURACIONES
 Route::get('/settingsuser', 'UserController@index')->name('settingsuser');
+Route::post('/settingsuser/{id}', 'UserController@update');
+Route::get('/prueba', 'UserController@prueba'); //PRUEBA
 Route::get('/settingsfact', 'UsuarioFacturaController@index')->name('settingsfact');
+Route::post('/settingsfact/{id}', 'UsuarioFacturaController@update');
 

@@ -90,7 +90,7 @@
                     <li class='nav-item'>
                         <a class="{{ request()->route()->getName() === 'settingsuser' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('settingsuser') }}">
                             <i class="material-icons">settings_applications</i>
-                            Configuración usuario
+                            Usuario app
                         </a>
                     </li>
                 </ul>
@@ -98,7 +98,7 @@
                     <li class='nav-item'>
                         <a class="{{ request()->route()->getName() === 'settingsfact' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('settingsfact') }}">
                             <i class="material-icons">settings_applications</i>
-                            Configuración facturas
+                            Emisor facturas
                         </a>
                     </li>
                 </ul>
@@ -117,9 +117,11 @@
 @endsection
 
 @section('pie')
-<footer class="mastfoot mt-auto">
-    <div class="inner">
-    <p>Ángeles Rosales 2019 <a href="{{ url('https://github.com/anrosalesfdez/miproyectoFP')}}">GitHub profile</a></p>
+<!-- Footer -->
+<footer class="page-footer font-small mdb-color lighten-3 pt-4">
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3">Ángeles Rosales 2019
+        <a href="{{ url('https://github.com/anrosalesfdez/miproyectoFP')}}" target="_blank">GitHub code</a> // <a href="#" target="_blank">Contacta</a>
     </div>
 </footer>
 @endsection
