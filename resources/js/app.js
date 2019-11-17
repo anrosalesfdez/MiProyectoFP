@@ -76,6 +76,9 @@ Vue.component('clientes_detalle', require('./components/clientes_detalle.vue').d
 Vue.component('productos', require('./components/productos.vue').default);
 Vue.component('settingsuser', require('./components/settingsuser.vue').default);
 Vue.component('settingsfact', require('./components/settingsfact.vue').default);
+Vue.component('facturas', require('./components/facturas.vue').default);
+Vue.component('facturas_nuevo', require('./components/facturas_nuevo.vue').default);
+Vue.component('facturas_detalle', require('./components/facturas_detalle.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

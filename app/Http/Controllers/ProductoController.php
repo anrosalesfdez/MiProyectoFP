@@ -18,6 +18,15 @@ class ProductoController extends Controller
     }
 
     /**
+     * Send a listing of the resource.
+     */
+     public function get(){
+        
+        return Producto::get();
+        
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

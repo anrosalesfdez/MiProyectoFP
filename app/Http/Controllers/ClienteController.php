@@ -24,6 +24,14 @@ class ClienteController extends Controller
         $cliente = Cliente::findOrFail($id);
         
         return view('clientes/ver', ['cliente'=> $cliente]);
+    }
+
+    // Recoge un cliente de la BD y lo envía a la vista
+    public function getCls(){
+
+        $clientes = Cliente::get();
+        
+        return $clientes;
     } 
 
 

@@ -52,6 +52,7 @@ Route::get('/dashboard', function(){
 Route::prefix('/clientes')->group(function () {
 
     Route::get('/listar', 'ClienteController@getClientesNonTrashed')->name('listar'); //VISTA clientes.blade con <clientes>
+    Route::get('/listarCl', 'ClienteController@getCls')->name('listarCl'); //dato
     Route::get('/ver/{id}', 'ClienteController@getCliente')->name('ver'); //VISTA + DATOS detalle de cliente consultado en BD
     
     Route::get('/crear', 'ClienteController@create')->name('crear'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
@@ -63,16 +64,26 @@ Route::prefix('/clientes')->group(function () {
     Route::delete('/delete/{id}', 'ClienteController@destroy'); // DATOS 
 });
 
+Route::get('/usuariofactura', 'UsuarioFacturaController@get')->name('usuariofactura');
+//FACTURAS
+Route::prefix('/facturas')->group(function () {
+
+    Route::get('/listar', 'FacturaCabeceraController@getFacturas')->name('listar'); //VISTA clientes.blade con <clientes>
+    Route::get('/ver/{id}', 'FacturaCabeceraController@getFactura')->name('ver'); //VISTA + DATOS detalle de cliente consultado en BD
+    Route::get('/getlast', 'FacturaCabeceraController@getLast')->name('getlast'); //VISTA clientes.blade con <clientes>
+
+    Route::get('/crear', 'FacturaCabeceraController@create')->name('crear'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
+    Route::post('/store', 'FacturaCabeceraController@store'); //DATOS recoge Request HTTP y hace POST a la BD con nuevo cliente
+    
+    Route::post('/delete/{id}', 'FacturaCabeceraController@anular'); // DATOS 
+});
+
 //PRODUCTOS
 Route::get('/productos', 'ProductoController@index')->name('productos');
+Route::get('/getProductos', 'ProductoController@get')->name('getProductos');
 Route::post('/productos', 'ProductoController@store');
 Route::post('/productoeditar/{id}', 'ProductoController@actualizar');
 Route::delete('/productos/{id}', 'ProductoController@destroy');
-
-//FACTURACIÓN
-Route::get('/facturacion', function(){
-    return view('facturacion');
-})->name('facturacion');
 
 //CONFIGURACIONES
 Route::get('/settingsuser', 'UserController@index')->name('settingsuser');

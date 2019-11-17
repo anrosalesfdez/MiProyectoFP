@@ -40,7 +40,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="{{ request()->route()->getName() === 'facturacion' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('facturacion') }}">
+                        <a class="{{ request()->route()->getName() === 'listar' || request()->route()->getName() === 'ver' || request()->route()->getName() === 'crear'  ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('facturas/listar') }}">
                             <i class="material-icons">format_list_bulleted</i>
                             Facturación
                         </a>

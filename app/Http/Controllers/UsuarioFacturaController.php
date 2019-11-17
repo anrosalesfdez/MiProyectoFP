@@ -23,6 +23,20 @@ class UsuarioFacturaController extends Controller
     }
 
     /**
+     * Display emisor fra  of the resource.
+     */
+     public function get(){
+
+        // Get the currently authenticated user's ID... => dato válido pq tienen mismo id
+        $id = Auth::id();
+        // Retrieve a model by its primary key...
+        $emisor = UsuarioFactura::find($id);
+        // dd($usuariofactbd);
+        
+        return $emisor;
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id){
