@@ -3,7 +3,7 @@
 
 
         <div class="col-md-12 espacios">
-            <h3 style="display: inline">Listado de Clientes</h3>
+            <h3 style="display: inline">Mantenimiento de Clientes</h3>
             <a class="btn btn-success" role="button" href="/clientes/crear">Nuevo cliente</a>
         </div> 
                 
@@ -29,7 +29,7 @@
             </div>
             <div slot="acciones" slot-scope="props" style="display: inline">
                 <a title="editar" class="btn btn-xs" :href="'/clientes/editar/'+props.row.id" >
-                    <i class="material-icons" style="font-size: 18px; color:blue">edit</i>
+                    <i class="material-icons" style="font-size: 18px; color:#3490dc">edit</i>
                 </a>
                 <button title="eliminar" class="btn btn-xs" @click.prevent="deleteCliente(props.row.id)">
                    <i class="material-icons" style="font-size: 18px; color:red">delete</i>

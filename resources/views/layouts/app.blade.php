@@ -21,13 +21,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" integrity="sha256-BJ/G+e+y7bQdrYkS2RBTyNfBHpA9IuGaPmf9htub5MQ=" crossorigin="anonymous" />
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 
+    <style>
+    body{
+        font-family: Helvetica, sans-serif !important;
 
+    }
+    h1, h2, h3, h4, h5, h6{
+        font-family: "Futura", sans-serif;
+    }
+        .material-icons {
+            vertical-align: bottom;
+            font-size: 18px !important;
+            /* diplay:inline-flex;
+            vertical-align:top; */
+        }
+        .sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .sidebar-sticky {
+            position: -webkit-sticky;  // required for Safari
+            position: sticky;
+            top: 0; // required as well.
+        }  
+        body{
+            bgcolor: #eff8f9;
+            background-size: 1000px 500px; 
+
+        }
+        
+    </style>
 
     @yield('css')
 
 </head>
 
 <body>
+
     <div id="app">
         @yield('content')
     </div>

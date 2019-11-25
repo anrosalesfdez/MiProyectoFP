@@ -39,7 +39,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 /**
  * Salir del proyecto. Redirige a /
  */
-Route::post('/logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
+Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
  
 /**
  * Muestra vista Dashboard

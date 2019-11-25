@@ -3,7 +3,7 @@
 
 
         <div class="col-md-12 espacios">
-            <h3 style="display: inline">Listado de facturas</h3>
+            <h3 style="display: inline">Facturación</h3>
             <a class="btn btn-success" role="button" href="/facturas/crear">Nueva factura</a>
         </div> 
                 

@@ -32,7 +32,7 @@
 
         <div class="col-md-12 espacios" v-if="isEditing">
             <p><strong>Editando producto:</strong></p>
-            <input type="text" name="idEdit" id="idEdit"
+            <input type="text" name="idEdit" id="idEdit" class="col-md-1"
                                 v-model="editado.id"
                                 value="editado.id"
                                 readonly
@@ -51,7 +51,7 @@
             <input type="text" name="unidad" id="unidad"
                                 v-model="editado.unidad"
                                 value="editado.unidad">
-            <button title="crear" class="btn btn-success" @click="(editado.actualizarid)" >Actualizar</button>
+            <button title="crear" class="btn btn-success" @click="actualizar(editado.id)" >Actualizar</button>
             <button title="crear" class="btn btn-danger" @click="isEditing = !isEditing" >Cancelar</button>
         </div>
 
@@ -59,7 +59,7 @@
             <v-client-table ref="tabla" class="col-md-12" :data="misProductos" :columns="columns" :options="options">
                 <div slot="acciones" slot-scope="props" style="display: inline">
                     <button title="editar" class="btn btn-xs" @click="editar(props.row.id)" >
-                        <i class="material-icons" style="font-size: 18px; color:blue">edit</i>
+                        <i class="material-icons" style="font-size: 18px; color:#3490dc">edit</i>
                     </button>
                     <button title="eliminar" class="btn btn-xs" @click="eliminar(props.row.id)">
                         <i class="material-icons" style="font-size: 18px; color:red">delete</i>
@@ -209,6 +209,8 @@ export default {
                 this.$notification.success("Producto creado correctamente!", {  timer: 4, position:'topRigth' });
                 this.misProductos = response.data;
                 this.toggler();
+                location.reload(); //para que carguen bien las fechas...
+
             }).catch((error) => { //(error) es el param que le paso a la funcion anónima
                 console.log(error); // error = Error object
                 if(error.response.status == 422){
@@ -261,6 +263,8 @@ export default {
                 this.editado.descripcion = '';
                 this.editado.precio = '';
                 this.editado.unidad = '';
+                location.reload(); //para que carguen bien las fechas...
+
             }).catch((error) => {
                 if(error.response.status == 422){
                     let validadoServer = this.validarServer(error.response.data.errors);
@@ -282,6 +286,7 @@ export default {
                     console.log(response);
                     this.$notification.success("Producto eliminado correctamente!", {  timer: 4, position:'topRigth' });
                     this.misProductos = response.data;
+                    location.reload(); //para que carguen bien las fechas...
                 }).catch((error) => {
                     console.log(error);
                     this.$notification.error(error, {  timer: 4, position:'topRigth' });

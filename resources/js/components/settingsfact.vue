@@ -1,7 +1,7 @@
 <template>
     <div class="row justify-content-center card">
       
-        <div class="card-header espacios">
+        <div class="card-header">
             <h3 style="display: inline">Configuración de emisor facturas</h3>
             <div style="display: inline; float: right">
                 <button class="btn btn-success" @click="actualizar(usuariofactura.id)">

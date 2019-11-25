@@ -10,7 +10,7 @@
         
         <form method="post" v-bind:action="'/clientes/update/'+editadocliente.id" @submit="validarForm($event)">
             
-            <div class="card-header espacios">
+            <div class="card-header">
                 <h3 style="display: inline" v-html="this.razonvieja">Actualizando cliente: <strong></strong></h3>
                 <div style="display: inline; float: right">
                     <!-- <button class="btn btn-primary" @click="updateCliente">Actualizar</button> -->

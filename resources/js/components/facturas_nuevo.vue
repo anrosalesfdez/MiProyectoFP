@@ -1,11 +1,11 @@
 <template>
 <div class="row card" id="page-wrap">
 
-    <div class="card-header espacios">
+    <div class="card-header">
         <h3 style="display: inline">Alta nueva factura</h3>
         <div style="display: inline; float: right">
             <button type="submit" class="btn btn-success">Guardar</button>
-            <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
+            <a href="/facturas/listar" class="btn btn-danger">Cancelar</a>
         </div>
     </div>
 
@@ -22,17 +22,24 @@
             </div>
 
             <div id="emisor" class="col-md-6" style="float: left">
-                <span type="text" class="form-control-plaintext form-control-sm" readonly v-model="emisor.nombrefiscal" >{{emisor.nombrefiscal}}</span>
-                <span type="text" class="form-control-plaintext form-control-sm" readonly v-model="emisor.nif">{{emisor.nif}}</span>
-                <span type="text" class="form-control-plaintext form-control-sm" readonly v-model="emisor.direccionfiscal">{{emisor.direccionfiscal}}</span>
-                <span type="text" class="form-control-plaintext form-control-sm" readonly v-model="emisor.email">{{emisor.email}}</span>
-                <span type="text" class="form-control-plaintext form-control-sm" readonly v-model="emisor.telefono">{{emisor.telefono}}</span>
+                <span type="text" class="form-control-plaintext form-control-sm" readonly
+                    v-text="nuevaFactura.emiNombrecomercial"></span>
+                <span v-if="cliente.ambito_cl != 'NACIONAL'" type="text" class="form-control-plaintext form-control-sm" readonly
+                            v-text="nuevaFactura.emiNiva"></span>
+                <span v-else type="text" class="form-control-plaintext form-control-sm" readonly
+                            v-text="nuevaFactura.emiNif"></span>
+                <span type="text" class="form-control-plaintext form-control-sm" readonly 
+                            v-text="nuevaFactura.emiDireccionfiscal"></span>
+                <span type="text" class="form-control-plaintext form-control-sm" readonly 
+                            v-text="nuevaFactura.emiEmail"></span>
+                <span type="text" class="form-control-plaintext form-control-sm" readonly 
+                            v-text="nuevaFactura.emiTelefono"></span>
             </div>
         </div>
 
         <div class="row espacios">
     		<div id="cliente" class="col-md-7 espacios">
-                <select class="form-control-plaintext" id="cliente" v-model="cliente">
+                <select class="form-control-plaintext editable" id="cliente" v-model="cliente" @change="clFra($event)">
                     <option disabled value="null">Seleccione un cliente</option>
                     <option v-for="cliente in clientes" v-bind:value="cliente"> {{ cliente.razon_social }} </option>
                 </select>
@@ -47,25 +54,23 @@
                         <td class="cabecera-title">Número factura</td>
                         <td class="cabecera-text">
                             <span type="text" readonly
-                                    v-model="nuevaFactura.numero">
-                                {{nuevaFactura.numero}}
+                                    v-text="nuevaFactura.serie+'/'+nuevaFactura.numero">
                             </span>
                         </td>
                     </tr>
                     <tr>
                         <td class="cabecera-title">Fecha factura</td>
-                        <td class="cabecera-text editable">
-                            <input type="date" id="fecha"
-                                    v-model="nuevaFactura.fecha_fra">
+                        <td class="cabecera-text">
+                            <input type="date" id="fecha" class="editable"
+                                    v-model="nuevaFactura.fechaFra">
                         </td>
                     </tr>
                     <tr>
                         <td class="cabecera-title">Vencimiento</td>
-                        <td class="cabecera-text editable">
-                            <span type="date" readonly
+                        <td class="cabecera-text">
+                            <input type="date" readonly
+                                    tabindex="-1" 
                                     v-model="nuevaFactura.vencimiento">
-                                {{nuevaFactura.vencimiento}}
-                            </span>
                         </td>
                     </tr>
                 </table>
@@ -78,62 +83,50 @@
                 <thead>
                     <tr>
                         <th class="cabecera-title" style="width: 20%">Item</th>
-                        <th class="cabecera-title" style="width: 40%">Descripción</th>
-                        <th class="cabecera-title" style="width: 10%">Precio</th>
-                        <th class="cabecera-title" style="width: 20%" colspan="2">Cantidad</th>
-                        <th class="cabecera-title" style="width: 10%">Subtotal</th>
+                        <th class="cabecera-title" style="width: 30%">Descripción</th>
+                        <th class="cabecera-title" style="width: 20%" colspan="2">Precio</th>
+                        <th class="cabecera-title" style="width: 15%">Cantidad</th>
+                        <th class="cabecera-title" style="width: 15%">Subtotal</th>
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody v-for="linea in lineas" v-bind:key="linea">
                     <tr id="nuevoItem">
-                        <td>
+                        <td style="width: 20%">
                             <div class="delete-wpr">
-                            <select class="form-control-plaintext" id="cliente" v-model="producto">
-                                <option disabled value="null">Seleccione un producto</option>
-                                <option v-for="producto in productos" v-bind:value="producto"> {{ producto.nombre }} </option>
-                            </select>
-                                <a class="delete" href="javascript:;" title="Remove row">X</a>
+                                <select class="form-control-plaintext form-control-sm editable" v-model="linea.producto">
+                                    <option disabled value="null">Seleccione un producto</option>
+                                    <option v-for="producto in productos" v-bind:key="producto"> {{ producto.nombre }} </option>
+                                </select>
+                                <a class="delete" role="button" @click="eliminarLinea(index)" title="Eliminar línea">X</a>
                             </div>
                         </td>
-                        <td class="editable">
-                            <input type="text" class="form-control-plaintext form-control-sm"  
-                                    v-model="producto.descripcion"
-                                    value="producto.descripcion">
+                        <td style="width: 30%">
+                            <input type="text" class="form-control-plaintext form-control-sm editable"  
+                                    v-model="linea.producto.descripcion">
                         </td>
-                        <td class="editable">
-                            <input type="number" class="form-control-plaintext form-control-sm dcha" 
+                        <td style="width: 10%">
+                            <input type="number" class="dcha editable" 
                                     step="0.01" 
-                                    v-model="producto.precio" 
-                                    value="producto.precio">
+                                    v-model="linea.producto.precio">
                         </td>
-                        <td class="editable" style="width: 10%">
-                            <input type="number" class="form-control-plaintext form-control-sm dcha" 
-                                    v-model="cantidad" 
+                        <td style="width: 10%">
+                            <input type="text" class="form-control-plaintext form-control-sm"
+                                    v-model="linea.producto.unidad">
+                        </td>
+                        <td style="width: 10%">
+                            <input type="number" class=" editable dcha" 
+                                    v-model="linea.cantidad" 
                                     value="1">
                         </td>
                         <td style="width: 10%">
-                            <span type="text" class="form-control-plaintext form-control-sm"
-                                    v-model="producto.unidad">
-                                €/{{producto.unidad}}
-                            </span>
-                        </td>
-                        <td>
-                            <span type="number" class="form-control-plaintext form-control-sm dcha"
-                                    v-model="cantidad"
-                                    step="0.01">
-                                {{producto.precio*cantidad}}
-                                </span>
+                            <input type="number" class="dcha"
+                                    step="0.01"
+                                    value="(linea.precio*linea.cantidad)().toFixed(2)">
                         </td>
                     </tr>
-
-                    
-                    <!-- <tr id="hiderow">
-                        <td colspan="5"><button id="addrow" href="javascript:;" title="Add a row">Add a row</a></td>
-                    </tr> -->
-
                 </tbody>
-                    <button title="nuevaLinea" class="btn-default btn-xs" @click="addrow">
+                    <button title="nuevaLinea" class="btn-default btn-xs" @click="crearLinea">
                         Nueva línea
                     </button>
             </table>
@@ -142,24 +135,40 @@
         <div id="pieFra" class="col-md-12 espacios">
             <table id="totalesFra">
                 <tr>
-                    <td rowspan="3" style="width: 60%" >
-                        <textarea placeholder="Observaciones..."></textarea>
+                    <td rowspan="4" style="width: 60%" >
+                        <textarea rows="6" cols="50" placeholder="Observaciones..."></textarea>
                     </td>
                     <td class="cabecera-title" style="width: 20%">Subtotal</td>
-                    <td class="cabecera-text" style="width: 20%">xxx</td>
+                    <td class="cabecera-text" style="width: 20%">
+                        <span type="number" class="dcha"
+                                    v-text="nuevaFactura.subtotal"
+                                    step="0.01">
+                                {{nuevaFactura.subtotal}} €
+                        </span>
+                    </td>
                 </tr>
                 <tr>
                     <td class="cabecera-title">Impuestos</td>
                     <td class="cabecera-text">xxx</td>
                 </tr>
                 <tr>
-                    <td class="cabecera-title">Total</td>
+                    <td class="cabecera-title">Retención</td>
                     <td class="cabecera-text">xxx</td>
+                </tr>
+                <tr>
+                    <td class="cabecera-title">Total Factura</td>
+                    <td class="cabecera-text">
+                        <span type="number" class="dcha"
+                                    v-text="nuevaFactura.total"
+                                    step="0.01">
+                                {{nuevaFactura.total}} €
+                        </span>
+                    </td>
                 </tr>
             </table>
         </div>
 		
-		<div id="terms">
+		<div id="terms" class="espacios">
 		  <h5>Condiciones</h5>
 		  <span>Forma de pago: {{this.cliente.forma_pago}} a {{this.cliente.dias_pago}} días.</span>
 		</div>
@@ -170,39 +179,69 @@
 
 
 <script>
-//FIXME: enviar notificación desde server cuando se guarda OK.
-//FIXME: meter control si NIF ya existe. traer datos desde clientes.vue
-//FIXME: No funciona la directiva de pintar en mayusc
 
 export default{
     data(){ //datos del componente
         return {
             nuevaFactura: { // datos de factura creada
+                //propios fra
                 ejercicio: '',
-                serie: '',
-                numero: 0,
-                fecha_fra: '',
-                cliente_id: '',
-                total: 0,
+                serie: 'VEND',
+                numero: '',
+                fechaFra: '',
+                subtotal:'',
+                total: '',
                 vencimiento: '',
-                forma_pago: '',
+                formaPago: '',
                 observ: '',
-                moneda: ''          
+                //de emisor
+                emiId: '',
+                emiNif : '',
+                emiNiva: '',
+                emiNombrecomercial: '',
+                emiEmail: '',
+                emiTelefono: '',
+                emiDireccionfiscal: '',
+                emiCp: '',
+                emiCiudad: '',
+                emiPais: '',
+                emiMoneda: '',
+                emiCnae: '',
+                //de cliente
+                cliId:'',
+                cliRazon_social:'',
+                cliNif:'',
+                cliNiva:'',
+                cliDireccion:'',
+                cliProvincia:'',
+                cliPais:'',
+                cliCp:'',
+                cliTlfn:'',
+                cliEmail:'',
+                cliAmbito_cl:'',
+                cliTipo_cl:'',
+                cliForma_pago:'',
+                cliDias_pago:'',
+
             },
             
-            emisor: { // datos de emisor fra. OBLIGATORIO NIF
+            emisor: { // datos de emisor fra. (modelo UsuarioFactura)
+                id:'',
                 nif: '',
                 niva: '',
                 nombrefiscal: '',
                 nombrecomercial: '',
+                email:'',
                 telefono: '',
                 direccionfiscal: '',
                 cp: '',
                 ciudad: '',
-                pais: ''
+                pais: '',
+                moneda:'',
+                cnae: '',
             },
 
-            clientes: [], // recoge todos los clientes en BD
+            clientes: [], // datos de todos los clientes activos en BD (modelo Cliente)
 
             cliente:{ // cliente seleccionado para emitir fra
                 id:'',
@@ -220,55 +259,51 @@ export default{
                 forma_pago:'',
                 dias_pago:'',
             },
-            productos:[],
-            producto:{
+
+            productos:[], // datos de todos los productos activos en BD (modelo Producto)
+
+            producto:{ // producto seleccionado para ser linea
                 id:'',
                 nombre:'',
                 descripcion: '',
                 precio:0,
                 unidad:''
             },
+
+            lineas:[], //array de líneas de la factura
+
+            linea:{
+                producto:{
+                    id:'',
+                    nombre:'',
+                    descripcion: '',
+                    precio:0,
+                    unidad:'',
+                },
+                cantidad:1,
+            },
+
+            ultimaFra:'',
+
             csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+
             validado:'', //recoge errores en form. Cliente,
-            cantidad:1,
         }
     },
     computed: {
-        
+
     },
     props:[
         'olds',
         'errors'
     ],
     created(){
-
         //CARGA DATOS PARA FRA
         this.datosEmisor();
         this.datosClientes();
         this.datosFactura();
         this.datosProductos();
-
-        //TRAE DATOS VIEJOS
-        if('ejercicio' in this.olds) { this.nuevaFactura.ejercicio = this.olds.ejercicio; }
-        if('serie' in this.olds) { this.nuevaFactura.serie = this.olds.serie; }
-        if('numero' in this.olds) { this.nuevaFactura.numero = this.olds.numero; }
-        if('fecha_fra' in this.olds) { this.nuevaFactura.fecha_fra = this.olds.fecha_fra; }
-        if('cliente_id' in this.olds) { this.nuevaFactura.cliente_id = this.olds.cliente_id; }
-        if('total' in this.olds) { this.nuevaFactura.total = this.olds.total; }
-        if('vencimiento' in this.olds) { this.nuevaFactura.vencimiento = this.olds.vencimiento; }
-        if('observ' in this.olds) { this.nuevaFactura.observ = this.olds.observ; }
-        if('moneda' in this.olds) { this.nuevaFactura.moneda = this.olds.moneda; }
-        
-        //si form validado en cliente pero falla en servidor.
-        console.log('enviado true, devuelve errors: '+this.errors);
-        if(this.errors.length !== 0){
-            this.validado = '';
-            for(let i=0; i < this.errors.length; i++){
-                this.validado += this.errors[i];
-            }
-            
-            this.$notification.error(this.validado, {  timer: 2, position:'topRigth' });
-        };
+        this.hoy(); //fecha inicial para fra. modificable.
     },
     mounted() {
         //MIN Y MAX FECHA FRA: en base al trimestre en el que estamos.
@@ -276,15 +311,81 @@ export default{
         this.maxFecha();
     },
     methods:{
+        hoy(){
+            let fecha = new Date();
+            return this.nuevaFactura.fechaFra = fecha.getFullYear()+'-'+(fecha.getMonth()+1)+'-'+fecha.getDate();
+        },
+        clFra(event){
+            this.nuevaFactura.cliId = this.cliente.id;
+            this.nuevaFactura.cliRazon_social = this.cliente.razon_social;
+            this.nuevaFactura.cliNif = this.cliente.nif;
+            this.nuevaFactura.cliNiva = this.cliente.niva;
+            this.nuevaFactura.cliDireccion = this.cliente.direccion;
+            this.nuevaFactura.cliProvincia = this.cliente.provincia;
+            this.nuevaFactura.cliPais = this.cliente.pais;
+            this.nuevaFactura.cliCp = this.cliente.cp;
+            this.nuevaFactura.cliTlfn = this.cliente.tlfn;
+            this.nuevaFactura.cliEmail = this.cliente.email;
+            this.nuevaFactura.cliAmbito_cl = this.cliente.ambito_cl;
+            this.nuevaFactura.cliTipo_cl = this.cliente.tipo_cl;
+            this.nuevaFactura.cliForma_pago = this.cliente.forma_pago;
+            this.nuevaFactura.cliDias_pago = this.cliente.dias_pago;
+            //si cliente no NACIONAL y no tenemos NIVA en emisor:
+            if(this.cliente.ambito_cl !== 'NACIONAL' && this.emisor.niva === null){
+                this.$notification.error("Necesitas NIVA para emitir a extranjeros", {  timer: 2, position:'topRigth' });
+            }
+            //calcula vencimiento
+            console.log(this.nuevaFactura.fechaFra);
+            let v = new Date(this.nuevaFactura.fechaFra);
+            v.setDate(v.getDate() + parseInt(this.nuevaFactura.cliDias_pago));
+            console.log(v);
+            let mes = v.getMonth()+1;
+            let dia = v.getDate();
+            if (mes < 10) 
+                mes = "0" + mes;
+            if (dia < 10) 
+                dia = "0" + dia;
+            console.log(mes);
+            this.nuevaFactura.vencimiento =v.getFullYear()+'-'+(mes)+'-'+dia;
+        },
+        //RECUPERA DEL SERVER DATOS EMISOR FRA
         datosEmisor(){
             let url = "/usuariofactura";
             axios.get(url).then(response => {
                 this.emisor = response.data;
                 console.log(this.emisor);
+                this.nuevaFactura.emiId = this.emisor.id;
+                this.nuevaFactura.emiNif = this.emisor.nif;
+                this.nuevaFactura.emiNiva = this.emisor.niva;
+                this.nuevaFactura.emiNombrecomercial = this.emisor.nombrecomercial;
+                this.nuevaFactura.emiEmail = this.emisor.email;
+                this.nuevaFactura.emiTelefono = this.emisor.telefono;
+                this.nuevaFactura.emiDireccionfiscal = this.emisor.direccionfiscal;
+                this.nuevaFactura.emiCp = this.emisor.cp;
+                this.nuevaFactura.emiCiudad = this.emisor.ciudad;
+                this.nuevaFactura.emiPais = this.emisor.pais;
+                this.nuevaFactura.emiMoneda = this.emisor.moneda;
+                this.nuevaFactura.emiCnae = this.emisor.cnae;
             }).catch((error) => {
                 console.log(error);
             });
         },
+        //RECUPERA DEL SERVER DATOS PARA INICIALIZAR NUEVA FRA
+        datosFactura(){
+            let url = "/facturas/getlast";
+            axios.get(url).then(response => {
+                this.ultimaFra = response.data.numero;
+                console.log(this.ultimaFra);
+                if(!this.ultimaFra)
+                    this.nuevaFactura.numero = 1;
+                else
+                    this.nuevaFactura.numero += this.ultimaFra;
+                this.nuevaFactura.ejercicio = new Date().getFullYear();
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
+        //RECUPERA DEL SERVER DATOS DE CLIENTES
         datosClientes(){
             let url = "/clientes/listarCl";
             axios.get(url).then(response => {
@@ -294,76 +395,7 @@ export default{
                 console.log(error);
             });
         },
-        datosFactura(){
-            let url = "/facturas/getlast";
-            axios.get(url).then(response => {
-                if(response.data == ''){
-                    this.nuevaFactura.numero = 1;
-                    //FIXME: como darle formato tipo: 2019/00001 ¿?
-                }
-                else{
-                    this.nuevaFactura.numero = response.data.numero + 1;
-                }
-            }).catch((error) => {
-                console.log(error);
-            });
-        },
-        minFecha(){
-            var today = new Date();
-            var dd = today.getDate();
-            var mm = today.getMonth()+1; //January is 0!
-            var yyyy = today.getFullYear();
-            if(dd<10){
-                dd='0'+dd
-            } 
-            if(mm<10){
-                mm='0'+mm
-            } 
-
-            today = yyyy+'-'+mm+'-'+dd;
-            let minMes = '';
-            let minDia = '01';
-            if(mm >= 10)
-                minMes = '10';
-            else if(mm >=7)
-                minMes='07';
-            else if(mm >=4)
-                minMes='04';
-            else
-                minMes='01';
-            let minimo = yyyy+'-'+minMes+'-'+minDia;
-            document.getElementById("fecha").setAttribute("min", minimo);
-            console.log(minimo);
-
-        },
-        maxFecha(){
-            var today = new Date();
-            var dd = today.getDate();
-            var mm = today.getMonth()+1; //January is 0!
-            var yyyy = today.getFullYear();
-            if(dd<10){
-                dd='0'+dd
-            } 
-            if(mm<10){
-                mm='0'+mm
-            } 
-
-            today = yyyy+'-'+mm+'-'+dd;
-            let maxMes = '';
-            let maxDia = '30'; //FIXME: habría que calcular final mes en función del mes
-            if(mm >= 10)
-                maxMes = '12';
-            else if(mm >=7)
-                maxMes='09';
-            else if(mm >=4)
-                maxMes='06';
-            else
-                maxMes='03';
-            let maximo = yyyy+'-'+maxMes+'-'+maxDia;
-            document.getElementById("fecha").setAttribute("max", maximo);
-            console.log(maximo);
-
-        },
+        //RECUPERA DEL SERVER DATOS DE PRODUCTOS
         datosProductos(){
             let url = "/getProductos";
             axios.get(url).then(response => {
@@ -373,31 +405,59 @@ export default{
                 console.log(error);
             });
         },
-        addrow(){
-            // let linea = $('#nuevoItem');
-            $('#items').find('tbody').append("hola");
-
+        //MÉTODOS AUXILIARES
+        minFecha(){
+            let mesHoy = (new Date().getMonth()+1);
+            let minMes = '';
+            if(mesHoy >= 10)
+                minMes = '10';
+            else if(mesHoy >=7)
+                minMes='07';
+            else if(mesHoy >=4)
+                minMes='04';
+            else
+                minMes='01';
+            let minDia = '01';
+            let minFecha = new Date().getFullYear()+'-'+minMes+'-'+minDia;
+            document.getElementById("fecha").setAttribute("min", minFecha);
+            console.log('minFecha: '+minFecha);
         },
-        //VALIDACION DEL FORM. SI TODO OK ENVÍA HTTP REQUEST, SINO, MUESTRA NOTIFICACIÓN CON ERRORES.
-        validarForm(e){
-            this.validado=''; //blanquea
-            //Ejecuta validaciones en cliente
-
-            if(this.validado !== ''){
-                this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
-                e.preventDefault();
-                return;
-            }          
+        maxFecha(){
+            let mesHoy = (new Date().getMonth()+1);
+            let maxMes = '';
+            let maxDia = '';
+            if(mesHoy >= 10){
+                maxMes = '12';
+                maxDia = '31';
+            }else if(mesHoy >=7){
+                maxMes='09';
+                maxDia = '30';
+            }else if(mesHoy >=4){
+                maxMes='06';
+                maxDia = '30';
+            }else{
+                maxMes='03';
+                maxDia = '31';
+            }
+            let maxFecha = new Date().getFullYear()+'-'+maxMes+'-'+maxDia;
+            document.getElementById("fecha").setAttribute("max", maxFecha);
+            console.log('maxFecha: '+maxFecha);
         },
+        //MÉTODOS GESTIÓN INTERFAZ
+        //NUEVA LÍNEA FRA
+        crearLinea() {
+            this.lineas.push(Vue.util.extend({}, this.linea))
+        },
+        //ELIMINA LÍNEA FRA
+        eliminarLinea(index){
+            Vue.delete(this.lineas, index);
+        }
     } //end methods
 }
 </script>
 
 <style>
-.espacios {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
+.espacios { margin-top: 20px; margin-bottom: 20px; }
 
 * { margin: 0; padding: 0; }
 
@@ -414,9 +474,9 @@ body { font: 14px/1.4 Georgia, serif; }
 /*inputs // span */
 input { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px; }
 span { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px; }
-.editable td:hover: { background-color:#EEFF88 !important; }
+.editable { background-color:#08FBA1; }
 td {padding: 5px;}
-.dcha{text-align: rigth}
+.dcha{float: right; text-align: right;}
 /* todas las tablas */
 table { border-collapse: collapse; } /** solapa los bordes*/
 .cabecera-title{ padding: 5px; text-align: left; font-weight: bold;  background: #eee; border: 1px solid black;}

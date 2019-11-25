@@ -6880,40 +6880,78 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//FIXME: enviar notificación desde server cuando se guarda OK.
-//FIXME: meter control si NIF ya existe. traer datos desde clientes.vue
-//FIXME: No funciona la directiva de pintar en mayusc
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     //datos del componente
     return {
       nuevaFactura: {
         // datos de factura creada
+        //propios fra
         ejercicio: '',
-        serie: '',
-        numero: 0,
-        fecha_fra: '',
-        cliente_id: '',
-        total: 0,
+        serie: 'VEND',
+        numero: '',
+        fechaFra: '',
+        subtotal: '',
+        total: '',
         vencimiento: '',
-        forma_pago: '',
+        formaPago: '',
         observ: '',
-        moneda: ''
+        //de emisor
+        emiId: '',
+        emiNif: '',
+        emiNiva: '',
+        emiNombrecomercial: '',
+        emiEmail: '',
+        emiTelefono: '',
+        emiDireccionfiscal: '',
+        emiCp: '',
+        emiCiudad: '',
+        emiPais: '',
+        emiMoneda: '',
+        emiCnae: '',
+        //de cliente
+        cliId: '',
+        cliRazon_social: '',
+        cliNif: '',
+        cliNiva: '',
+        cliDireccion: '',
+        cliProvincia: '',
+        cliPais: '',
+        cliCp: '',
+        cliTlfn: '',
+        cliEmail: '',
+        cliAmbito_cl: '',
+        cliTipo_cl: '',
+        cliForma_pago: '',
+        cliDias_pago: ''
       },
       emisor: {
-        // datos de emisor fra. OBLIGATORIO NIF
+        // datos de emisor fra. (modelo UsuarioFactura)
+        id: '',
         nif: '',
         niva: '',
         nombrefiscal: '',
         nombrecomercial: '',
+        email: '',
         telefono: '',
         direccionfiscal: '',
         cp: '',
         ciudad: '',
-        pais: ''
+        pais: '',
+        moneda: '',
+        cnae: ''
       },
       clientes: [],
-      // recoge todos los clientes en BD
+      // datos de todos los clientes activos en BD (modelo Cliente)
       cliente: {
         // cliente seleccionado para emitir fra
         id: '',
@@ -6932,17 +6970,31 @@ __webpack_require__.r(__webpack_exports__);
         dias_pago: ''
       },
       productos: [],
+      // datos de todos los productos activos en BD (modelo Producto)
       producto: {
+        // producto seleccionado para ser linea
         id: '',
         nombre: '',
         descripcion: '',
         precio: 0,
         unidad: ''
       },
+      lineas: [],
+      //array de líneas de la factura
+      linea: {
+        producto: {
+          id: '',
+          nombre: '',
+          descripcion: '',
+          precio: 0,
+          unidad: ''
+        },
+        cantidad: 1
+      },
+      ultimaFra: '',
       csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-      validado: '',
-      //recoge errores en form. Cliente,
-      cantidad: 1
+      validado: '' //recoge errores en form. Cliente,
+
     };
   },
   computed: {},
@@ -6952,61 +7004,8 @@ __webpack_require__.r(__webpack_exports__);
     this.datosEmisor();
     this.datosClientes();
     this.datosFactura();
-    this.datosProductos(); //TRAE DATOS VIEJOS
-
-    if ('ejercicio' in this.olds) {
-      this.nuevaFactura.ejercicio = this.olds.ejercicio;
-    }
-
-    if ('serie' in this.olds) {
-      this.nuevaFactura.serie = this.olds.serie;
-    }
-
-    if ('numero' in this.olds) {
-      this.nuevaFactura.numero = this.olds.numero;
-    }
-
-    if ('fecha_fra' in this.olds) {
-      this.nuevaFactura.fecha_fra = this.olds.fecha_fra;
-    }
-
-    if ('cliente_id' in this.olds) {
-      this.nuevaFactura.cliente_id = this.olds.cliente_id;
-    }
-
-    if ('total' in this.olds) {
-      this.nuevaFactura.total = this.olds.total;
-    }
-
-    if ('vencimiento' in this.olds) {
-      this.nuevaFactura.vencimiento = this.olds.vencimiento;
-    }
-
-    if ('observ' in this.olds) {
-      this.nuevaFactura.observ = this.olds.observ;
-    }
-
-    if ('moneda' in this.olds) {
-      this.nuevaFactura.moneda = this.olds.moneda;
-    } //si form validado en cliente pero falla en servidor.
-
-
-    console.log('enviado true, devuelve errors: ' + this.errors);
-
-    if (this.errors.length !== 0) {
-      this.validado = '';
-
-      for (var i = 0; i < this.errors.length; i++) {
-        this.validado += this.errors[i];
-      }
-
-      this.$notification.error(this.validado, {
-        timer: 2,
-        position: 'topRigth'
-      });
-    }
-
-    ;
+    this.datosProductos();
+    this.hoy(); //fecha inicial para fra. modificable.
   },
   mounted: function mounted() {
     //MIN Y MAX FECHA FRA: en base al trimestre en el que estamos.
@@ -7014,6 +7013,46 @@ __webpack_require__.r(__webpack_exports__);
     this.maxFecha();
   },
   methods: {
+    hoy: function hoy() {
+      var fecha = new Date();
+      return this.nuevaFactura.fechaFra = fecha.getFullYear() + '-' + (fecha.getMonth() + 1) + '-' + fecha.getDate();
+    },
+    clFra: function clFra(event) {
+      this.nuevaFactura.cliId = this.cliente.id;
+      this.nuevaFactura.cliRazon_social = this.cliente.razon_social;
+      this.nuevaFactura.cliNif = this.cliente.nif;
+      this.nuevaFactura.cliNiva = this.cliente.niva;
+      this.nuevaFactura.cliDireccion = this.cliente.direccion;
+      this.nuevaFactura.cliProvincia = this.cliente.provincia;
+      this.nuevaFactura.cliPais = this.cliente.pais;
+      this.nuevaFactura.cliCp = this.cliente.cp;
+      this.nuevaFactura.cliTlfn = this.cliente.tlfn;
+      this.nuevaFactura.cliEmail = this.cliente.email;
+      this.nuevaFactura.cliAmbito_cl = this.cliente.ambito_cl;
+      this.nuevaFactura.cliTipo_cl = this.cliente.tipo_cl;
+      this.nuevaFactura.cliForma_pago = this.cliente.forma_pago;
+      this.nuevaFactura.cliDias_pago = this.cliente.dias_pago; //si cliente no NACIONAL y no tenemos NIVA en emisor:
+
+      if (this.cliente.ambito_cl !== 'NACIONAL' && this.emisor.niva === null) {
+        this.$notification.error("Necesitas NIVA para emitir a extranjeros", {
+          timer: 2,
+          position: 'topRigth'
+        });
+      } //calcula vencimiento
+
+
+      console.log(this.nuevaFactura.fechaFra);
+      var v = new Date(this.nuevaFactura.fechaFra);
+      v.setDate(v.getDate() + parseInt(this.nuevaFactura.cliDias_pago));
+      console.log(v);
+      var mes = v.getMonth() + 1;
+      var dia = v.getDate();
+      if (mes < 10) mes = "0" + mes;
+      if (dia < 10) dia = "0" + dia;
+      console.log(mes);
+      this.nuevaFactura.vencimiento = v.getFullYear() + '-' + mes + '-' + dia;
+    },
+    //RECUPERA DEL SERVER DATOS EMISOR FRA
     datosEmisor: function datosEmisor() {
       var _this = this;
 
@@ -7021,82 +7060,49 @@ __webpack_require__.r(__webpack_exports__);
       axios.get(url).then(function (response) {
         _this.emisor = response.data;
         console.log(_this.emisor);
+        _this.nuevaFactura.emiId = _this.emisor.id;
+        _this.nuevaFactura.emiNif = _this.emisor.nif;
+        _this.nuevaFactura.emiNiva = _this.emisor.niva;
+        _this.nuevaFactura.emiNombrecomercial = _this.emisor.nombrecomercial;
+        _this.nuevaFactura.emiEmail = _this.emisor.email;
+        _this.nuevaFactura.emiTelefono = _this.emisor.telefono;
+        _this.nuevaFactura.emiDireccionfiscal = _this.emisor.direccionfiscal;
+        _this.nuevaFactura.emiCp = _this.emisor.cp;
+        _this.nuevaFactura.emiCiudad = _this.emisor.ciudad;
+        _this.nuevaFactura.emiPais = _this.emisor.pais;
+        _this.nuevaFactura.emiMoneda = _this.emisor.moneda;
+        _this.nuevaFactura.emiCnae = _this.emisor.cnae;
       })["catch"](function (error) {
         console.log(error);
       });
     },
-    datosClientes: function datosClientes() {
-      var _this2 = this;
-
-      var url = "/clientes/listarCl";
-      axios.get(url).then(function (response) {
-        _this2.clientes = response.data;
-        console.log(_this2.clientes);
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
+    //RECUPERA DEL SERVER DATOS PARA INICIALIZAR NUEVA FRA
     datosFactura: function datosFactura() {
-      var _this3 = this;
+      var _this2 = this;
 
       var url = "/facturas/getlast";
       axios.get(url).then(function (response) {
-        if (response.data == '') {
-          _this3.nuevaFactura.numero = 1; //FIXME: como darle formato tipo: 2019/00001 ¿?
-        } else {
-          _this3.nuevaFactura.numero = response.data.numero + 1;
-        }
+        _this2.ultimaFra = response.data.numero;
+        console.log(_this2.ultimaFra);
+        if (!_this2.ultimaFra) _this2.nuevaFactura.numero = 1;else _this2.nuevaFactura.numero += _this2.ultimaFra;
+        _this2.nuevaFactura.ejercicio = new Date().getFullYear();
       })["catch"](function (error) {
         console.log(error);
       });
     },
-    minFecha: function minFecha() {
-      var today = new Date();
-      var dd = today.getDate();
-      var mm = today.getMonth() + 1; //January is 0!
+    //RECUPERA DEL SERVER DATOS DE CLIENTES
+    datosClientes: function datosClientes() {
+      var _this3 = this;
 
-      var yyyy = today.getFullYear();
-
-      if (dd < 10) {
-        dd = '0' + dd;
-      }
-
-      if (mm < 10) {
-        mm = '0' + mm;
-      }
-
-      today = yyyy + '-' + mm + '-' + dd;
-      var minMes = '';
-      var minDia = '01';
-      if (mm >= 10) minMes = '10';else if (mm >= 7) minMes = '07';else if (mm >= 4) minMes = '04';else minMes = '01';
-      var minimo = yyyy + '-' + minMes + '-' + minDia;
-      document.getElementById("fecha").setAttribute("min", minimo);
-      console.log(minimo);
+      var url = "/clientes/listarCl";
+      axios.get(url).then(function (response) {
+        _this3.clientes = response.data;
+        console.log(_this3.clientes);
+      })["catch"](function (error) {
+        console.log(error);
+      });
     },
-    maxFecha: function maxFecha() {
-      var today = new Date();
-      var dd = today.getDate();
-      var mm = today.getMonth() + 1; //January is 0!
-
-      var yyyy = today.getFullYear();
-
-      if (dd < 10) {
-        dd = '0' + dd;
-      }
-
-      if (mm < 10) {
-        mm = '0' + mm;
-      }
-
-      today = yyyy + '-' + mm + '-' + dd;
-      var maxMes = '';
-      var maxDia = '30'; //FIXME: habría que calcular final mes en función del mes
-
-      if (mm >= 10) maxMes = '12';else if (mm >= 7) maxMes = '09';else if (mm >= 4) maxMes = '06';else maxMes = '03';
-      var maximo = yyyy + '-' + maxMes + '-' + maxDia;
-      document.getElementById("fecha").setAttribute("max", maximo);
-      console.log(maximo);
-    },
+    //RECUPERA DEL SERVER DATOS DE PRODUCTOS
     datosProductos: function datosProductos() {
       var _this4 = this;
 
@@ -7108,23 +7114,47 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
-    addrow: function addrow() {
-      // let linea = $('#nuevoItem');
-      $('#items').find('tbody').append("hola");
+    //MÉTODOS AUXILIARES
+    minFecha: function minFecha() {
+      var mesHoy = new Date().getMonth() + 1;
+      var minMes = '';
+      if (mesHoy >= 10) minMes = '10';else if (mesHoy >= 7) minMes = '07';else if (mesHoy >= 4) minMes = '04';else minMes = '01';
+      var minDia = '01';
+      var minFecha = new Date().getFullYear() + '-' + minMes + '-' + minDia;
+      document.getElementById("fecha").setAttribute("min", minFecha);
+      console.log('minFecha: ' + minFecha);
     },
-    //VALIDACION DEL FORM. SI TODO OK ENVÍA HTTP REQUEST, SINO, MUESTRA NOTIFICACIÓN CON ERRORES.
-    validarForm: function validarForm(e) {
-      this.validado = ''; //blanquea
-      //Ejecuta validaciones en cliente
+    maxFecha: function maxFecha() {
+      var mesHoy = new Date().getMonth() + 1;
+      var maxMes = '';
+      var maxDia = '';
 
-      if (this.validado !== '') {
-        this.$notification.error(this.validado, {
-          timer: 4,
-          position: 'topRigth'
-        });
-        e.preventDefault();
-        return;
+      if (mesHoy >= 10) {
+        maxMes = '12';
+        maxDia = '31';
+      } else if (mesHoy >= 7) {
+        maxMes = '09';
+        maxDia = '30';
+      } else if (mesHoy >= 4) {
+        maxMes = '06';
+        maxDia = '30';
+      } else {
+        maxMes = '03';
+        maxDia = '31';
       }
+
+      var maxFecha = new Date().getFullYear() + '-' + maxMes + '-' + maxDia;
+      document.getElementById("fecha").setAttribute("max", maxFecha);
+      console.log('maxFecha: ' + maxFecha);
+    },
+    //MÉTODOS GESTIÓN INTERFAZ
+    //NUEVA LÍNEA FRA
+    crearLinea: function crearLinea() {
+      this.lineas.push(Vue.util.extend({}, this.linea));
+    },
+    //ELIMINA LÍNEA FRA
+    eliminarLinea: function eliminarLinea(index) {
+      Vue["delete"](this.lineas, index);
     }
   } //end methods
 
@@ -7364,6 +7394,8 @@ __webpack_require__.r(__webpack_exports__);
         _this.misProductos = response.data;
 
         _this.toggler();
+
+        location.reload(); //para que carguen bien las fechas...
       })["catch"](function (error) {
         //(error) es el param que le paso a la funcion anónima
         console.log(error); // error = Error object
@@ -7446,6 +7478,7 @@ __webpack_require__.r(__webpack_exports__);
         _this2.editado.descripcion = '';
         _this2.editado.precio = '';
         _this2.editado.unidad = '';
+        location.reload(); //para que carguen bien las fechas...
       })["catch"](function (error) {
         if (error.response.status == 422) {
           var validadoServer = _this2.validarServer(error.response.data.errors);
@@ -7478,6 +7511,7 @@ __webpack_require__.r(__webpack_exports__);
           });
 
           _this3.misProductos = response.data;
+          location.reload(); //para que carguen bien las fechas...
         })["catch"](function (error) {
           console.log(error);
 
@@ -14729,7 +14763,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.espacios {\r\n    margin-top: 10px;\r\n    margin-bottom: 10px;\n}\n* { margin: 0; padding: 0;\n}\nbody { font: 14px/1.4 Georgia, serif;\n}\n#page-wrap { width: 800px; margin: 0 auto;\n} /* tamaño A4¿? */\r\n\r\n/**titulo: F A C T U R A */\n#tituloFact { width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; -webkit-text-decoration: uppercase; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px;\n}\r\n\r\n/*logo */\n#logo { text-align: right; float: right; position: relative; border: 1px solid #fff; max-width: 540px; max-height: 100px; overflow: hidden;\n}\r\n\r\n/*inputs // span */\ninput { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px;\n}\nspan { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px;\n}\n.editable td:hover: { background-color:#EEFF88 !important;\n}\ntd {padding: 5px;}\n.dcha{text-align: rigth}\r\n/* todas las tablas */\ntable { border-collapse: collapse;\n} /** solapa los bordes*/\n.cabecera-title{ padding: 5px; text-align: left; font-weight: bold;  background: #eee; border: 1px solid black;}\n.cabecera-text{ padding: 5px; text-align: rigth; float: rigth; border: 1px solid black;}\n#items{width: 100%;}\n#totalesFra{width: 100%;}\r\n/*terminos de la fra */\n#terms { text-align: center; margin: 20px 0 0 0;\n}\n#terms h5 { text-transform: uppercase; font: 13px Helvetica, Sans-Serif; letter-spacing: 10px; border-bottom: 1px solid black; padding: 0 0 8px 0; margin: 0 0 8px 0;\n}\r\n\r\n/* textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; } */\r\n\r\n/* textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; } */\r\n\r\n\r\n\r\n\r\n/*#items { clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid black; }\r\n#items textarea { width: 80px; height: 50px; }\r\n#items tr.item-row td { border: 0; vertical-align: top; }\r\n#items td.total-line { border-right: 0; text-align: right; }\r\n#items td.total-value { border-left: 0; padding: 10px; }\r\n#items td.total-value textarea { height: 20px; background: none; }\r\n#items td.balance { background: #eee; }\r\n#items td.blank { border: 0; }\r\n\r\n\r\n\r\ntextarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; }*/\n.delete-wpr { position: relative;\n}\n.delete { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.espacios { margin-top: 20px; margin-bottom: 20px;\n}\n* { margin: 0; padding: 0;\n}\nbody { font: 14px/1.4 Georgia, serif;\n}\n#page-wrap { width: 800px; margin: 0 auto;\n} /* tamaño A4¿? */\r\n\r\n/**titulo: F A C T U R A */\n#tituloFact { width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; -webkit-text-decoration: uppercase; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px;\n}\r\n\r\n/*logo */\n#logo { text-align: right; float: right; position: relative; border: 1px solid #fff; max-width: 540px; max-height: 100px; overflow: hidden;\n}\r\n\r\n/*inputs // span */\ninput { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px;\n}\nspan { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px;\n}\n.editable { background-color:#08FBA1;\n}\ntd {padding: 5px;}\n.dcha{float: right; text-align: right;}\r\n/* todas las tablas */\ntable { border-collapse: collapse;\n} /** solapa los bordes*/\n.cabecera-title{ padding: 5px; text-align: left; font-weight: bold;  background: #eee; border: 1px solid black;}\n.cabecera-text{ padding: 5px; text-align: rigth; float: rigth; border: 1px solid black;}\n#items{width: 100%;}\n#totalesFra{width: 100%;}\r\n/*terminos de la fra */\n#terms { text-align: center; margin: 20px 0 0 0;\n}\n#terms h5 { text-transform: uppercase; font: 13px Helvetica, Sans-Serif; letter-spacing: 10px; border-bottom: 1px solid black; padding: 0 0 8px 0; margin: 0 0 8px 0;\n}\r\n\r\n/* textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; } */\r\n\r\n/* textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; } */\r\n\r\n\r\n\r\n\r\n/*#items { clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid black; }\r\n#items textarea { width: 80px; height: 50px; }\r\n#items tr.item-row td { border: 0; vertical-align: top; }\r\n#items td.total-line { border-right: 0; text-align: right; }\r\n#items td.total-value { border-left: 0; padding: 10px; }\r\n#items td.total-value textarea { height: 20px; background: none; }\r\n#items td.balance { background: #eee; }\r\n#items td.blank { border: 0; }\r\n\r\n\r\n\r\ntextarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; }*/\n.delete-wpr { position: relative;\n}\n.delete { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -79447,7 +79481,7 @@ var render = function() {
                       "i",
                       {
                         staticClass: "material-icons",
-                        staticStyle: { "font-size": "18px", color: "blue" }
+                        staticStyle: { "font-size": "18px", color: "#3490dc" }
                       },
                       [_vm._v("edit")]
                     )
@@ -79493,7 +79527,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-md-12 espacios" }, [
       _c("h3", { staticStyle: { display: "inline" } }, [
-        _vm._v("Listado de Clientes")
+        _vm._v("Mantenimiento de Clientes")
       ]),
       _vm._v(" "),
       _c(
@@ -80273,7 +80307,7 @@ var render = function() {
             }
           },
           [
-            _c("div", { staticClass: "card-header espacios" }, [
+            _c("div", { staticClass: "card-header" }, [
               _c(
                 "h3",
                 {
@@ -81708,7 +81742,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header espacios" }, [
+    return _c("div", { staticClass: "card-header" }, [
       _c("h3", { staticStyle: { display: "inline" } }, [
         _vm._v("Alta nuevo cliente")
       ]),
@@ -81845,9 +81879,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col-md-12 espacios" }, [
-      _c("h3", { staticStyle: { display: "inline" } }, [
-        _vm._v("Listado de facturas")
-      ]),
+      _c("h3", { staticStyle: { display: "inline" } }, [_vm._v("Facturación")]),
       _vm._v(" "),
       _c(
         "a",
@@ -81898,85 +81930,45 @@ var render = function() {
             attrs: { id: "emisor" }
           },
           [
-            _c(
-              "span",
-              {
-                staticClass: "form-control-plaintext form-control-sm",
-                attrs: { type: "text", readonly: "" },
-                model: {
-                  value: _vm.emisor.nombrefiscal,
-                  callback: function($$v) {
-                    _vm.$set(_vm.emisor, "nombrefiscal", $$v)
-                  },
-                  expression: "emisor.nombrefiscal"
-                }
-              },
-              [_vm._v(_vm._s(_vm.emisor.nombrefiscal))]
-            ),
+            _c("span", {
+              staticClass: "form-control-plaintext form-control-sm",
+              attrs: { type: "text", readonly: "" },
+              domProps: {
+                textContent: _vm._s(_vm.nuevaFactura.emiNombrecomercial)
+              }
+            }),
             _vm._v(" "),
-            _c(
-              "span",
-              {
-                staticClass: "form-control-plaintext form-control-sm",
-                attrs: { type: "text", readonly: "" },
-                model: {
-                  value: _vm.emisor.nif,
-                  callback: function($$v) {
-                    _vm.$set(_vm.emisor, "nif", $$v)
-                  },
-                  expression: "emisor.nif"
-                }
-              },
-              [_vm._v(_vm._s(_vm.emisor.nif))]
-            ),
+            _vm.cliente.ambito_cl != "NACIONAL"
+              ? _c("span", {
+                  staticClass: "form-control-plaintext form-control-sm",
+                  attrs: { type: "text", readonly: "" },
+                  domProps: { textContent: _vm._s(_vm.nuevaFactura.emiNiva) }
+                })
+              : _c("span", {
+                  staticClass: "form-control-plaintext form-control-sm",
+                  attrs: { type: "text", readonly: "" },
+                  domProps: { textContent: _vm._s(_vm.nuevaFactura.emiNif) }
+                }),
             _vm._v(" "),
-            _c(
-              "span",
-              {
-                staticClass: "form-control-plaintext form-control-sm",
-                attrs: { type: "text", readonly: "" },
-                model: {
-                  value: _vm.emisor.direccionfiscal,
-                  callback: function($$v) {
-                    _vm.$set(_vm.emisor, "direccionfiscal", $$v)
-                  },
-                  expression: "emisor.direccionfiscal"
-                }
-              },
-              [_vm._v(_vm._s(_vm.emisor.direccionfiscal))]
-            ),
+            _c("span", {
+              staticClass: "form-control-plaintext form-control-sm",
+              attrs: { type: "text", readonly: "" },
+              domProps: {
+                textContent: _vm._s(_vm.nuevaFactura.emiDireccionfiscal)
+              }
+            }),
             _vm._v(" "),
-            _c(
-              "span",
-              {
-                staticClass: "form-control-plaintext form-control-sm",
-                attrs: { type: "text", readonly: "" },
-                model: {
-                  value: _vm.emisor.email,
-                  callback: function($$v) {
-                    _vm.$set(_vm.emisor, "email", $$v)
-                  },
-                  expression: "emisor.email"
-                }
-              },
-              [_vm._v(_vm._s(_vm.emisor.email))]
-            ),
+            _c("span", {
+              staticClass: "form-control-plaintext form-control-sm",
+              attrs: { type: "text", readonly: "" },
+              domProps: { textContent: _vm._s(_vm.nuevaFactura.emiEmail) }
+            }),
             _vm._v(" "),
-            _c(
-              "span",
-              {
-                staticClass: "form-control-plaintext form-control-sm",
-                attrs: { type: "text", readonly: "" },
-                model: {
-                  value: _vm.emisor.telefono,
-                  callback: function($$v) {
-                    _vm.$set(_vm.emisor, "telefono", $$v)
-                  },
-                  expression: "emisor.telefono"
-                }
-              },
-              [_vm._v(_vm._s(_vm.emisor.telefono))]
-            )
+            _c("span", {
+              staticClass: "form-control-plaintext form-control-sm",
+              attrs: { type: "text", readonly: "" },
+              domProps: { textContent: _vm._s(_vm.nuevaFactura.emiTelefono) }
+            })
           ]
         )
       ]),
@@ -81997,22 +81989,27 @@ var render = function() {
                     expression: "cliente"
                   }
                 ],
-                staticClass: "form-control-plaintext",
+                staticClass: "form-control-plaintext editable",
                 attrs: { id: "cliente" },
                 on: {
-                  change: function($event) {
-                    var $$selectedVal = Array.prototype.filter
-                      .call($event.target.options, function(o) {
-                        return o.selected
-                      })
-                      .map(function(o) {
-                        var val = "_value" in o ? o._value : o.value
-                        return val
-                      })
-                    _vm.cliente = $event.target.multiple
-                      ? $$selectedVal
-                      : $$selectedVal[0]
-                  }
+                  change: [
+                    function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.cliente = $event.target.multiple
+                        ? $$selectedVal
+                        : $$selectedVal[0]
+                    },
+                    function($event) {
+                      return _vm.clFra($event)
+                    }
+                  ]
                 }
               },
               [
@@ -82074,26 +82071,14 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("td", { staticClass: "cabecera-text" }, [
-                  _c(
-                    "span",
-                    {
-                      attrs: { type: "text", readonly: "" },
-                      model: {
-                        value: _vm.nuevaFactura.numero,
-                        callback: function($$v) {
-                          _vm.$set(_vm.nuevaFactura, "numero", $$v)
-                        },
-                        expression: "nuevaFactura.numero"
-                      }
-                    },
-                    [
-                      _vm._v(
-                        "\r\n                                " +
-                          _vm._s(_vm.nuevaFactura.numero) +
-                          "\r\n                            "
+                  _c("span", {
+                    attrs: { type: "text", readonly: "" },
+                    domProps: {
+                      textContent: _vm._s(
+                        _vm.nuevaFactura.serie + "/" + _vm.nuevaFactura.numero
                       )
-                    ]
-                  )
+                    }
+                  })
                 ])
               ]),
               _vm._v(" "),
@@ -82102,18 +82087,19 @@ var render = function() {
                   _vm._v("Fecha factura")
                 ]),
                 _vm._v(" "),
-                _c("td", { staticClass: "cabecera-text editable" }, [
+                _c("td", { staticClass: "cabecera-text" }, [
                   _c("input", {
                     directives: [
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.nuevaFactura.fecha_fra,
-                        expression: "nuevaFactura.fecha_fra"
+                        value: _vm.nuevaFactura.fechaFra,
+                        expression: "nuevaFactura.fechaFra"
                       }
                     ],
+                    staticClass: "editable",
                     attrs: { type: "date", id: "fecha" },
-                    domProps: { value: _vm.nuevaFactura.fecha_fra },
+                    domProps: { value: _vm.nuevaFactura.fechaFra },
                     on: {
                       input: function($event) {
                         if ($event.target.composing) {
@@ -82121,7 +82107,7 @@ var render = function() {
                         }
                         _vm.$set(
                           _vm.nuevaFactura,
-                          "fecha_fra",
+                          "fechaFra",
                           $event.target.value
                         )
                       }
@@ -82135,27 +82121,31 @@ var render = function() {
                   _vm._v("Vencimiento")
                 ]),
                 _vm._v(" "),
-                _c("td", { staticClass: "cabecera-text editable" }, [
-                  _c(
-                    "span",
-                    {
-                      attrs: { type: "date", readonly: "" },
-                      model: {
+                _c("td", { staticClass: "cabecera-text" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
                         value: _vm.nuevaFactura.vencimiento,
-                        callback: function($$v) {
-                          _vm.$set(_vm.nuevaFactura, "vencimiento", $$v)
-                        },
                         expression: "nuevaFactura.vencimiento"
                       }
-                    },
-                    [
-                      _vm._v(
-                        "\r\n                                " +
-                          _vm._s(_vm.nuevaFactura.vencimiento) +
-                          "\r\n                            "
-                      )
-                    ]
-                  )
+                    ],
+                    attrs: { type: "date", readonly: "", tabindex: "-1" },
+                    domProps: { value: _vm.nuevaFactura.vencimiento },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.nuevaFactura,
+                          "vencimiento",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  })
                 ])
               ])
             ])
@@ -82167,227 +82157,289 @@ var render = function() {
         "div",
         { staticClass: "col-md-12 espacios", attrs: { id: "cuerpoFra" } },
         [
-          _c("table", { attrs: { id: "items" } }, [
-            _vm._m(3),
-            _vm._v(" "),
-            _c("tbody", [
-              _c("tr", { attrs: { id: "nuevoItem" } }, [
-                _c("td", [
-                  _c("div", { staticClass: "delete-wpr" }, [
-                    _c(
-                      "select",
-                      {
+          _c(
+            "table",
+            { attrs: { id: "items" } },
+            [
+              _vm._m(3),
+              _vm._v(" "),
+              _vm._l(_vm.lineas, function(linea) {
+                return _c("tbody", { key: linea }, [
+                  _c("tr", { attrs: { id: "nuevoItem" } }, [
+                    _c("td", { staticStyle: { width: "20%" } }, [
+                      _c("div", { staticClass: "delete-wpr" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: linea.producto,
+                                expression: "linea.producto"
+                              }
+                            ],
+                            staticClass:
+                              "form-control-plaintext form-control-sm editable",
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.$set(
+                                  linea,
+                                  "producto",
+                                  $event.target.multiple
+                                    ? $$selectedVal
+                                    : $$selectedVal[0]
+                                )
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { disabled: "", value: "null" } },
+                              [_vm._v("Seleccione un producto")]
+                            ),
+                            _vm._v(" "),
+                            _vm._l(_vm.productos, function(producto) {
+                              return _c("option", { key: producto }, [
+                                _vm._v(" " + _vm._s(producto.nombre) + " ")
+                              ])
+                            })
+                          ],
+                          2
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            staticClass: "delete",
+                            attrs: { role: "button", title: "Eliminar línea" },
+                            on: {
+                              click: function($event) {
+                                return _vm.eliminarLinea(_vm.index)
+                              }
+                            }
+                          },
+                          [_vm._v("X")]
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("td", { staticStyle: { width: "30%" } }, [
+                      _c("input", {
                         directives: [
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.producto,
-                            expression: "producto"
+                            value: linea.producto.descripcion,
+                            expression: "linea.producto.descripcion"
                           }
                         ],
-                        staticClass: "form-control-plaintext",
-                        attrs: { id: "cliente" },
+                        staticClass:
+                          "form-control-plaintext form-control-sm editable",
+                        attrs: { type: "text" },
+                        domProps: { value: linea.producto.descripcion },
                         on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.producto = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              linea.producto,
+                              "descripcion",
+                              $event.target.value
+                            )
                           }
                         }
-                      },
-                      [
-                        _c(
-                          "option",
-                          { attrs: { disabled: "", value: "null" } },
-                          [_vm._v("Seleccione un producto")]
-                        ),
-                        _vm._v(" "),
-                        _vm._l(_vm.productos, function(producto) {
-                          return _c(
-                            "option",
-                            { domProps: { value: producto } },
-                            [_vm._v(" " + _vm._s(producto.nombre) + " ")]
-                          )
-                        })
-                      ],
-                      2
-                    ),
+                      })
+                    ]),
                     _vm._v(" "),
-                    _c(
-                      "a",
-                      {
-                        staticClass: "delete",
-                        attrs: { href: "javascript:;", title: "Remove row" }
-                      },
-                      [_vm._v("X")]
-                    )
-                  ])
-                ]),
-                _vm._v(" "),
-                _c("td", { staticClass: "editable" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.producto.descripcion,
-                        expression: "producto.descripcion"
-                      }
-                    ],
-                    staticClass: "form-control-plaintext form-control-sm",
-                    attrs: { type: "text", value: "producto.descripcion" },
-                    domProps: { value: _vm.producto.descripcion },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(
-                          _vm.producto,
-                          "descripcion",
-                          $event.target.value
-                        )
-                      }
-                    }
-                  })
-                ]),
-                _vm._v(" "),
-                _c("td", { staticClass: "editable" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.producto.precio,
-                        expression: "producto.precio"
-                      }
-                    ],
-                    staticClass: "form-control-plaintext form-control-sm dcha",
-                    attrs: {
-                      type: "number",
-                      step: "0.01",
-                      value: "producto.precio"
-                    },
-                    domProps: { value: _vm.producto.precio },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.producto, "precio", $event.target.value)
-                      }
-                    }
-                  })
-                ]),
-                _vm._v(" "),
-                _c(
-                  "td",
-                  { staticClass: "editable", staticStyle: { width: "10%" } },
-                  [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.cantidad,
-                          expression: "cantidad"
-                        }
-                      ],
-                      staticClass:
-                        "form-control-plaintext form-control-sm dcha",
-                      attrs: { type: "number", value: "1" },
-                      domProps: { value: _vm.cantidad },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
+                    _c("td", { staticStyle: { width: "10%" } }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: linea.producto.precio,
+                            expression: "linea.producto.precio"
                           }
-                          _vm.cantidad = $event.target.value
+                        ],
+                        staticClass: "dcha editable",
+                        attrs: { type: "number", step: "0.01" },
+                        domProps: { value: linea.producto.precio },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              linea.producto,
+                              "precio",
+                              $event.target.value
+                            )
+                          }
                         }
-                      }
-                    })
-                  ]
-                ),
-                _vm._v(" "),
-                _c("td", { staticStyle: { width: "10%" } }, [
-                  _c(
-                    "span",
-                    {
-                      staticClass: "form-control-plaintext form-control-sm",
-                      attrs: { type: "text" },
-                      model: {
-                        value: _vm.producto.unidad,
-                        callback: function($$v) {
-                          _vm.$set(_vm.producto, "unidad", $$v)
-                        },
-                        expression: "producto.unidad"
-                      }
-                    },
-                    [
-                      _vm._v(
-                        "\r\n                                €/" +
-                          _vm._s(_vm.producto.unidad) +
-                          "\r\n                            "
-                      )
-                    ]
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c("td", { staticStyle: { width: "10%" } }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: linea.producto.unidad,
+                            expression: "linea.producto.unidad"
+                          }
+                        ],
+                        staticClass: "form-control-plaintext form-control-sm",
+                        attrs: { type: "text" },
+                        domProps: { value: linea.producto.unidad },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              linea.producto,
+                              "unidad",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c("td", { staticStyle: { width: "10%" } }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: linea.cantidad,
+                            expression: "linea.cantidad"
+                          }
+                        ],
+                        staticClass: " editable dcha",
+                        attrs: { type: "number", value: "1" },
+                        domProps: { value: linea.cantidad },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(linea, "cantidad", $event.target.value)
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _vm._m(4, true)
+                  ])
+                ])
+              }),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn-default btn-xs",
+                  attrs: { title: "nuevaLinea" },
+                  on: { click: _vm.crearLinea }
+                },
+                [
+                  _vm._v(
+                    "\r\n                        Nueva línea\r\n                    "
                   )
-                ]),
-                _vm._v(" "),
-                _c("td", [
+                ]
+              )
+            ],
+            2
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-md-12 espacios", attrs: { id: "pieFra" } },
+        [
+          _c("table", { attrs: { id: "totalesFra" } }, [
+            _c("tr", [
+              _vm._m(5),
+              _vm._v(" "),
+              _c(
+                "td",
+                {
+                  staticClass: "cabecera-title",
+                  staticStyle: { width: "20%" }
+                },
+                [_vm._v("Subtotal")]
+              ),
+              _vm._v(" "),
+              _c(
+                "td",
+                { staticClass: "cabecera-text", staticStyle: { width: "20%" } },
+                [
                   _c(
                     "span",
                     {
-                      staticClass:
-                        "form-control-plaintext form-control-sm dcha",
+                      staticClass: "dcha",
                       attrs: { type: "number", step: "0.01" },
-                      model: {
-                        value: _vm.cantidad,
-                        callback: function($$v) {
-                          _vm.cantidad = $$v
-                        },
-                        expression: "cantidad"
+                      domProps: {
+                        textContent: _vm._s(_vm.nuevaFactura.subtotal)
                       }
                     },
                     [
                       _vm._v(
                         "\r\n                                " +
-                          _vm._s(_vm.producto.precio * _vm.cantidad) +
-                          "\r\n                                "
+                          _vm._s(_vm.nuevaFactura.subtotal) +
+                          " €\r\n                        "
                       )
                     ]
                   )
-                ])
-              ])
+                ]
+              )
             ]),
             _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn-default btn-xs",
-                attrs: { title: "nuevaLinea" },
-                on: { click: _vm.addrow }
-              },
-              [
-                _vm._v(
-                  "\r\n                        Nueva línea\r\n                    "
+            _vm._m(6),
+            _vm._v(" "),
+            _vm._m(7),
+            _vm._v(" "),
+            _c("tr", [
+              _c("td", { staticClass: "cabecera-title" }, [
+                _vm._v("Total Factura")
+              ]),
+              _vm._v(" "),
+              _c("td", { staticClass: "cabecera-text" }, [
+                _c(
+                  "span",
+                  {
+                    staticClass: "dcha",
+                    attrs: { type: "number", step: "0.01" },
+                    domProps: { textContent: _vm._s(_vm.nuevaFactura.total) }
+                  },
+                  [
+                    _vm._v(
+                      "\r\n                                " +
+                        _vm._s(_vm.nuevaFactura.total) +
+                        " €\r\n                        "
+                    )
+                  ]
                 )
-              ]
-            )
+              ])
+            ])
           ])
         ]
       ),
       _vm._v(" "),
-      _vm._m(4),
-      _vm._v(" "),
-      _c("div", { attrs: { id: "terms" } }, [
+      _c("div", { staticClass: "espacios", attrs: { id: "terms" } }, [
         _c("h5", [_vm._v("Condiciones")]),
         _vm._v(" "),
         _c("span", [
@@ -82408,7 +82460,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header espacios" }, [
+    return _c("div", { staticClass: "card-header" }, [
       _c("h3", { staticStyle: { display: "inline" } }, [
         _vm._v("Alta nueva factura")
       ]),
@@ -82424,7 +82476,7 @@ var staticRenderFns = [
           "a",
           {
             staticClass: "btn btn-danger",
-            attrs: { href: "/clientes/listar" }
+            attrs: { href: "/facturas/listar" }
           },
           [_vm._v("Cancelar")]
         )
@@ -82469,14 +82521,8 @@ var staticRenderFns = [
         _vm._v(" "),
         _c(
           "th",
-          { staticClass: "cabecera-title", staticStyle: { width: "40%" } },
+          { staticClass: "cabecera-title", staticStyle: { width: "30%" } },
           [_vm._v("Descripción")]
-        ),
-        _vm._v(" "),
-        _c(
-          "th",
-          { staticClass: "cabecera-title", staticStyle: { width: "10%" } },
-          [_vm._v("Precio")]
         ),
         _vm._v(" "),
         _c(
@@ -82486,12 +82532,18 @@ var staticRenderFns = [
             staticStyle: { width: "20%" },
             attrs: { colspan: "2" }
           },
+          [_vm._v("Precio")]
+        ),
+        _vm._v(" "),
+        _c(
+          "th",
+          { staticClass: "cabecera-title", staticStyle: { width: "15%" } },
           [_vm._v("Cantidad")]
         ),
         _vm._v(" "),
         _c(
           "th",
-          { staticClass: "cabecera-title", staticStyle: { width: "10%" } },
+          { staticClass: "cabecera-title", staticStyle: { width: "15%" } },
           [_vm._v("Subtotal")]
         )
       ])
@@ -82501,45 +82553,50 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("td", { staticStyle: { width: "10%" } }, [
+      _c("input", {
+        staticClass: "dcha",
+        attrs: {
+          type: "number",
+          step: "0.01",
+          value: "(linea.precio*linea.cantidad)().toFixed(2)"
+        }
+      })
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c(
-      "div",
-      { staticClass: "col-md-12 espacios", attrs: { id: "pieFra" } },
+      "td",
+      { staticStyle: { width: "60%" }, attrs: { rowspan: "4" } },
       [
-        _c("table", { attrs: { id: "totalesFra" } }, [
-          _c("tr", [
-            _c(
-              "td",
-              { staticStyle: { width: "60%" }, attrs: { rowspan: "3" } },
-              [_c("textarea", { attrs: { placeholder: "Observaciones..." } })]
-            ),
-            _vm._v(" "),
-            _c(
-              "td",
-              { staticClass: "cabecera-title", staticStyle: { width: "20%" } },
-              [_vm._v("Subtotal")]
-            ),
-            _vm._v(" "),
-            _c(
-              "td",
-              { staticClass: "cabecera-text", staticStyle: { width: "20%" } },
-              [_vm._v("xxx")]
-            )
-          ]),
-          _vm._v(" "),
-          _c("tr", [
-            _c("td", { staticClass: "cabecera-title" }, [_vm._v("Impuestos")]),
-            _vm._v(" "),
-            _c("td", { staticClass: "cabecera-text" }, [_vm._v("xxx")])
-          ]),
-          _vm._v(" "),
-          _c("tr", [
-            _c("td", { staticClass: "cabecera-title" }, [_vm._v("Total")]),
-            _vm._v(" "),
-            _c("td", { staticClass: "cabecera-text" }, [_vm._v("xxx")])
-          ])
-        ])
+        _c("textarea", {
+          attrs: { rows: "6", cols: "50", placeholder: "Observaciones..." }
+        })
       ]
     )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("td", { staticClass: "cabecera-title" }, [_vm._v("Impuestos")]),
+      _vm._v(" "),
+      _c("td", { staticClass: "cabecera-text" }, [_vm._v("xxx")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("td", { staticClass: "cabecera-title" }, [_vm._v("Retención")]),
+      _vm._v(" "),
+      _c("td", { staticClass: "cabecera-text" }, [_vm._v("xxx")])
+    ])
   }
 ]
 render._withStripped = true
@@ -82726,6 +82783,7 @@ var render = function() {
                 expression: "editado.id"
               }
             ],
+            staticClass: "col-md-1",
             attrs: {
               type: "text",
               name: "idEdit",
@@ -82858,7 +82916,7 @@ var render = function() {
               attrs: { title: "crear" },
               on: {
                 click: function($event) {
-                  _vm.editado.actualizarid
+                  return _vm.actualizar(_vm.editado.id)
                 }
               }
             },
@@ -82914,7 +82972,7 @@ var render = function() {
                         "i",
                         {
                           staticClass: "material-icons",
-                          staticStyle: { "font-size": "18px", color: "blue" }
+                          staticStyle: { "font-size": "18px", color: "#3490dc" }
                         },
                         [_vm._v("edit")]
                       )
@@ -82989,7 +83047,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row justify-content-center card" }, [
-    _c("div", { staticClass: "card-header espacios" }, [
+    _c("div", { staticClass: "card-header" }, [
       _c("h3", { staticStyle: { display: "inline" } }, [
         _vm._v("Configuración de emisor facturas")
       ]),
@@ -83437,7 +83495,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row justify-content-center card" }, [
-    _c("div", { staticClass: "card-header espacios" }, [
+    _c("div", { staticClass: "card-header" }, [
       _c("h3", { staticStyle: { display: "inline" } }, [
         _vm._v("Configuración de usuario")
       ]),

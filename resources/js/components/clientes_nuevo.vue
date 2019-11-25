@@ -6,7 +6,7 @@
 
             <form method="post" action="/clientes/store" @submit="validarForm($event)">
 
-                <div class="card-header espacios">
+                <div class="card-header">
                     <h3 style="display: inline">Alta nuevo cliente</h3>
                     <div style="display: inline; float: right">
                         <button type="submit" class="btn btn-success">Guardar</button>

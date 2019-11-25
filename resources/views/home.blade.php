@@ -1,24 +1,24 @@
 @extends('layouts.app')
 
 @section('content')
-<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url('/') }}">
-        <h1>{{ config('app.name', 'MiProyecto') }}</h1>
+<nav class="navbar sticky-top flex-md-nowrap p-0 navbar-dark bg-primary">
+    <a class="boxed-btn3" href="{{ url('/home') }}">
+        <img src="../pictures/otro1.png" width="120" height="50" alt="mi_logo" style="padding: 10px; padding-left:30px;">
     </a>
+    {{-- <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url('/home') }}">
+        <h1>{{ config('app.name', 'MiProyecto') }}</h1>
+    </a> --}}
     <ul class="navbar-nav px-3">
         <li class="nav-item">
-            <a class="nav-link" style="display: inline-block; margin-rigth: 5px;" href="{{ route('home') }}" role="button">
+            <a class="{{ request()->route()->getName() === 'settingsuser' ? 'nav-item nav-link  active' : 'nav-item nav-link' }}" style="display: inline-block; margin-rigth: 5px;" href="{{ url('settingsuser') }}" role="button">
                 <i class="material-icons">perm_identity</i>
-                {{ "Mi cuenta: ".Auth::user()->name }} <span class="caret"></span>
+                {{ "Mi cuenta" }}
             </a>
             
-            <a class="nav-link" style="display: inline" href="#" role="button" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a class="nav-link" style="display: inline; margin-left: 20px;" href="{{ route('logout') }}" role="button">
                 <i class="material-icons">logout</i>
                 {{ __('Salir') }}
             </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
         </li>
     </ul>
 </nav>
@@ -26,11 +26,11 @@
 <div class="container-fluid" >
     <div class="row">
         <!--Define la nav lateral-->
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar-stick">
             <div class="sidebar-sticky">
                     
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span>GESTIÓN GENERAL</span>
+                GESTIÓN GENERAL
                 </h6>
                 <ul class="nav flex-column nav-pills">
                     <li class='nav-item'>
@@ -40,13 +40,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="{{ request()->route()->getName() === 'listar' || request()->route()->getName() === 'ver' || request()->route()->getName() === 'crear'  ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('facturas/listar') }}">
+                        <a class="{{ request()->route()->getPrefix() === '/facturas' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('facturas/listar') }}">
                             <i class="material-icons">format_list_bulleted</i>
                             Facturación
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="{{ request()->route()->getName() === 'listar' || request()->route()->getName() === 'ver' || request()->route()->getName() === 'crear' || request()->route()->getName() === 'editar' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('/clientes/listar') }}">
+                        <a class="{{ request()->route()->getPrefix() === '/clientes'  ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('/clientes/listar') }}">
                             <i class="material-icons">group</i>
                             Clientes
                         </a>
@@ -60,7 +60,7 @@
                 </ul>
 
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                <span>GESTIÓN FISCAL</span>
+                GESTIÓN FISCAL
                 </h6>
                 <ul class="nav flex-column mb-2">
                 <li class="nav-item">
@@ -84,21 +84,21 @@
                 </ul>
 
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                <span>CONFIGURACIÓN</span>
+                CONFIGURACIÓN
                 </h6>
-                <ul class="nav flex-column nav-pills">
-                    <li class='nav-item'>
-                        <a class="{{ request()->route()->getName() === 'settingsuser' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('settingsuser') }}">
-                            <i class="material-icons">settings_applications</i>
-                            Usuario app
-                        </a>
-                    </li>
-                </ul>
                 <ul class="nav flex-column nav-pills">
                     <li class='nav-item'>
                         <a class="{{ request()->route()->getName() === 'settingsfact' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('settingsfact') }}">
                             <i class="material-icons">settings_applications</i>
                             Emisor facturas
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav flex-column nav-pills">
+                    <li class='nav-item'>
+                        <a class="{{ request()->route()->getName() === 'settingsuser' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="">
+                            <i class="material-icons">settings_applications</i>
+                            Impuestos
                         </a>
                     </li>
                 </ul>
