@@ -124,19 +124,7 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:200,200i,300,300i,400,400i,500,500i,600,600i,700,800&display=swap");
 @import url("https://fonts.googleapis.com/css?family=Poppins:200,200i,300,300i,400,400i,500,500i,600,600i,700,800&display=swap");
 /* line 1, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_extend.scss */
-.boxed-btn3, .boxed-btn3-text:hover, .footer .footer_top .footer_widget .newsletter_form button, .footer .socail_links ul li a:hover {
-  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ff008c+0,ff6357+100 */
-  background: #ff008c;
-  /* Old browsers */
-  background: -moz-linear-gradient(left, #ff008c 0%, #ff6357 100%);
-  /* FF3.6-15 */
-  background: -webkit-linear-gradient(left, #ff008c 0%, #ff6357 100%);
-  /* Chrome10-25,Safari5.1-6 */
-  background: linear-gradient(to right, #ff008c 0%, #ff6357 100%);
-  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff008c', endColorstr='#ff6357',GradientType=1 );
-  /* IE6-9 */
-}
+
 
 /* Normal desktop :1200px. */
 /* Normal desktop :992px. */
@@ -533,258 +521,9 @@ h3 {
 }
 
 /* line 1, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn {
-  background: #fff;
-  color: #131313;
-  display: inline-block;
-  padding: 18px 44px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  border: 0;
-  border: 1px solid #FF008C;
-  letter-spacing: 3px;
-  text-align: center;
-  color: #FF008C !important;
-  text-transform: uppercase;
-  cursor: pointer;
-}
 
-/* line 17, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn:hover {
-  background: #FF008C;
-  color: #fff !important;
-  border: 1px solid #FF008C;
-}
 
-/* line 22, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn:focus {
-  outline: none;
-}
 
-/* line 25, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn.large-width {
-  width: 220px;
-}
-
-/* line 29, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3 {
-  font-family: "Poppins", sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  color: #fff;
-  cursor: pointer;
-  padding: 13px 41px;
-  text-align: center;
-  border: none;
-  background-size: 100% 100%;
-  border-radius: 50px;
-  background-size: 101% 100%;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -o-transition: 0.5s;
-  transition: 0.5s;
-  display: inline-block;
-  border: 1px solid transparent;
-}
-
-/* line 45, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3:hover {
-  color: #fff;
-  background-size: 300% 100%;
-  moz-transition: all .4s ease-in-out;
-  -o-transition: all .4s ease-in-out;
-  -webkit-transition: all .4s ease-in-out;
-  transition: all .4s ease-in-out;
-}
-
-/* line 56, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3:focus {
-  outline: none;
-}
-
-/* line 64, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-text {
-  font-family: "Poppins", sans-serif;
-  font-size: 15px;
-  font-weight: 500;
-  color: #fff;
-  cursor: pointer;
-  padding: 14px 38px;
-  text-align: center;
-  border: none;
-  border-radius: 50px;
-  -webkit-transition: 0.3s;
-  -moz-transition: 0.3s;
-  -o-transition: 0.3s;
-  transition: 0.3s;
-  display: inline-block;
-  color: #FF008C;
-}
-
-/* line 77, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-text:hover {
-  background-position: 100% 0;
-  color: #fff;
-}
-
-/* line 82, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-text:focus {
-  outline: none;
-}
-
-/* line 88, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn4 {
-  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#0181f5+0,5db2ff+100 */
-  background: #FF008C;
-  color: #fff;
-  display: inline-block;
-  padding: 14px 27px;
-  font-family: "Poppins", sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  border: 0;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-  text-align: center;
-  color: #fff !important;
-  text-transform: capitalize;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -o-transition: 0.5s;
-  transition: 0.5s;
-  cursor: pointer;
-  letter-spacing: 2px;
-}
-
-/* line 107, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn4:hover {
-  background: #FF008C;
-  color: #fff !important;
-}
-
-/* line 112, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn4:focus {
-  outline: none;
-}
-
-/* line 115, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn4.large-width {
-  width: 220px;
-}
-
-/* line 120, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-white {
-  color: #fff;
-  display: inline-block;
-  padding: 13px 27px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  border: 0;
-  border: 1px solid #fff;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  text-align: center;
-  color: #fff !important;
-  text-transform: capitalize;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -o-transition: 0.5s;
-  transition: 0.5s;
-  cursor: pointer;
-  letter-spacing: 2px;
-}
-
-/* line 137, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-white:hover {
-  background: #28AE61;
-  color: #fff !important;
-  border: 1px solid transparent;
-}
-
-/* line 142, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-white i {
-  margin-right: 2px;
-}
-
-/* line 145, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-white:focus {
-  outline: none;
-}
-
-/* line 148, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-white.large-width {
-  width: 220px;
-}
-
-/* line 153, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-green-2 {
-  color: #FF008C !important;
-  display: inline-block;
-  padding: 14px 31px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  border: 0;
-  border: 1px solid #FF008C;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  text-align: center;
-  text-transform: capitalize;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -o-transition: 0.5s;
-  transition: 0.5s;
-  cursor: pointer;
-  letter-spacing: 2px;
-}
-
-/* line 169, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-green-2:hover {
-  background: #FF008C;
-  color: #fff !important;
-  border: 1px solid transparent;
-}
-
-/* line 174, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-green-2:focus {
-  outline: none;
-}
-
-/* line 177, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn3-green-2.large-width {
-  width: 220px;
-}
-
-/* line 181, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn2 {
-  background: transparent;
-  color: #fff;
-  display: inline-block;
-  padding: 18px 24px;
-  font-family: "Poppins", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  border: 0;
-  border: 1px solid #fff;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-/* line 193, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn2:hover {
-  background: #fff;
-  color: #131313 !important;
-}
-
-/* line 197, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
-.boxed-btn2:focus {
-  outline: none;
-}
 
 /* line 201, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
 .line-button {
@@ -7259,9 +6998,9 @@ h6 {
                                     <ul id="navigation">
                                       <!-- Authentication Links -->
                                       @guest   <!--The user is not authenticated...-->
-                                        <li><a href="{{ route('login') }}">{{ __('Entrar') }}</a></li>
+                                        <li><a href="{{ route('login') }}">{{ __('Iniciar sesión') }}</a></li>
                                             @if (Route::has('register'))
-                                            <li><a href="{{ route('register') }}" >{{ __('Registrarse') }}</a></li>
+                                            <li><a href="{{ route('register') }}" >{{ __('Crear cuenta') }}</a></li>
                                             @endif
                                       @else <!--The user is authenticated...-->
                                           <li><a href="{{ route('home') }}"> {{ "Mi cuenta" }}</a></li>
@@ -7313,7 +7052,6 @@ h6 {
                     <div class="company_info">
                         <h3>Factura a cualquier lugar del mundo <br>
                             con solo esta aplicación!</h3>
-                            <p>Con esta aplicación se pretende utilizar tooooodoo lo aprendido estos 2 años</p>
                             <p>Enjoy it ;)</p>
 
                         <a target="_blank" href="{{ url('https://github.com/anrosalesfdez/miproyectoFP')}}" class="boxed-btn3">Sobre el proyecto.</a>
@@ -7361,21 +7099,8 @@ h6 {
     </div>
     <!--/ service_area  -->
 
-  <footer>
-    <div class="copy-right_text">
-                <div class="container">
-                    <div class="footer_border"></div>
-                        <div class="row">
-                            <div class="col-xl-12">
-                                <p class="copy_right text-center">
-                                Ángeles Rosales 2019 <a style="color: #FF008C;" target="_blank" href="{{ url('https://github.com/anrosalesfdez/miproyectoFP')}}">GitHub profile</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-      </div>
-
-  </footer>
-
+    <footer>
+      @include('pie')
+    </footer>
 @endsection
+

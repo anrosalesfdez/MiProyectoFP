@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<nav class="navbar sticky-top flex-md-nowrap p-0 navbar-dark bg-primary">
-    <a class="boxed-btn3" href="{{ url('/home') }}">
+
+<nav class="navbar sticky-top flex-md-nowrap p-0 navhome">
+    <a href="{{ url('/home') }}">
         <img src="../pictures/otro1.png" width="120" height="50" alt="mi_logo" style="padding: 10px; padding-left:30px;">
     </a>
     {{-- <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url('/home') }}">
@@ -114,14 +115,7 @@
     </div>
 </div>
 
-@endsection
-
-@section('pie')
-<!-- Footer -->
-<footer class="page-footer font-small mdb-color lighten-3 pt-4">
-    <!-- Copyright -->
-    <div class="footer-copyright text-center py-3">Ángeles Rosales 2019
-        <a href="{{ url('https://github.com/anrosalesfdez/miproyectoFP')}}" target="_blank">GitHub code</a> // <a href="#" target="_blank">Contacta</a>
-    </div>
-</footer>
+<footer>
+    @include('pie')
+</footer>   
 @endsection
