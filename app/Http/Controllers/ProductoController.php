@@ -8,23 +8,53 @@ use Illuminate\Http\Request;
 class ProductoController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+     public function __construct()
+     {
+         $this->middleware('auth');
+     }
+
+
+    /**
+     * Get a listing of the resource.
+     */
+    public function getProductos(){
+        
+        $productos = Producto::where("users_id", "=", auth()->user()->id)->get();
+        //si utilizase el belongsTo user, no necesita el get()
+        //$productos = auth()->user()->productos();
+        
+        return $productos;
+    }
+
+
+    /**
      * Display a listing of the resource.
      */
-    public function index(){
+     public function listarProductos(){
         
-        $productos = Producto::get();
+        $productos = $this->getProductos();
         
         return view('productos', ['productos' => $productos]);
     }
 
+
     /**
-     * Send a listing of the resource.
+     * Get a listing of the resource.
      */
-     public function get(){
+     public function getProducto($id){
+
+        // $producto = Producto::where("users_id", "=", auth()->user()->id)
+        //                         ->where("id", "=", $id)
+        //                         ->first();
+        $producto = auth()->user()->find($id);
         
-        return Producto::get();
-        
+        return $producto;
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -35,9 +65,9 @@ class ProductoController extends Controller
     public function store(Request $request) {
         
         $this->validate($request, $this->rules(), $this->messages());
-
         Producto::create($request->all());
-        $productos = Producto::get();
+        
+        $productos = $this->getProductos();
 
         return $productos;
 
@@ -50,15 +80,24 @@ class ProductoController extends Controller
      * @param  \App\Producto  $producto
      * @return \Illuminate\Http\Response
      */
-    public function actualizar(Request $request, $id){
+    public function update(Request $request, $id){
         
         $this->validate($request, $this->rules(), $this->messages());
 
-        $producto = Producto::findOrFail($id)->update(request()->all()); //ya hace findOrFail por detrás
-        $productos = Producto::get();
+        $producto = Producto::findOrFail($id)->update(request()->all());
+
+        $productos = $this->getProductos();
 
         return $productos;
     }
+
+    //recoge actividad del producto
+    public function getCnae($idPto){
+        $actividad = Producto::find($idPto)->actividad;
+
+        return $actividad;
+    }
+
 
     /**
      * Remove the specified resource from storage.
@@ -68,8 +107,9 @@ class ProductoController extends Controller
      */
     public function destroy($id){
 
-        $producto = Producto::findOrFail($id)->delete(); //soft delete
-        $productos = Producto::get();
+        $producto = $this->getProducto($id)->delete(); //soft delete
+        
+        $productos = $this->getProductos();
 
         return $productos;
     }

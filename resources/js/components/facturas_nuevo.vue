@@ -20,39 +20,55 @@
             <div id="logo" class="col-md-3">
               <img id="image" src="/pictures/logo.png" alt="logo" width="200px" height="140px"/>
             </div>
-
+            <!-- DATOS EMISOR FACTURA -->
             <div id="emisor" class="col-md-6" style="float: left">
-                <span type="text" class="form-control-plaintext form-control-sm" readonly
-                    v-text="nuevaFactura.emiNombrecomercial"></span>
-                <span v-if="cliente.ambito_cl != 'NACIONAL'" type="text" class="form-control-plaintext form-control-sm" readonly
-                            v-text="nuevaFactura.emiNiva"></span>
-                <span v-else type="text" class="form-control-plaintext form-control-sm" readonly
-                            v-text="nuevaFactura.emiNif"></span>
-                <span type="text" class="form-control-plaintext form-control-sm" readonly 
-                            v-text="nuevaFactura.emiDireccionfiscal"></span>
-                <span type="text" class="form-control-plaintext form-control-sm" readonly 
-                            v-text="nuevaFactura.emiEmail"></span>
-                <span type="text" class="form-control-plaintext form-control-sm" readonly 
-                            v-text="nuevaFactura.emiTelefono"></span>
+                <input type="text" id="emi_nombre_fiscal" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="emisor.nombre_fiscal">
+                <input v-if="nuevaFactura.emi_nif == ''" type="text" id="emiNif" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="emisor.nif">
+                <input v-else type="text" id="emi_niva" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="emisor.niva">
+                <input type="text" id="emi_direccion_fiscal" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="emisor.direccion_fiscal">
+                <input type="text" id="emi_email" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="emisor.email">
+                <input type="text" id="emi_telefono" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="emisor.telefono">
             </div>
         </div>
-
+        <!-- DATOS CLIENTE FACTURA -->
         <div class="row espacios">
     		<div id="cliente" class="col-md-7 espacios">
                 <select class="form-control-plaintext editable" id="cliente" v-model="cliente" @change="clFra($event)">
                     <option disabled value="null">Seleccione un cliente</option>
-                    <option v-for="cliente in clientes" v-bind:value="cliente"> {{ cliente.razon_social }} </option>
+                    <option v-for="cliente in clientes" :key="cliente.id" :value="cliente"> {{ cliente.razon_social }} </option>
                 </select>
-                <span type="text" class="form-control-plaintext" readonly v-model="cliente.nif">{{cliente.nif}}</span>
-                <span type="text" class="form-control-plaintext" readonly v-model="cliente.direccionfiscal">{{cliente.direccionfiscal}}</span>
+                <input type="text" id="cli_nif" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="cliente.nif"
+                                    value="cliente.nif">
+                <input type="text" id="cli_direccion" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="cliente.direccion"
+                                    value="cliente.direccion">
             </div>
 
     		<div id="idFra" class="col-md-5 espacios">
+                <!-- DATOS BÁSICOS FRA -->
                 <!-- <input type="text" class="form-control-plaintext form-control-sm" value="ORIGINAL"> -->
                 <table>
                     <tr>
                         <td class="cabecera-title">Número factura</td>
                         <td class="cabecera-text">
+                            <!-- <input type="text" id="cliDireccion" size="50" readonly
+                                    tabindex="-1" 
+                                    value="nuevaFactura.serie+'/'+nuevaFactura.numero"> -->
                             <span type="text" readonly
                                     v-text="nuevaFactura.serie+'/'+nuevaFactura.numero">
                             </span>
@@ -62,7 +78,7 @@
                         <td class="cabecera-title">Fecha factura</td>
                         <td class="cabecera-text">
                             <input type="date" id="fecha" class="editable"
-                                    v-model="nuevaFactura.fechaFra">
+                                    v-model="nuevaFactura.fecha">
                         </td>
                     </tr>
                     <tr>
@@ -77,92 +93,107 @@
             </div>
 		
 		</div>
-
+        <!-- BLOQUE LÍNEAS FACTURA -->
         <div id="cuerpoFra" class="col-md-12 espacios">
             <table id="items">
                 <thead>
-                    <tr>
+                    <tr class="row">
+                        <!-- <th class="cabecera-title" style="width: 20%">Item</th> -->
                         <th class="cabecera-title" style="width: 20%">Item</th>
                         <th class="cabecera-title" style="width: 30%">Descripción</th>
-                        <th class="cabecera-title" style="width: 20%" colspan="2">Precio</th>
-                        <th class="cabecera-title" style="width: 15%">Cantidad</th>
-                        <th class="cabecera-title" style="width: 15%">Subtotal</th>
+                        <th class="cabecera-title" style="width: 10%">Precio</th>
+                        <th class="cabecera-title" style="width: 10%">Unidad</th>
+                        <th class="cabecera-title" style="width: 10%">Cantidad</th>
+                        <th class="cabecera-title" style="width: 20%">Subtotal</th>
                     </tr>
                 </thead>
 
-                <tbody v-for="linea in lineas" v-bind:key="linea">
-                    <tr id="nuevoItem">
-                        <td style="width: 20%">
-                            <div class="delete-wpr">
-                                <select class="form-control-plaintext form-control-sm editable" v-model="linea.producto">
-                                    <option disabled value="null">Seleccione un producto</option>
-                                    <option v-for="producto in productos" v-bind:key="producto"> {{ producto.nombre }} </option>
-                                </select>
-                                <a class="delete" role="button" @click="eliminarLinea(index)" title="Eliminar línea">X</a>
-                            </div>
-                        </td>
-                        <td style="width: 30%">
-                            <input type="text" class="form-control-plaintext form-control-sm editable"  
-                                    v-model="linea.producto.descripcion">
-                        </td>
-                        <td style="width: 10%">
-                            <input type="number" class="dcha editable" 
-                                    step="0.01" 
-                                    v-model="linea.producto.precio">
-                        </td>
-                        <td style="width: 10%">
-                            <input type="text" class="form-control-plaintext form-control-sm"
-                                    v-model="linea.producto.unidad">
-                        </td>
-                        <td style="width: 10%">
-                            <input type="number" class=" editable dcha" 
-                                    v-model="linea.cantidad" 
-                                    value="1">
-                        </td>
-                        <td style="width: 10%">
-                            <input type="number" class="dcha"
-                                    step="0.01"
-                                    value="(linea.precio*linea.cantidad)().toFixed(2)">
-                        </td>
-                    </tr>
+                <tbody>
+                    <!-- CADA LÍNEA DE FACTURA -->
+                    <!-- trae el componente "item" con las propiedades linea y productos -->
+                    <tr class="row" v-for="linea in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos"></tr>
                 </tbody>
-                    <button title="nuevaLinea" class="btn-default btn-xs" @click="crearLinea">
-                        Nueva línea
-                    </button>
+                <button title="nuevaLinea" class="btn-default btn-xs" @click="crearLinea">
+                    Nueva línea
+                </button>
             </table>
         </div>
 
         <div id="pieFra" class="col-md-12 espacios">
             <table id="totalesFra">
                 <tr>
-                    <td rowspan="4" style="width: 60%" >
-                        <textarea rows="6" cols="50" placeholder="Observaciones..."></textarea>
+                    <td class="cabecera-title" style="width: 10%">21%</td>
+                    <td class="cabecera-text" style="width: 10%">
+                        <input type="number" class="dcha"
+                                    v-model="nuevaFactura.base21"
+                                    readonly
+                                    tabindex="-1">
                     </td>
-                    <td class="cabecera-title" style="width: 20%">Subtotal</td>
+                    <td style="width: 50%">
+                    <td class="cabecera-title" style="width: 15%">Subtotal</td>
+                    <td class="cabecera-text" style="width: 15%">
+                        <input type="number" class="dcha"
+                                    v-model="gransubtotal"
+                                    readonly
+                                    tabindex="-1">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="cabecera-title" style="width: 20%">10%</td>
                     <td class="cabecera-text" style="width: 20%">
-                        <span type="number" class="dcha"
-                                    v-text="nuevaFactura.subtotal"
-                                    step="0.01">
-                                {{nuevaFactura.subtotal}} €
-                        </span>
+                        <input type="number" class="dcha"
+                                    v-model="nuevaFactura.base10"
+                                    readonly
+                                    tabindex="-1">
+                    </td>
+                    <td style="width: 50%">
+                    <td class="cabecera-title">Impuestos</td>
+                    <td class="cabecera-text">
+                        <input type="number" class="dcha"
+                                    v-model="impuestos"
+                                    readonly
+                                    tabindex="-1">
                     </td>
                 </tr>
                 <tr>
-                    <td class="cabecera-title">Impuestos</td>
-                    <td class="cabecera-text">xxx</td>
-                </tr>
-                <tr>
+                    <td class="cabecera-title" style="width: 20%">4%</td>
+                    <td class="cabecera-text" style="width: 20%">
+                        <input type="number" class="dcha"
+                                    v-model="nuevaFactura.base04"
+                                    readonly
+                                    tabindex="-1">
+                    </td>
+                    <td style="width: 50%">
                     <td class="cabecera-title">Retención</td>
-                    <td class="cabecera-text">xxx</td>
+                    <td class="cabecera-text">
+                        <input type="number" class="dcha"
+                                    v-model="retencion"
+                                    readonly
+                                    tabindex="-1">
+                    </td>
                 </tr>
                 <tr>
+                    <td class="cabecera-title" style="width: 20%">0%</td>
+                    <td class="cabecera-text" style="width: 20%">
+                        <input type="number" class="dcha"
+                                    v-model="nuevaFactura.base00"
+                                    readonly
+                                    tabindex="-1">
+                    </td>
+                    <td style="width: 50%">
                     <td class="cabecera-title">Total Factura</td>
                     <td class="cabecera-text">
-                        <span type="number" class="dcha"
-                                    v-text="nuevaFactura.total"
-                                    step="0.01">
-                                {{nuevaFactura.total}} €
-                        </span>
+                        <input type="number" class="dcha"
+                                    v-model="total"
+                                    readonly
+                                    tabindex="-1">
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td rowspan="12" style="width: 100%" >
+                        <textarea rows="12" cols="20" placeholder="Observaciones..."></textarea>
                     </td>
                 </tr>
             </table>
@@ -188,25 +219,28 @@ export default{
                 ejercicio: '',
                 serie: 'VEND',
                 numero: '',
-                fechaFra: '',
-                subtotal:'',
-                total: '',
+                fecha: '',
                 vencimiento: '',
-                formaPago: '',
                 observ: '',
+                base00:'',
+                base04:'',
+                base10:'',
+                base21:'',
                 //de emisor
-                emiId: '',
-                emiNif : '',
-                emiNiva: '',
-                emiNombrecomercial: '',
-                emiEmail: '',
-                emiTelefono: '',
-                emiDireccionfiscal: '',
-                emiCp: '',
-                emiCiudad: '',
-                emiPais: '',
-                emiMoneda: '',
-                emiCnae: '',
+                emi_nif:'', 
+                emi_niva:'', 
+                emi_nombre_fiscal:'', 
+                emi_nombre_comercial:'', 
+                emi_direccion_fiscal:'', 
+                emi_direccion_comercial:'', 
+                emi_cp_fiscal:'', 
+                emi_cp_comercial:'', 
+                emi_provincia_fiscal:'', 
+                emi_provincia_comercial:'', 
+                emi_pais_fiscal:'', 
+                emi_pais_comercial:'', 
+                emi_telefono:'', 
+                emi_email:'', 
                 //de cliente
                 cliId:'',
                 cliRazon_social:'',
@@ -222,27 +256,7 @@ export default{
                 cliTipo_cl:'',
                 cliForma_pago:'',
                 cliDias_pago:'',
-
             },
-            
-            emisor: { // datos de emisor fra. (modelo UsuarioFactura)
-                id:'',
-                nif: '',
-                niva: '',
-                nombrefiscal: '',
-                nombrecomercial: '',
-                email:'',
-                telefono: '',
-                direccionfiscal: '',
-                cp: '',
-                ciudad: '',
-                pais: '',
-                moneda:'',
-                cnae: '',
-            },
-
-            clientes: [], // datos de todos los clientes activos en BD (modelo Cliente)
-
             cliente:{ // cliente seleccionado para emitir fra
                 id:'',
                 razon_social:'',
@@ -259,153 +273,129 @@ export default{
                 forma_pago:'',
                 dias_pago:'',
             },
-
-            productos:[], // datos de todos los productos activos en BD (modelo Producto)
-
-            producto:{ // producto seleccionado para ser linea
-                id:'',
-                nombre:'',
-                descripcion: '',
-                precio:0,
-                unidad:''
-            },
-
             lineas:[], //array de líneas de la factura
-
             linea:{
+                id:'',
                 producto:{
                     id:'',
                     nombre:'',
                     descripcion: '',
                     precio:0,
                     unidad:'',
+                    actividades_codigo:'',
                 },
                 cantidad:1,
             },
-
-            ultimaFra:'',
-
             csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-
-            validado:'', //recoge errores en form. Cliente,
+            validado:'', //recoge errores
         }
-    },
-    computed: {
-
     },
     props:[
         'olds',
-        'errors'
+        'errors', //lo genera Laravel
+        'emisor',
+        'clientes',
+        'productos',
+        'ultima',
+        'impuestosfacturacion'
     ],
+    computed: {
+		gransubtotal: function() {
+            return (this.lineas.reduce((sum, i) => sum + i.cantidad * i.producto.precio, 0));
+        },
+        impuestos: function(){
+            return
+        },
+        retencion: function(){
+            return
+        },
+        total: function() {
+            return this.gransubtotal + this.impuestos + this.retencion;
+        }
+    },
+    components: {
+        item: {
+            props: [
+                'productos',
+                'linea',
+            ],
+            template: '<tr><td style="width: 20%"><div class="delete-wpr"><select class="form-control-plaintext form-control-sm editable" v-model="linea.producto"><option disabled value="null">Seleccione un producto</option><option v-for="producto in productos" :key="producto.id" :value="producto"> {{ producto.nombre }} </option></select><a class="delete" role="button" @click="eliminarLinea(index)" title="Eliminar línea">X</a></div></td><td style="width: 30%"><input type="text" class="editable" maxlength="50" size="27" v-model="linea.producto.descripcion"></td><td style="width: 10%"><input type="number" class="editable dcha" style="width: 100%" step="0.01" v-model="linea.producto.precio"></td><td style="width: 10%"><input type="text"  readonly maxlength="10" size="10" tabindex="-1" v-model="linea.producto.unidad"></td><td style="width: 10%"><input type="number" class="editable dcha" style="width: 100%" v-model="linea.cantidad" value="1"></td><td style="width: 10%"><input type="number" readonly class="dcha" style="width: 100%" tabindex="-1" v-model="subtotal" @change="calculaBase"></td><td style="width: 10%"><input type="hidden"  readonly maxlength="10" size="10" tabindex="-1" v-model="linea.producto.actividades_codigo"></td></tr>',
+            computed: {
+                subtotal: function() { //este dato no se almacena
+                    return this.linea.producto.precio * this.linea.cantidad;
+                }
+            }
+        }
+    },
     created(){
-        //CARGA DATOS PARA FRA
-        this.datosEmisor();
-        this.datosClientes();
         this.datosFactura();
-        this.datosProductos();
         this.hoy(); //fecha inicial para fra. modificable.
+        console.log(typeof this.productos);
     },
     mounted() {
         //MIN Y MAX FECHA FRA: en base al trimestre en el que estamos.
         this.minFecha();
         this.maxFecha();
+
+        if(!this.emisor.nif)
+            this.$notification.error("Necesitas NIF para emitir facturas", {  timer: 4, position:'topRigth' });
     },
     methods:{
+        calculaBase(){
+            //1---cuando cambie subtotal, recoge impuesto de la línea y 
+            //busca impto_facturacion en array of objects impuestosfacturacion
+            var devReact = this.impuestosfacturacion.filter(obj => obj.tipo.includes(this.cliente.tipo)).map(obj => ({"impto_linea":obj.impto_linea_fra, "retencion_linea":obj.retencion_linea_fra}));
+            console.log(devReact);
+            //2---una vez tiene el tipo a aplicar: tipo*subtotal y lo añade a base que corresponda
+        },
+        encuentraImpuesto(tipo, ambito, impto_act){ //ej: PERSONA FISICA NACIONAL GE
+            // var filter = {
+            //     tipo: tipo,  //'PERSONA FISICA'
+            //     ambito: ambito, //'NACIONAL'
+            //     impto_act: impto_act,  //'GE'
+            // };
+            // for (var key in filter) {
+            //     if (filter[key] === undefined || filter[key] != this.[key])
+            //     return false;
+            // }
+            //     return true;
+        },
+        
         hoy(){
             let fecha = new Date();
-            return this.nuevaFactura.fechaFra = fecha.getFullYear()+'-'+(fecha.getMonth()+1)+'-'+fecha.getDate();
+            let mes = fecha.getMonth()+1;
+            if(mes.toString().length == 1)
+                mes = '0'+mes;
+            let dia = fecha.getDate();
+            if(dia.toString().length == 1)
+                dia = '0'+dia;
+            console.log('hoy!!!'+fecha.getFullYear()+'-'+mes+'-'+dia);
+            return this.nuevaFactura.fecha = fecha.getFullYear()+'-'+mes+'-'+dia;
         },
         clFra(event){
-            this.nuevaFactura.cliId = this.cliente.id;
-            this.nuevaFactura.cliRazon_social = this.cliente.razon_social;
-            this.nuevaFactura.cliNif = this.cliente.nif;
-            this.nuevaFactura.cliNiva = this.cliente.niva;
-            this.nuevaFactura.cliDireccion = this.cliente.direccion;
-            this.nuevaFactura.cliProvincia = this.cliente.provincia;
-            this.nuevaFactura.cliPais = this.cliente.pais;
-            this.nuevaFactura.cliCp = this.cliente.cp;
-            this.nuevaFactura.cliTlfn = this.cliente.tlfn;
-            this.nuevaFactura.cliEmail = this.cliente.email;
-            this.nuevaFactura.cliAmbito_cl = this.cliente.ambito_cl;
-            this.nuevaFactura.cliTipo_cl = this.cliente.tipo_cl;
-            this.nuevaFactura.cliForma_pago = this.cliente.forma_pago;
-            this.nuevaFactura.cliDias_pago = this.cliente.dias_pago;
             //si cliente no NACIONAL y no tenemos NIVA en emisor:
-            if(this.cliente.ambito_cl !== 'NACIONAL' && this.emisor.niva === null){
+            if(this.cliente.ambito !== 'NACIONAL' && this.emisor.niva === null){
                 this.$notification.error("Necesitas NIVA para emitir a extranjeros", {  timer: 2, position:'topRigth' });
             }
             //calcula vencimiento
-            console.log(this.nuevaFactura.fechaFra);
-            let v = new Date(this.nuevaFactura.fechaFra);
-            v.setDate(v.getDate() + parseInt(this.nuevaFactura.cliDias_pago));
-            console.log(v);
+            let v = new Date(this.nuevaFactura.fecha);
+            v.setDate(v.getDate() + parseInt(this.cliente.dias_pago));
             let mes = v.getMonth()+1;
             let dia = v.getDate();
             if (mes < 10) 
                 mes = "0" + mes;
             if (dia < 10) 
                 dia = "0" + dia;
-            console.log(mes);
             this.nuevaFactura.vencimiento =v.getFullYear()+'-'+(mes)+'-'+dia;
-        },
-        //RECUPERA DEL SERVER DATOS EMISOR FRA
-        datosEmisor(){
-            let url = "/usuariofactura";
-            axios.get(url).then(response => {
-                this.emisor = response.data;
-                console.log(this.emisor);
-                this.nuevaFactura.emiId = this.emisor.id;
-                this.nuevaFactura.emiNif = this.emisor.nif;
-                this.nuevaFactura.emiNiva = this.emisor.niva;
-                this.nuevaFactura.emiNombrecomercial = this.emisor.nombrecomercial;
-                this.nuevaFactura.emiEmail = this.emisor.email;
-                this.nuevaFactura.emiTelefono = this.emisor.telefono;
-                this.nuevaFactura.emiDireccionfiscal = this.emisor.direccionfiscal;
-                this.nuevaFactura.emiCp = this.emisor.cp;
-                this.nuevaFactura.emiCiudad = this.emisor.ciudad;
-                this.nuevaFactura.emiPais = this.emisor.pais;
-                this.nuevaFactura.emiMoneda = this.emisor.moneda;
-                this.nuevaFactura.emiCnae = this.emisor.cnae;
-            }).catch((error) => {
-                console.log(error);
-            });
         },
         //RECUPERA DEL SERVER DATOS PARA INICIALIZAR NUEVA FRA
         datosFactura(){
-            let url = "/facturas/getlast";
-            axios.get(url).then(response => {
-                this.ultimaFra = response.data.numero;
-                console.log(this.ultimaFra);
-                if(!this.ultimaFra)
+            if(!this.ultima)
                     this.nuevaFactura.numero = 1;
                 else
-                    this.nuevaFactura.numero += this.ultimaFra;
+                    this.nuevaFactura.numero += this.ultima;
                 this.nuevaFactura.ejercicio = new Date().getFullYear();
-            }).catch((error) => {
-                console.log(error);
-            });
         },
-        //RECUPERA DEL SERVER DATOS DE CLIENTES
-        datosClientes(){
-            let url = "/clientes/listarCl";
-            axios.get(url).then(response => {
-                this.clientes = response.data;
-                console.log(this.clientes);
-            }).catch((error) => {
-                console.log(error);
-            });
-        },
-        //RECUPERA DEL SERVER DATOS DE PRODUCTOS
-        datosProductos(){
-            let url = "/getProductos";
-            axios.get(url).then(response => {
-                this.productos = response.data;
-                console.log(this.productos);
-            }).catch((error) => {
-                console.log(error);
-            });
-        },
-        //MÉTODOS AUXILIARES
         minFecha(){
             let mesHoy = (new Date().getMonth()+1);
             let minMes = '';
@@ -446,7 +436,8 @@ export default{
         //MÉTODOS GESTIÓN INTERFAZ
         //NUEVA LÍNEA FRA
         crearLinea() {
-            this.lineas.push(Vue.util.extend({}, this.linea))
+            this.lineas.push(Vue.util.extend({}, this.linea));
+            this.lineas.slice(-1)[0].id = this.lineas.length+1;
         },
         //ELIMINA LÍNEA FRA
         eliminarLinea(index){
@@ -458,19 +449,13 @@ export default{
 
 <style>
 .espacios { margin-top: 20px; margin-bottom: 20px; }
-
 * { margin: 0; padding: 0; }
-
 body { font: 14px/1.4 Georgia, serif; }
-
 #page-wrap { width: 800px; margin: 0 auto; } /* tamaño A4¿? */
-
 /**titulo: F A C T U R A */
 #tituloFact { width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px; }
-
 /*logo */
 #logo { text-align: right; float: right; position: relative; border: 1px solid #fff; max-width: 540px; max-height: 100px; overflow: hidden; }
-
 /*inputs // span */
 input { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px; }
 span { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px; }
@@ -486,14 +471,8 @@ table { border-collapse: collapse; } /** solapa los bordes*/
 /*terminos de la fra */
 #terms { text-align: center; margin: 20px 0 0 0; }
 #terms h5 { text-transform: uppercase; font: 13px Helvetica, Sans-Serif; letter-spacing: 10px; border-bottom: 1px solid black; padding: 0 0 8px 0; margin: 0 0 8px 0; }
-
 /* textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; } */
-
 /* textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; } */
-
-
-
-
 /*#items { clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid black; }
 #items textarea { width: 80px; height: 50px; }
 #items tr.item-row td { border: 0; vertical-align: top; }
@@ -502,12 +481,7 @@ table { border-collapse: collapse; } /** solapa los bordes*/
 #items td.total-value textarea { height: 20px; background: none; }
 #items td.balance { background: #eee; }
 #items td.blank { border: 0; }
-
-
-
 textarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; }*/
-
 .delete-wpr { position: relative; }
 .delete { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px; }
-
 </style>

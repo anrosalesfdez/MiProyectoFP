@@ -4,7 +4,10 @@
 
         <div class="col-md-12 espacios">
             <h3 style="display: inline">Facturación</h3>
-            <a class="btn btn-success" role="button" href="/facturas/crear">Nueva factura</a>
+            <a class="nuevaPag" href="/facturas/crear">
+                <i class="material-icons">control_point</i>
+                Nueva factura
+            </a>
         </div> 
                 
         <v-client-table ref="tabla" class="col-md-12" :data="facturas" :columns="columns" :options="options">

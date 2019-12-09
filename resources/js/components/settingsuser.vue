@@ -4,10 +4,10 @@
         <div class="card-header">
             <h3 style="display: inline">Configuración de usuario</h3>
             <div style="display: inline; float: right">
-                <button class="btn btn-success" @click="actualizar(usuario.id)">
+                <button class="crearButton" @click="actualizar(usuario.id)">
                     Actualizar
                 </button>
-                <a href="/dashboard" class="btn btn-danger">
+                <a href="/dashboard" class="cancelarButton">
                     Cancelar
                 </a>
             </div>
@@ -125,10 +125,10 @@
         </div>
 
         <div class="modal-footer">
-            <button class="btn btn-success" @click="actualizar(usuario.id)">
+            <button class="crearButton" @click="actualizar(usuario.id)">
                 Actualizar
             </button>
-            <a href="/dashboard" class="btn btn-danger">
+            <a href="/dashboard" class="cancelarButton">
                 Cancelar
             </a>
         </div>

@@ -22,11 +22,11 @@ class User extends Authenticatable
         'apellido1', 
         'apellido2', 
         'telefono', 
-        'fechanacimiento', 
+        'fecha_nacimiento', 
         'nif',
         'direccion', 
         'cp', 
-        'ciudad', 
+        'provincia', 
         'pais'
     ];
 
@@ -47,4 +47,33 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Relación de user con emisor.
+     */
+     public function emisor(){
+         return $this->hasOne('App\Emisor', 'users_id');
+     }
+
+     /**
+     * Relación de user con clientes. 
+     */
+     public function clientes(){
+        return $this->hasMany('App\Cliente', 'users_id');
+    }
+
+    /**
+     * Relación de user con productos. 
+     */
+     public function productos(){
+        return $this->hasMany('App\Producto', 'users_id');
+    }
+
+    /**
+     * Relación INDIRECT a través de tabla pivot. el modelo emisor no tiene actividades en tabla, pero si a traves de la tabla emisores_actividades
+     */
+     public function actividades(){
+        return $this->hasManyThrough('App\Actividad')
+                    ->using('App\EmisorActividad');
+    }
 }

@@ -2,8 +2,9 @@
     <div class="row justify-content-center">
       
         <div class="col-md-12 espacios">
-            <h3 style="display: inline">Mantenimiento de Productos</h3>
-            <button class="btn btn-success" @click="toggler">
+            <h3>Mantenimiento de Productos</h3>
+            <button v-if="mostrarCrear" class="nuevaPag" @click="toggler">
+                <i class="material-icons">control_point</i>
                 Nuevo producto
                 <!-- <span class="oi oi-plus"></span> -->
             </button>
@@ -23,15 +24,22 @@
                                 step="0.01"
                                 min="0.00"
                                 value="0.00">
-            <input type="text" name="unidadv" id="unidad"
+            <input type="text" name="unidad" id="unidad"
                                 v-model="nuevo.unidad"
-                                placeholder="unidad precio">
-            <button title="crear" class="btn btn-success" @click="crear" >Crear</button>
-            <button title="crear" class="btn btn-danger" @click="isActive = !isActive" >Cancelar</button>
+                                placeholder="unidad">
+            <select class="form-control-plaintext editable" id="actividades_id" 
+                                v-model="nuevo.actividades_id">
+                <option disabled value="null">Código CNAE actividad</option>
+                <option v-for="actividad in actividades" :key="actividad.id" :value="actividad.id"> {{ actividad.codigo }} - {{ actividad.titulo }} </option>
+            </select>
+            <button title="crear" class="crearButton" @click="crear" >Crear</button>
+            <button title="crear" class="cancelarButton" @click="isActive = !isActive" >Cancelar</button>
         </div>
 
         <div class="col-md-12 espacios" v-if="isEditing">
             <p><strong>Editando producto:</strong></p>
+            <input type="hide" name="idUser" id="idUser"
+                v-model="editado.users_id">
             <input type="text" name="idEdit" id="idEdit" class="col-md-1"
                                 v-model="editado.id"
                                 value="editado.id"
@@ -51,18 +59,28 @@
             <input type="text" name="unidad" id="unidad"
                                 v-model="editado.unidad"
                                 value="editado.unidad">
-            <button title="crear" class="btn btn-success" @click="actualizar(editado.id)" >Actualizar</button>
-            <button title="crear" class="btn btn-danger" @click="isEditing = !isEditing" >Cancelar</button>
+            <input type="text" name="actividades_id" id="actividades_id"
+                                v-model="editado.actividades_id"
+                                value="editado.actividades_id"
+                                readonly
+                                disabled>
+            <div style="padding: 15px 0px;">
+                <button title="crear" class="crearButton" @click="actualizar(editado.id)" >Actualizar</button>
+                <button title="crear" class="cancelarButton" @click="isEditing = !isEditing; mostrarCrear= !mostrarCrear" >Cancelar</button>
+            </div>
         </div>
 
         <div class="col-md-12 espacios">
             <v-client-table ref="tabla" class="col-md-12" :data="misProductos" :columns="columns" :options="options">
+                <div slot="cnae" slot-scope="props" style="display: inline">
+                {{ getCnae(props.row.id) }}
+                </div>
                 <div slot="acciones" slot-scope="props" style="display: inline">
                     <button title="editar" class="btn btn-xs" @click="editar(props.row.id)" >
-                        <i class="material-icons" style="font-size: 18px; color:#3490dc">edit</i>
+                        <i class="material-icons iconosEdicion">edit</i>
                     </button>
                     <button title="eliminar" class="btn btn-xs" @click="eliminar(props.row.id)">
-                        <i class="material-icons" style="font-size: 18px; color:red">delete</i>
+                        <i class="material-icons iconosEdicion">delete</i>
                     </button>
                 </div>
             </v-client-table> 
@@ -73,45 +91,52 @@
 
 <script>
 //TODO:salto de línea en errores servidorbundleRenderer.renderToStream
-//TODO: fechas en tabla, no aplica la mascara cuando no recarga del server
 export default {
     data(){
         return{
             misProductos: this.productos, //necesario pq no se puede modif la prop de padre por hijo
-            isActive: false,
-            isEditing: false,
+            isActive: false, //div crear producto
+            isEditing: false, //div editar producto
+            mostrarCrear: true, //botón nuevo producto
             nuevo: {
                 nombre: '',
                 descripcion:'',
                 precio:'',
-                unidad:''
+                unidad:'',
+                actividades_id:''
             },
             editado: {
                 id: '',
                 nombre: '',
                 descripcion:'',
                 precio:'',
-                unidad:''
+                unidad:'',
+                actividades_id:'',
+            },
+            actividades: [],
+            actividad: {
+                id:'',
+                codigo:'',
+                titulo:'',
+                descripcion:'',
+                impuesto:''
             },
             validado: '', //recoge mensajes de errores front end y back end en caso de haberlos.
+            cnae:'',
             //para la tabla
-            columns: ['id', 'nombre', 'descripcion', 'precio', 'unidad', 'created_at', 'updated_at', 'acciones'],
+            columns: ['nombre', 'descripcion', 'precio', 'unidad', 'cnae', 'acciones'],
             
             filterByColumn: false,
 
             options:{
-                dateColumns:['created_at','updated_at'],
-                toMomentFormat: 'YYYY-MM-DD',
-                sortable: ['id', 'nombre'],
+                sortable: ['nombre', 'precio', 'unidad', 'actividades_id'],
                 filterable: false, //OCULTA FILTRO
                 headings: {
-                        id: 'ID',
                         nombre: 'NOMBRE',
                         descripcion: 'DESCRIPCION',
                         precio: 'PRECIO €',
                         unidad: 'UNIDAD',
-                        'created_at': 'CREACIÓN',
-                        'updated_at': 'ACTUALIZACIÓN',
+                        'cnae': 'CNAE',
                         'acciones': 'ACCIONES'
                     },
                 orderBy: {
@@ -139,7 +164,31 @@ export default {
     props: [
         'productos'
     ],
+    computed: { //TOFIX 
+        // cnaeCode: function(actividad_id){
+        //     return this.actividades.find(actividad => actividad.id === actividad_id).codigo;
+        // }
+    },
+    created: function(){
+        this.getActividades();
+
+    },
     methods: {
+        getCnae(idPto){
+            let actividad = this.misProductos.find(x => x.id == idPto).actividades_id;
+                            // this.misProductos.find(x => x.id === id).actividdes_id;
+            console.log(actividad);
+            return this.actividades.find(x => x.id == actividad).codigo;
+        },
+        getActividades(){
+            let url = "/actividades";
+            axios.get(url).then(response => {
+                this.actividades = response.data;
+                console.log(this.actividades);
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
         //VALIDA EN CLIENTE. Se ejecutan todas de golpe al click en crear/actualizar
         //si se superan (this.validado =''), se envía la petición AJAX
         controlNombre(nombre){
@@ -162,9 +211,13 @@ export default {
             if(unidad.length > 10)
                 this.validado += "UNIDAD: Máximo 10 caracteres\n";
         },
+        controlActividad(actividades_id){
+            if(!actividades_id)
+                this.validado += "ACTIVIDAD CNAE: Campo obligatorio\n";
+        },
         //VALIDA EN SERVIDOR. Se ejecutan en caso de que el servidor devuelva un error 422
         validarServer(errors){
-            let campos = ['nombre', 'descripcion', 'precio', 'unidad'];
+            let campos = ['nombre', 'descripcion', 'precio', 'unidad', 'actividades_id'];
             let validadoServer = '';
             campos.forEach(element =>{
                 if(errors[element]) {
@@ -178,21 +231,22 @@ export default {
         },
         //MUESTRA u OCULTA DIV CON INPUTS PARA NUEVO PRODUCTO
         toggler(){
-            this.isActive = !this.isActive;
+            this.isActive = !this.isActive; //mostrar div
             this.nuevo.nombre = '';
             this.nuevo.descripcion = '';
             this.nuevo.precio = '';
             this.nuevo.unidad = '';
+            this.nuevo.actividades_id='';
         },
         //ENVÍA A SERVIDOR PETICIÓN AJAX CON DATOS DE NUEVO PRODUCTO PARA GUARDAR EN BD
         crear(){
-            console.log(this.nuevo.nombre + ' ' + this.nuevo.descripcion + ' ' + this.nuevo.precio + ' ' + this.nuevo.unidad)
             //Ejecuta validaciones en cliente
             this.validado=''; //blanquea
             this.controlNombre(this.nuevo.nombre);
             this.controlDescripcion(this.nuevo.descripcion);
             this.controlPrecio(this.nuevo.precio);
             this.controlUnidad(this.nuevo.unidad);
+            this.controlActividad(this.nuevo.actividades_id);
             if(this.validado !== ''){
                 this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
                 return;
@@ -203,13 +257,14 @@ export default {
                 nombre: this.nuevo.nombre,
                 descripcion: this.nuevo.descripcion,
                 precio: this.nuevo.precio,
-                unidad: this.nuevo.unidad
+                unidad: this.nuevo.unidad,
+                actividades_id: this.nuevo.actividades_id
             }).then(response => {
                 console.log(response);
                 this.$notification.success("Producto creado correctamente!", {  timer: 4, position:'topRigth' });
                 this.misProductos = response.data;
                 this.toggler();
-                location.reload(); //para que carguen bien las fechas...
+                // location.reload(); //para que carguen bien las fechas...
 
             }).catch((error) => { //(error) es el param que le paso a la funcion anónima
                 console.log(error); // error = Error object
@@ -227,12 +282,18 @@ export default {
         editar(id){
             console.log(this.editado)
             // this.isEditing = !this.isEditing; NO VALE! PORQUE SI PULSA EDITAR UNO, Y LUEGO OTRO, LO QUE HACE ES OCULTAR EL 2º.... :/
-            this.isEditing = true;
+            this.isEditing = true; //muestra div editar
+            //
             this.editado.id = this.misProductos.find(x => x.id === id).id;
             this.editado.nombre = this.misProductos.find(x => x.id === id).nombre;
             this.editado.descripcion = this.misProductos.find(x => x.id === id).descripcion;
             this.editado.precio = this.misProductos.find(x => x.id === id).precio;
             this.editado.unidad = this.misProductos.find(x => x.id === id).unidad;
+            this.editado.actividades_id = this.misProductos.find(x => x.id === id).actividades_id;
+            this.editado.users_id = this.misProductos.find(x => x.id === id).users_id;
+
+            this.mostrarCrear = !this.mostrarCrear; //muestra botón de crear producto
+
         },
         //ENVÍA A SERVIDOR PETICIÓN AJAX CON DATOS DE PRODUCTO EDITADO PARA GUARDAR EN BD
         actualizar(id){
@@ -242,18 +303,21 @@ export default {
             this.controlDescripcion(this.editado.descripcion);
             this.controlPrecio(this.editado.precio);
             this.controlUnidad(this.editado.unidad);
+            this.controlActividad(this.editado.actividades_id);
             if(this.validado !== ''){
                 this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
                 return;
             }
             //si no hubo errores, envía AJAX
-            var url='/productoeditar/' + id;
+            var url='/productoEditar/' + id;
             axios.post(url, {
                 id: this.editado.id,
                 nombre: this.editado.nombre,
                 descripcion: this.editado.descripcion,
                 precio: this.editado.precio,
-                unidad: this.editado.unidad
+                unidad: this.editado.unidad,
+                actividades_id: this.editado.actividades_id,
+                users_id: this.editado.users_id,
             }).then(response => {
                 console.log(response);
                 this.$notification.success("Producto actualizado correctamente!", {  timer: 4, position:'topRigth' });
@@ -263,7 +327,8 @@ export default {
                 this.editado.descripcion = '';
                 this.editado.precio = '';
                 this.editado.unidad = '';
-                location.reload(); //para que carguen bien las fechas...
+                this.editado.actividades_id = '';
+                // location.reload(); //para que carguen bien las fechas...
 
             }).catch((error) => {
                 if(error.response.status == 422){

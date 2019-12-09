@@ -9,8 +9,8 @@
                 <div class="card-header">
                     <h3 style="display: inline">Alta nuevo cliente</h3>
                     <div style="display: inline; float: right">
-                        <button type="submit" class="btn btn-success">Guardar</button>
-                        <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
+                        <button type="submit" class="crearButton">Guardar</button>
+                        <a href="/clientes/listar" class="cancelarButton">Cancelar</a>
                     </div>
                 </div>
 
@@ -67,9 +67,9 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="tlfn" class="col-form-label">Teléfono</label>      
-                            <input type="tel" class="form-control" name="tlfn" id="tlfn"
-                                    v-model="nuevoCliente.tlfn">
+                            <label for="telefono" class="col-form-label">Teléfono</label>      
+                            <input type="tel" class="form-control" name="telefono" id="telefono"
+                                    v-model="nuevoCliente.telefono">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email" class="col-form-label">Email</label>      
@@ -80,9 +80,9 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="ambito_cl" class="col-form-label">Ámbito cliente</label>
-                            <select class="form-control" name="ambito_cl" id="ambito_cl"
-                                    v-model="nuevoCliente.ambito_cl">
+                            <label for="ambito" class="col-form-label">Ámbito cliente</label>
+                            <select class="form-control" name="ambito" id="ambito"
+                                    v-model="nuevoCliente.ambito">
                                 <option disabled selected value="">Ámbito de cliente...</option>
                                 <option value="NACIONAL">NACIONAL</option>
                                 <option value="INTRACOMUNITARIO">INTRACOMUNITARIO</option>
@@ -90,9 +90,9 @@
                             </select>         
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="tipo_cl" class="col-form-label">Tipo cliente</label>
-                            <select class="form-control" name="tipo_cl" id="tipo_cl"
-                                    v-model="nuevoCliente.tipo_cl">
+                            <label for="tipo" class="col-form-label">Tipo cliente</label>
+                            <select class="form-control" name="tipo" id="tipo"
+                                    v-model="nuevoCliente.tipo">
                                 <option disabled selected value="">Tipo de cliente...</option>
                                 <option value="PERSONA FISICA">PERSONA FISICA</option>
                                 <option value="PERSONA JURIDICA">PERSONA JURIDICA</option>
@@ -123,14 +123,14 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="observ" class="col-form-label">Observaciones</label>
-                        <textarea class="form-control" name="observ" id="observ"
-                                v-model="nuevoCliente.observ"></textarea>
+                        <label for="observaciones" class="col-form-label">Observaciones</label>
+                        <textarea class="form-control" name="observaciones" id="observaciones"
+                                v-model="nuevoCliente.observaciones"></textarea>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Guardar</button>
-                        <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
+                        <button type="submit" class="crearButton">Guardar</button>
+                        <a href="/clientes/listar" class="cancelarButton">Cancelar</a>
                     </div>
                 </div>
             </form>
@@ -158,13 +158,13 @@ export default{
                 provincia: '',
                 pais: '',
                 cp: '',
-                tlfn: '',
+                telefono: '',
                 email: '',
-                ambito_cl: '',
-                tipo_cl: '',
+                ambito: '',
+                tipo: '',
                 forma_pago: '',
                 dias_pago: '',
-                observ: ''
+                observaciones: ''
             },
             csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             validado:'' //recoge errores en form. Cliente
@@ -176,8 +176,6 @@ export default{
     ],
     created(){
 
-        this.$notification.warning("Aegure los datos en AEAT antes de GUARDAR", {  timer: 4, position:'topRigth' });
-
         if('razon_social' in this.olds) { this.nuevoCliente.razon_social = this.olds.razon_social; }
         if('nif' in this.olds) { this.nuevoCliente.nif = this.olds.nif; }
         if('niva' in this.olds) { this.nuevoCliente.niva = this.olds.niva; }
@@ -185,13 +183,13 @@ export default{
         if('pais' in this.olds) { this.nuevoCliente.pais = this.olds.pais; }
         if('provincia' in this.olds) { this.nuevoCliente.provincia = this.olds.provincia; }
         if('cp' in this.olds) { this.nuevoCliente.cp = this.olds.cp; }
-        if('tlfn' in this.olds) { this.nuevoCliente.tlfn = this.olds.tlfn; }
+        if('telefono' in this.olds) { this.nuevoCliente.telefono = this.olds.telefono; }
         if('email' in this.olds) { this.nuevoCliente.email = this.olds.email; }
-        if('ambito_cl' in this.olds) { this.nuevoCliente.ambito_cl = this.olds.ambito_cl; }
-        if('tipo_cl' in this.olds) { this.nuevoCliente.tipo_cl = this.olds.tipo_cl; }
+        if('ambito' in this.olds) { this.nuevoCliente.ambito = this.olds.ambito; }
+        if('tipo' in this.olds) { this.nuevoCliente.tipo = this.olds.tipo; }
         if('forma_pago' in this.olds) { this.nuevoCliente.forma_pago = this.olds.forma_pago; }
         if('dias_pago' in this.olds) { this.nuevoCliente.dias_pago = this.olds.dias_pago; }
-        if('observ' in this.olds) { this.nuevoCliente.observ = this.olds.observ; }
+        if('observaciones' in this.olds) { this.nuevoCliente.observaciones = this.olds.observaciones; }
         
         //si form validado en cliente pero falla en servidor.
         console.log('enviado true, devuelve errors: '+this.errors);
@@ -213,8 +211,8 @@ export default{
             this.controlRazonSocial(e, this.nuevoCliente.razon_social);
             this.controlNif(e, this.nuevoCliente.nif);
             this.controlPais(e, this.nuevoCliente.pais);
-            this.controlAmbito(e, this.nuevoCliente.ambito_cl, this.nuevoCliente.niva, this.nuevoCliente.pais);
-            this.controlTipo(e, this.nuevoCliente.tipo_cl, this.nuevoCliente.ambito_cl, this.nuevoCliente.nif);
+            this.controlAmbito(e, this.nuevoCliente.ambito, this.nuevoCliente.niva, this.nuevoCliente.pais);
+            this.controlTipo(e, this.nuevoCliente.tipo, this.nuevoCliente.ambito, this.nuevoCliente.nif);
             this.controlEmail(e, this.nuevoCliente.email);
 
             if(this.validado !== ''){
@@ -245,27 +243,27 @@ export default{
             if(!pais)
                 this.validado += "Campo pais obligatorio\n";
         },
-        controlAmbito(e, ambito_cl, niva, pais){
-            if(!ambito_cl)
+        controlAmbito(e, ambito, niva, pais){
+            if(!ambito)
                 this.validado += "ÁMBITO es campo obligatorio\n";
 
-            if(ambito_cl == 'NACIONAL' && pais!=='ESPAÑA')
-                this.validado += "ÁMBITO: "+ambito_cl+ " incorrecto para PAÏS: "+pais+"\n";
+            if(ambito == 'NACIONAL' && pais.toUpperCase() !== 'ESPAÑA')
+                this.validado += "ÁMBITO: "+ambito+ " incorrecto para PAÍS: "+pais+"\n";
             
-            if(ambito_cl !== 'NACIONAL' && pais =='ESPAÑA')
-                this.validado += "ÁMBITO: "+ambito_cl+ " incorrecto para PAÏS: "+pais+"\n";
+            if(ambito !== 'NACIONAL' && pais =='ESPAÑa')
+                this.validado += "ÁMBITO: "+ambito+ " incorrecto para PAÍS: "+pais+"\n";
 
-            if(ambito_cl == 'INTRACOMUNITARIO' && !niva)
-                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito_cl+"\n";
+            if(ambito == 'INTRACOMUNITARIO' && !niva)
+                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito+"\n";
 
-            if((ambito_cl == 'EXTRACOMUNITARIO') && !niva)
-                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito_cl+"\n";
+            if((ambito == 'EXTRACOMUNITARIO') && !niva)
+                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito+"\n";
         },
-        controlTipo(e, tipo_cl, ambito_cl, nif){
-            if(!tipo_cl)
+        controlTipo(e, tipo, ambito, nif){
+            if(!tipo)
                 this.validado += "TIPO es campo obligatorio\n";
 
-            if(ambito_cl == 'NACIONAL' && tipo_cl == 'PERSONA FISICA'){
+            if(ambito == 'NACIONAL' && tipo == 'PERSONA FISICA'){
                 let dniPatron1 = /^\d{8}[a-zA-Z]$/; //personas físicas
                 let dniPatron2 = /[M|X-Z]^\d{7}[A-Z]$/; //extranjeros residentes
                 let letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
@@ -310,10 +308,3 @@ export default{
     } //end methods
 }
 </script>
-
-<style>
-.espacios {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-</style>

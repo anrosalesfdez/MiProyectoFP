@@ -11,11 +11,10 @@
         <form method="post" v-bind:action="'/clientes/update/'+editadocliente.id" @submit="validarForm($event)">
             
             <div class="card-header">
-                <h3 style="display: inline" v-html="this.razonvieja">Actualizando cliente: <strong></strong></h3>
-                <div style="display: inline; float: right">
-                    <!-- <button class="btn btn-primary" @click="updateCliente">Actualizar</button> -->
-                    <button type="submit" class="btn btn-success">Actualizar</button>
-                    <a href="/clientes/listar" class="btn btn-danger pull-right">Cancelar</a>
+                <h3 style="display: inline">Actualizando cliente: {{ this.razonvieja}}<strong></strong></h3>
+                <div style="display: inline; float: right;">
+                    <button type="submit" class="crearButton" style="padding:9px 38px;">Actualizar</button>
+                    <a href="/clientes/listar" class="cancelarButton">Cancelar</a>
                 </div>
             </div>
 
@@ -25,11 +24,11 @@
                     <input type="hidden" name="_token" v-model="csrf">
 
                     <div class="form-row">
-                        <div class="form-group col-md-1">
+                        <!-- <div class="form-group col-md-1">
                             <label for="id" class="col-form-label">ID cliente</label>      
                             <input type="text" class="form-control" readonly name="id" id="id" v-model="editadocliente.id">
-                        </div>
-                        <div class="form-group col-md-11">
+                        </div> -->
+                        <div class="form-group col-md-12">
                             <label for="razon_social" class="col-form-label">Razón social</label>      
                             <input type="text" class="form-control" name="razon_social" id="razon_social"
                                         v-model="editadocliente.razon_social"
@@ -75,8 +74,8 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="tlfn" class="col-form-label">Teléfono</label>      
-                            <input type="tel" class="form-control" name="tlfn" id="tlfn" v-model="editadocliente.tlfn"> 
+                            <label for="telefono" class="col-form-label">Teléfono</label>      
+                            <input type="tel" class="form-control" name="telefono" id="telefono" v-model="editadocliente.telefono"> 
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email" class="col-form-label">Email</label>      
@@ -86,9 +85,9 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="ambito_cl" class="col-form-label">Ámbito cliente</label>
-                            <select class="form-control" name="ambito_cl" id="ambito_cl" 
-                                    v-model="editadocliente.ambito_cl">
+                            <label for="ambito" class="col-form-label">Ámbito cliente</label>
+                            <select class="form-control" name="ambito" id="ambito" 
+                                    v-model="editadocliente.ambito">
                                 <option disabled selected value="">Ámbito de cliente...</option>
                                 <option value="NACIONAL">NACIONAL</option>
                                 <option value="INTRACOMUNITARIO">INTRACOMUNITARIO</option>
@@ -96,9 +95,9 @@
                             </select>         
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="tipo_cl" class="col-form-label">Tipo cliente</label>
-                            <select class="form-control" name="tipo_cl" id="tipo_cl"
-                                    v-model="editadocliente.tipo_cl">
+                            <label for="tipo" class="col-form-label">Tipo cliente</label>
+                            <select class="form-control" name="tipo" id="tipo"
+                                    v-model="editadocliente.tipo">
                                 <option disabled selected value="">Tipo de cliente...</option>
                                 <option value="PERSONA FISICA">PERSONA FISICA</option>
                                 <option value="PERSONA JURIDICA">PERSONA JURIDICA</option>
@@ -129,15 +128,15 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="observ" class="col-form-label">Observaciones</label>
-                        <textarea class="form-control" name="observ" id="observ" 
-                                v-model="editadocliente.observ"></textarea>
+                        <label for="observaciones" class="col-form-label">observacionesaciones</label>
+                        <textarea class="form-control" name="observaciones" id="observaciones" 
+                                v-model="editadocliente.observaciones"></textarea>
                     </div>
 
                     <div class="modal-footer">
                         <!-- <button class="btn btn-primary" click="updateCliente">Actualizar</button> -->
-                        <button type="submit" class="btn btn-success">Actualizar</button>
-                        <a href="/clientes/listar" class="btn btn-danger">Cancelar</a>
+                        <button type="submit" class="crearButton">Actualizar</button>
+                        <a href="/clientes/listar" class="cancelarButton">Cancelar</a>
                     </div>
             </div>
         </form>
@@ -173,13 +172,13 @@ export default{
         if('pais' in this.olds) { this.editadocliente.pais = this.olds.pais; }
         if('provincia' in this.olds) { this.editadocliente.provincia = this.olds.provincia; }
         if('cp' in this.olds) { this.editadocliente.cp = this.olds.cp; }
-        if('tlfn' in this.olds) { this.editadocliente.tlfn = this.olds.tlfn; }
+        if('telefono' in this.olds) { this.editadocliente.telefono = this.olds.telefono; }
         if('email' in this.olds) { this.editadocliente.email = this.olds.email; }
-        if('ambito_cl' in this.olds) { this.editadocliente.ambito_cl = this.olds.ambito_cl; }
-        if('tipo_cl' in this.olds) { this.editadocliente.tipo_cl = this.olds.tipo_cl; }
+        if('ambito' in this.olds) { this.editadocliente.ambito = this.olds.ambito; }
+        if('tipo' in this.olds) { this.editadocliente.tipo = this.olds.tipo; }
         if('forma_pago' in this.olds) { this.editadocliente.forma_pago = this.olds.forma_pago; }
         if('dias_pago' in this.olds) { this.editadocliente.dias_pago = this.olds.dias_pago; }
-        if('observ' in this.olds) { this.editadocliente.observ = this.olds.observ; }
+        if('observaciones' in this.olds) { this.editadocliente.observaciones = this.olds.observaciones; }
 
         //si form validado en cliente pero falla en servidor.
         console.log('enviado true, devuelve errors: '+this.errors);
@@ -199,8 +198,8 @@ export default{
             this.validado=''; //blanquea
             this.controlRazonSocial(e, this.editadocliente.razon_social);
             this.controlPais(e, this.editadocliente.pais);
-            this.controlAmbito(e, this.editadocliente.ambito_cl, this.editadocliente.niva, this.editadocliente.pais);
-            this.controlTipo(e, this.editadocliente.tipo_cl, this.editadocliente.ambito_cl, this.editadocliente.nif);
+            this.controlAmbito(e, this.editadocliente.ambito, this.editadocliente.niva, this.editadocliente.pais);
+            this.controlTipo(e, this.editadocliente.tipo, this.editadocliente.ambito, this.editadocliente.nif);
             this.controlEmail(e, this.editadocliente.email);
 
             if(this.validado !== ''){
@@ -227,27 +226,27 @@ export default{
             if(!pais)
                 this.validado += "Campo pais obligatorio\n";
         },
-        controlAmbito(e, ambito_cl, niva, pais){
-            if(!ambito_cl)
+        controlAmbito(e, ambito, niva, pais){
+            if(!ambito)
                 this.validado += "ÁMBITO es campo obligatorio\n";
 
-            if(ambito_cl == 'NACIONAL' && pais!=='ESPAÑA')
-                this.validado += "ÁMBITO: "+ambito_cl+ " incorrecto para PAÏS: "+pais+"\n";
+            if(ambito == 'NACIONAL' && pais!=='ESPAÑA')
+                this.validado += "ÁMBITO: "+ambito+ " incorrecto para PAÏS: "+pais+"\n";
             
-            if(ambito_cl !== 'NACIONAL' && pais =='ESPAÑA')
-                this.validado += "ÁMBITO: "+ambito_cl+ " incorrecto para PAÏS: "+pais+"\n";
+            if(ambito !== 'NACIONAL' && pais =='ESPAÑA')
+                this.validado += "ÁMBITO: "+ambito+ " incorrecto para PAÏS: "+pais+"\n";
 
-            if(ambito_cl == 'INTRACOMUNITARIO' && !niva)
-                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito_cl+"\n";
+            if(ambito == 'INTRACOMUNITARIO' && !niva)
+                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito+"\n";
 
-            if((ambito_cl == 'EXTRACOMUNITARIO') && !niva)
-                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito_cl+"\n";
+            if((ambito == 'EXTRACOMUNITARIO') && !niva)
+                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito+"\n";
         },
-        controlTipo(e, tipo_cl, ambito_cl, nif){
-            if(!tipo_cl)
+        controlTipo(e, tipo, ambito, nif){
+            if(!tipo)
                 this.validado += "TIPO es campo obligatorio\n";
 
-            if(ambito_cl == 'NACIONAL' && tipo_cl == 'PERSONA FISICA'){
+            if(ambito == 'NACIONAL' && tipo == 'PERSONA FISICA'){
                 let dniPatron1 = /^\d{8}[a-zA-Z]$/; //personas físicas
                 let dniPatron2 = /[M|X-Z]^\d{7}[A-Z]$/; //extranjeros residentes
                 let letras = 'TRWAGMYFPDXBNJZSQVHLCKET';
@@ -292,10 +291,3 @@ export default{
     }
 }
 </script>
-
-<style>
-/* mio */
-.espacios{
-    margin-top: 10px;
-}
-</style>

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNullableDescripcion extends Migration
+class AlterProductosAddActividadCodigo extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddNullableDescripcion extends Migration
     public function up()
     {
         Schema::table('productos', function (Blueprint $table) {
-            $table->string('descripcion')->nullable()->change();
+            $table->string('actividades_codigo');           
         });
     }
 

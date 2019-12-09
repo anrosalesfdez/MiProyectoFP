@@ -64,13 +64,17 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        //crea también un insert de UsuarioFactura
-        DB::insert('insert into usuario_facturas (nombrecomercial, email) values (?, ?)', array($data['name'], $data['email']));
 
-        return User::create([
+
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+
+        //crea también un insert de UsuarioFactura
+        DB::insert('insert into emisores (email, users_id) values (?, ?)', array($data['email'], $user->id));
+
     }
 }

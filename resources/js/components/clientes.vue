@@ -4,35 +4,23 @@
 
         <div class="col-md-12 espacios">
             <h3 style="display: inline">Mantenimiento de Clientes</h3>
-            <a class="btn btn-success" role="button" href="/clientes/crear">Nuevo cliente</a>
+            <a class="nuevaPag" href="/clientes/crear">
+                <i class="material-icons">control_point</i>
+                Nuevo cliente
+            </a>
+
         </div> 
                 
-        <!-- tabla que muestra todos los clientes -->
-        <!-- <div id="people">
-            <v-server-table url="/clientes/getClientesNonTrashed" :data="clientes" :columns="columns" :options="options">
-                <div slot="razon_social" slot-scope="props">
-                    <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
-                </div>
-                <div slot="acciones" slot-scope="props" style="display: inline">
-                    <a title="editar" class="btn btn-xs" :href="'/clientes/editar/'+props.row.id" >
-                        <i class="material-icons" style="font-size: 18px; color:blue">edit</i>
-                    </a>
-                    <button title="eliminar" class="btn btn-xs" @click.prevent="deleteCliente(props.row.id)">
-                        <i class="material-icons" style="font-size: 18px; color:red">delete</i>
-                    </button>
-                </div>
-            </v-server-table>
-        </div> -->
         <v-client-table ref="tabla" class="col-md-12" :data="clientes" :columns="columns" :options="options">
             <div slot="razon_social" slot-scope="props" style="display: inline">
                 <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
             </div>
             <div slot="acciones" slot-scope="props" style="display: inline">
                 <a title="editar" class="btn btn-xs" :href="'/clientes/editar/'+props.row.id" >
-                    <i class="material-icons" style="font-size: 18px; color:#3490dc">edit</i>
+                    <i class="material-icons iconosEdicion">edit</i>
                 </a>
                 <button title="eliminar" class="btn btn-xs" @click.prevent="deleteCliente(props.row.id)">
-                   <i class="material-icons" style="font-size: 18px; color:red">delete</i>
+                   <i class="material-icons iconosEdicion">delete</i>
                 </button>
             </div>
         </v-client-table> 
@@ -46,15 +34,14 @@
 export default{
     data(){ //datos del componente
         return {
-            columns: ['id', 'razon_social', 'nif', 'pais', 'ambito_cl', 'tipo_cl', 'acciones'],
+            columns: ['razon_social', 'nif', 'pais', 'ambito', 'tipo', 'acciones'],
             
             filterByColumn: true,
 
             options:{
-                sortable: ['id', 'razon_social', 'nif', 'pais', 'ambito_cl', 'tipo_cl'],
+                sortable: ['razon_social', 'nif', 'pais', 'ambito', 'tipo'],
                 filterable: ['razon_social'],
                 headings: {
-                        id: 'ID',
                         razon_social: 'RAZÓN SOCIAL',
                         nif: 'NIF',
                         pais: 'PAÍS',
@@ -98,7 +85,7 @@ export default{
 
                 var url='/clientes/delete/' + id;
                 axios.delete(url).then(response => {
-                    console.log(response.error);
+                    // console.log(response.error);
                     if(response.error){
                         this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
                     }else{
@@ -114,98 +101,3 @@ export default{
     }
 }
 </script>
-
-<style>
-  .paginate-links{
-    width:100%;
-    list-style: none;
-    text-align: center;
-}
-.paginate-links li {
-    display: inline;
-    background-color:#6c757d;
-    color:white;
-    padding:0.5rem;
-    margin-left:0.3rem;
-    margin-right: 0.3rem;
-    cursor:pointer;
-    border-radius: 3px;
-}
-.paginate-result{
-    width: 100%;
-    text-align:center;
-    margin-bottom: 1rem;
-}
-
-/* mio */
-.espacios{
-    margin-top: 10px;
-}
-.checkbox label:after, 
-.radio label:after {
-    content: '';
-    display: table;
-    clear: both;
-}
-
-/* s */
-.checkbox .cr,
-.radio .cr {
-    position: relative;
-    display: inline-block;
-    border: 1px solid #a9a9a9;
-    border-radius: .25em;
-    width: 1.3em;
-    height: 1.3em;
-    /* float: left; */
-    margin-right: .5em;
-}
-
-.radio .cr {
-    border-radius: 50%;
-}
-
-.checkbox .cr .cr-icon,
-.radio .cr .cr-icon {
-    position: absolute;
-    font-size: .8em;
-    line-height: 0;
-    top: 50%;
-    left: 20%;
-}
-
-.radio .cr .cr-icon {
-    margin-left: 0.04em;
-}
-
-.checkbox label input[type="checkbox"],
-.radio label input[type="radio"] {
-    display: none;
-}
-
-.checkbox label input[type="checkbox"] + .cr > .cr-icon,
-.radio label input[type="radio"] + .cr > .cr-icon {
-    transform: scale(3) rotateZ(-20deg);
-    opacity: 0;
-    transition: all .3s ease-in;
-}
-
-.checkbox label input[type="checkbox"]:checked + .cr > .cr-icon,
-.radio label input[type="radio"]:checked + .cr > .cr-icon {
-    transform: scale(1) rotateZ(0deg);
-    opacity: 1;
-}
-
-.checkbox label input[type="checkbox"]:disabled + .cr,
-.radio label input[type="radio"]:disabled + .cr {
-    opacity: .5;
-}
-
-/* vye tables 2 */
-.VueTables__date-filter {
-  border: 1px solid #ccc;
-  padding: 6px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-</style>

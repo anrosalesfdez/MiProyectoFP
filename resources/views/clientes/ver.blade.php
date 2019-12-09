@@ -3,7 +3,7 @@
 @section('contenidoDinamico')
 
 <!-- se envía al componente clientes_editar la prop editadoCliente (JSON) -->
-<clientes_detalle :cliente="{{$cliente}}"></clientes_detalle>
+<clientes_detalle :cliente="{{ json_encode($cliente) }}"></clientes_detalle>
 
 
 @endsection

@@ -1,16 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 /**
  * Ruta principal. Inicio de programa
  */
@@ -18,28 +7,32 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+
 /**
  * Rutas control autorización de usuarios.
- * Registers a login route with the name login
  */
 Auth::routes();
 
-/**
- * Explicación/detalle del proyecto
- */
-Route::get('proyecto', function(){
-    return view('proyecto');
-});
-
-/**
- * Muestra la interfaz Dashboard del usuario
- */
-Route::get('/home', 'HomeController@index')->name('home');
 
 /**
  * Salir del proyecto. Redirige a /
  */
-Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
+ Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout')->name('logout');
+
+
+/**
+ * Ruta a la documentación del proyecto
+ */
+Route::get('/proyecto', function(){
+    return view('proyecto');
+});
+
+
+/**
+ * Muestra la interfaz Home del usuario
+ */
+Route::get('/home', 'HomeController@index')->name('home');
+
  
 /**
  * Muestra vista Dashboard
@@ -48,47 +41,82 @@ Route::get('/dashboard', function(){
     return view('dashboard'); //TODO: meter charts
 })->name('dashboard');
 
-//CLIENTES
+
+/**
+ * Rutas para CLIENTES. Tienen prefijo.
+ */
 Route::prefix('/clientes')->group(function () {
 
-    Route::get('/listar', 'ClienteController@getClientesNonTrashed')->name('listar'); //VISTA clientes.blade con <clientes>
-    Route::get('/listarCl', 'ClienteController@getCls')->name('listarCl'); //dato
-    Route::get('/ver/{id}', 'ClienteController@getCliente')->name('ver'); //VISTA + DATOS detalle de cliente consultado en BD
+    Route::get('/listar', 'ClienteController@listarClientes')->name('listar');
+    Route::get('/listarCl', 'ClienteController@getClientes')->name('listarCl');
+    Route::get('/ver/{id}', 'ClienteController@verCliente')->name('ver');
     
-    Route::get('/crear', 'ClienteController@create')->name('crear'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
-    Route::post('/store', 'ClienteController@store'); //DATOS recoge Request HTTP y hace POST a la BD con nuevo cliente
+    Route::get('/crear', 'ClienteController@create')->name('crear'); //VISTA en blanco
+    Route::post('/store', 'ClienteController@store');
     
-    Route::get('/editar/{id}', 'ClienteController@vistaEditar')->name('editar'); //VISTA clientes_editar.blade con <clientes_editar>
-    Route::put('/update/{cliente}', 'ClienteController@update'); //DATOS recoge Request HTTP y hace POST a la BD con datos actualizados
+    Route::get('/editar/{id}', 'ClienteController@editar')->name('editar'); //VISTA clientes_editar.blade con <clientes_editar>
+    Route::put('/update/{cliente}', 'ClienteController@update');
     
     Route::delete('/delete/{id}', 'ClienteController@destroy'); // DATOS 
 });
 
-Route::get('/usuariofactura', 'UsuarioFacturaController@get')->name('usuariofactura');
-//FACTURAS
+
+/**
+ * Ruta apra gestión datos EMISOR 
+ */
+ Route::get('/settingsfact', 'UsuarioFacturaController@index')->name('settingsfact');
+ Route::post('/settingsfact/{id}', 'UsuarioFacturaController@update');
+
+
+/**
+ * Rutas para gestión datos FACTURAS 
+ */
 Route::prefix('/facturas')->group(function () {
 
-    Route::get('/listar', 'FacturaCabeceraController@getFacturas')->name('listar'); //VISTA clientes.blade con <clientes>
-    Route::get('/ver/{id}', 'FacturaCabeceraController@getFactura')->name('ver'); //VISTA + DATOS detalle de cliente consultado en BD
-    Route::get('/getlast', 'FacturaCabeceraController@getLast')->name('getlast'); //VISTA clientes.blade con <clientes>
+    Route::get('/listar', 'FacturaCabeceraController@getFacturas')->name('listar');
+    Route::get('/ver/{id}', 'FacturaCabeceraController@getFactura')->name('ver');
 
-    Route::get('/crear', 'FacturaCabeceraController@create')->name('crear'); //VISTA clientes_nuevo.blade con <clientes_nuevo>
-    Route::post('/store', 'FacturaCabeceraController@store'); //DATOS recoge Request HTTP y hace POST a la BD con nuevo cliente
+    Route::get('/crear', 'FacturaCabeceraController@create')->name('crear');
+    Route::post('/store', 'FacturaCabeceraController@store');
     
     Route::post('/delete/{id}', 'FacturaCabeceraController@anular'); // DATOS 
 });
 
-//PRODUCTOS
-Route::get('/productos', 'ProductoController@index')->name('productos');
-Route::get('/getProductos', 'ProductoController@get')->name('getProductos');
+/**
+ * Rutas para gestión de PRODUCTOS
+ */
+Route::get('/productos', 'ProductoController@listarProductos')->name('productos');
+Route::get('/getProductos', 'ProductoController@getProductos')->name('getProductos');
 Route::post('/productos', 'ProductoController@store');
-Route::post('/productoeditar/{id}', 'ProductoController@actualizar');
+Route::post('/productoEditar/{id}', 'ProductoController@update');
 Route::delete('/productos/{id}', 'ProductoController@destroy');
+Route::get('/getCnae/{idPto}', 'ProductoController@getCnae')->name('getCnae');
 
-//CONFIGURACIONES
+
+
+/**
+ * Ruta apra gestión datos EMISOR 
+ */
+ Route::get('/emisor', 'EmisorController@index')->name('emisor');
+ Route::post('/emisor/{id}', 'EmisorController@update');
+
+ 
+/**
+ * Ruta apra gestión datos USER aplicación
+ */
 Route::get('/settingsuser', 'UserController@index')->name('settingsuser');
 Route::post('/settingsuser/{id}', 'UserController@update');
+
+
+/**
+ * Ruta apra gestión datos ACTIVIDADES
+ */
+ Route::get('actividades', 'ActividadController@get')->name('actividades');
+ Route::get('actividadesEmisor', 'ActividadController@getEmisor')->name('actividadesEmisor');
+
+
 Route::get('/prueba', 'UserController@prueba'); //PRUEBA
-Route::get('/settingsfact', 'UsuarioFacturaController@index')->name('settingsfact');
-Route::post('/settingsfact/{id}', 'UsuarioFacturaController@update');
+
+
+
 

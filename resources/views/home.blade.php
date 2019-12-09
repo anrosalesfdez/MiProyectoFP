@@ -11,13 +11,13 @@
     </a> --}}
     <ul class="navbar-nav px-3">
         <li class="nav-item">
-            <a class="{{ request()->route()->getName() === 'settingsuser' ? 'nav-item nav-link  active' : 'nav-item nav-link' }}" style="display: inline-block; margin-rigth: 5px;" href="{{ url('settingsuser') }}" role="button">
-                <i class="material-icons">perm_identity</i>
+            <a class="{{ request()->route()->getName() === 'settingsuser' ? 'navButtonA' : 'navButton' }}" 
+                style="display: inline-block; margin-rigth: 5px; font-size:18px;" 
+                href="{{ url('settingsuser') }}">
                 {{ "Mi cuenta" }}
             </a>
             
-            <a class="nav-link" style="display: inline; margin-left: 20px;" href="{{ route('logout') }}" role="button">
-                <i class="material-icons">logout</i>
+            <a class="navButton" style="display: inline; margin-left: 20px; font-size:18px;" href="{{ route('logout') }}">
                 {{ __('Salir') }}
             </a>
         </li>
@@ -89,7 +89,7 @@
                 </h6>
                 <ul class="nav flex-column nav-pills">
                     <li class='nav-item'>
-                        <a class="{{ request()->route()->getName() === 'settingsfact' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('settingsfact') }}">
+                        <a class="{{ request()->route()->getName() === 'emisor' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="{{ url('emisor') }}">
                             <i class="material-icons">settings_applications</i>
                             Emisor facturas
                         </a>
@@ -97,7 +97,7 @@
                 </ul>
                 <ul class="nav flex-column nav-pills">
                     <li class='nav-item'>
-                        <a class="{{ request()->route()->getName() === 'settingsuser' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="">
+                        <a class="{{ request()->route()->getName() === 'impuestos' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="">
                             <i class="material-icons">settings_applications</i>
                             Impuestos
                         </a>

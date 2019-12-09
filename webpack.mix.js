@@ -12,4 +12,14 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css');
+   .sass('resources/sass/app.scss', 'public/css')
+   mix.styles([
+      'public/css/gijgo.css',
+      'public/css/magnific-popup.css',
+      'public/css/nice-select.css',
+      'public/css/slick.css',
+      'public/css/slicknav.css',
+      'public/css/style.css',
+      'public/css/theme-default.css'
+  ], 'public/css/all.css')
+;
