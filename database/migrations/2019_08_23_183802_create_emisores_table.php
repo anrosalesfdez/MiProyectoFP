@@ -16,7 +16,7 @@ class CreateEmisoresTable extends Migration
         Schema::create('emisores', function (Blueprint $table) {
             $table->increments('id');
             $table->bigInteger('users_id')->unsigned();
-            //datos de un usuario factura
+
             $table->string('nif')->nullable()->unique();
             $table->string('niva')->nullable()->unique();
             $table->string('nombre_fiscal')->nullable();

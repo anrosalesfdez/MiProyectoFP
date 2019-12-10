@@ -4,7 +4,7 @@
     <div class="card-header">
         <h3 style="display: inline">Alta nueva factura</h3>
         <div style="display: inline; float: right">
-            <button type="submit" class="btn btn-success">Guardar</button>
+            <button type="submit" class="btn btn-success" @click="enviar">Guardar</button>
             <a href="/facturas/listar" class="btn btn-danger">Cancelar</a>
         </div>
     </div>
@@ -22,6 +22,7 @@
             </div>
             <!-- DATOS EMISOR FACTURA -->
             <div id="emisor" class="col-md-6" style="float: left">
+                <input type="hidden" v-model="emisor.id">
                 <input type="text" id="emi_nombre_fiscal" size="50" readonly
                                     tabindex="-1" 
                                     v-model="emisor.nombre_fiscal">
@@ -31,15 +32,15 @@
                 <input v-else type="text" id="emi_niva" size="50" readonly
                                     tabindex="-1" 
                                     v-model="emisor.niva">
-                <input type="text" id="emi_direccion_fiscal" size="50" readonly
+                <input type="text" id="emi_direccion1" size="50" readonly
                                     tabindex="-1" 
-                                    v-model="emisor.direccion_fiscal">
-                <input type="text" id="emi_email" size="50" readonly
+                                    v-model="emi_direccion1">
+                <input type="text" id="emi_direccion2" size="50" readonly
                                     tabindex="-1" 
-                                    v-model="emisor.email">
-                <input type="text" id="emi_telefono" size="50" readonly
+                                    v-model="emi_direccion2">
+                <input type="text" id="emi_contacto" size="50" readonly
                                     tabindex="-1" 
-                                    v-model="emisor.telefono">
+                                    v-model="emi_contacto">
             </div>
         </div>
         <!-- DATOS CLIENTE FACTURA -->
@@ -51,12 +52,16 @@
                 </select>
                 <input type="text" id="cli_nif" size="50" readonly
                                     tabindex="-1" 
-                                    v-model="cliente.nif"
-                                    value="cliente.nif">
-                <input type="text" id="cli_direccion" size="50" readonly
+                                    v-model="cliente.nif">
+                <input type="text" id="cli_direccion1" size="50" readonly
                                     tabindex="-1" 
-                                    v-model="cliente.direccion"
-                                    value="cliente.direccion">
+                                    v-model="cli_direccion1">
+                <input type="text" id="cli_direccion2" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="cli_direccion2">
+                <input type="text" id="cli_contacto" size="50" readonly
+                                    tabindex="-1" 
+                                    v-model="cli_contacto">
             </div>
 
     		<div id="idFra" class="col-md-5 espacios">
@@ -98,23 +103,26 @@
             <table id="items">
                 <thead>
                     <tr class="row">
-                        <!-- <th class="cabecera-title" style="width: 20%">Item</th> -->
                         <th class="cabecera-title" style="width: 20%">Item</th>
-                        <th class="cabecera-title" style="width: 30%">Descripción</th>
-                        <th class="cabecera-title" style="width: 10%">Precio</th>
-                        <th class="cabecera-title" style="width: 10%">Unidad</th>
-                        <th class="cabecera-title" style="width: 10%">Cantidad</th>
-                        <th class="cabecera-title" style="width: 20%">Subtotal</th>
+                        <th class="cabecera-title" style="width: 20%">Descripción</th>
+                        <th class="cabecera-title" style="width: 15%">Precio</th>
+                        <th class="cabecera-title" style="width: 15%">Unidad</th>
+                        <th class="cabecera-title" style="width: 15%">Cantidad</th>
+                        <th class="cabecera-title" style="width: 15%">Subtotal</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <!-- CADA LÍNEA DE FACTURA -->
                     <!-- trae el componente "item" con las propiedades linea y productos -->
-                    <tr class="row" v-for="linea in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos"></tr>
+                    <!-- <tr class="row" v-for="linea in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos" v-on:calcula="calculaBase" v-on:elimina="eliminarLinea(index)"></tr> -->
+                    <tr class="row" v-for="(linea, index) in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos" v-on:calcula="calculaBase" v-on:elimina="eliminarLinea(index)"></tr>
                 </tbody>
                 <button title="nuevaLinea" class="btn-default btn-xs" @click="crearLinea">
                     Nueva línea
+                </button>
+                <button title="calculaTotales" class="btn-default btn-xs" @click="calculaTotales">
+                    Calcular factura
                 </button>
             </table>
         </div>
@@ -142,7 +150,7 @@
                     <td class="cabecera-title" style="width: 20%">10%</td>
                     <td class="cabecera-text" style="width: 20%">
                         <input type="number" class="dcha"
-                                    v-model="nuevaFactura.base10"
+                                    v-html="nuevaFactura.base10"
                                     readonly
                                     tabindex="-1">
                     </td>
@@ -150,7 +158,7 @@
                     <td class="cabecera-title">Impuestos</td>
                     <td class="cabecera-text">
                         <input type="number" class="dcha"
-                                    v-model="impuestos"
+                                    v-model="nuevaFactura.impuesto"
                                     readonly
                                     tabindex="-1">
                     </td>
@@ -167,7 +175,7 @@
                     <td class="cabecera-title">Retención</td>
                     <td class="cabecera-text">
                         <input type="number" class="dcha"
-                                    v-model="retencion"
+                                    v-model="nuevaFactura.retencion"
                                     readonly
                                     tabindex="-1">
                     </td>
@@ -183,8 +191,9 @@
                     <td style="width: 50%">
                     <td class="cabecera-title">Total Factura</td>
                     <td class="cabecera-text">
+                        <!-- <span>{{ formatPrice(nuevaFactura.total) € }}</span> -->
                         <input type="number" class="dcha"
-                                    v-model="total"
+                                    v-model="nuevaFactura.total"
                                     readonly
                                     tabindex="-1">
                     </td>
@@ -192,8 +201,10 @@
             </table>
             <table>
                 <tr>
-                    <td rowspan="12" style="width: 100%" >
-                        <textarea rows="12" cols="20" placeholder="Observaciones..."></textarea>
+                    <td style="width: 100%">
+                        <textarea class="form-control" name="observaciones" id="observaciones"
+                                placeholder="Observaciones"
+                                v-model="nuevaFactura.observaciones"></textarea>
                     </td>
                 </tr>
             </table>
@@ -211,51 +222,55 @@
 
 <script>
 
+import item from './item.vue';
+
 export default{
     data(){ //datos del componente
         return {
             nuevaFactura: { // datos de factura creada
-                //propios fra
+                //propios fra (se calculan al iniciar factura)
                 ejercicio: '',
                 serie: 'VEND',
                 numero: '',
                 fecha: '',
                 vencimiento: '',
                 observ: '',
-                base00:'',
-                base04:'',
-                base10:'',
-                base21:'',
+                //se calculan con el método calcularTotales()
+                base00:0,
+                base04:0,
+                base10:0,
+                base21:0,
+                retencion:0,
+                impuesto:0,
+                gransubtotal:0,
+                total:0,
                 //de emisor
+                emi_id:'', 
                 emi_nif:'', 
                 emi_niva:'', 
                 emi_nombre_fiscal:'', 
-                emi_nombre_comercial:'', 
                 emi_direccion_fiscal:'', 
-                emi_direccion_comercial:'', 
                 emi_cp_fiscal:'', 
-                emi_cp_comercial:'', 
                 emi_provincia_fiscal:'', 
-                emi_provincia_comercial:'', 
                 emi_pais_fiscal:'', 
-                emi_pais_comercial:'', 
                 emi_telefono:'', 
                 emi_email:'', 
                 //de cliente
-                cliId:'',
-                cliRazon_social:'',
-                cliNif:'',
-                cliNiva:'',
-                cliDireccion:'',
-                cliProvincia:'',
-                cliPais:'',
-                cliCp:'',
-                cliTlfn:'',
-                cliEmail:'',
-                cliAmbito_cl:'',
-                cliTipo_cl:'',
-                cliForma_pago:'',
-                cliDias_pago:'',
+                cli_id:'',
+                cli_razon_social:'',
+                cli_nif:'',
+                cli_niva:'',
+                cli_direccion:'',
+                cli_cp:'',
+                cli_provincia:'',
+                cli_pais:'',
+                cli_telefono:'',
+                cli_email:'',
+                cli_ambito:'',
+                cli_tipo:'',
+                cli_forma_pago:'',
+                cli_dias_pago:'',
+
             },
             cliente:{ // cliente seleccionado para emitir fra
                 id:'',
@@ -268,23 +283,30 @@ export default{
                 cp:'',
                 tlfn:'',
                 email:'',
-                ambito_cl:'',
-                tipo_cl:'',
+                ambito:'',
+                tipo:'',
                 forma_pago:'',
                 dias_pago:'',
             },
             lineas:[], //array de líneas de la factura
             linea:{
                 id:'',
+                factura_id:'',
+                ejercicio:'',
+                serie:'',
+                numero_fra:'',
+                numero:'',
                 producto:{
                     id:'',
                     nombre:'',
                     descripcion: '',
                     precio:0,
                     unidad:'',
-                    actividades_codigo:'',
+                    actividades_impuesto:'',
                 },
                 cantidad:1,
+                impuesto:0,
+                retencion:0
             },
             csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             validado:'', //recoge errores
@@ -301,39 +323,37 @@ export default{
     ],
     computed: {
 		gransubtotal: function() {
-            return (this.lineas.reduce((sum, i) => sum + i.cantidad * i.producto.precio, 0));
+            return parseFloat((this.lineas.reduce((sum, i) => sum + i.cantidad * i.producto.precio, 0))).toFixed(2);
         },
-        impuestos: function(){
-            return
+        emi_direccion1: function(){
+            return this.emisor.direccion_fiscal + ' - ' + this.emisor.cp_fiscal;
         },
-        retencion: function(){
-            return
+        emi_direccion2: function(){
+            return this.emisor.provincia_fiscal + ' - ' + this.emisor.pais_fiscal;
         },
-        total: function() {
-            return this.gransubtotal + this.impuestos + this.retencion;
-        }
+        emi_contacto: function(){
+            return this.emisor.email + ' - ' + this.emisor.telefono;
+        },
+        cli_direccion1: function(){
+            return this.cliente.direccion + ' - ' + this.cliente.cp;
+        },
+        cli_direccion2: function(){
+            return this.cliente.provincia + ' - ' + this.cliente.pais;
+        },
+        cli_contacto: function(){
+            return (this.cliente.email == null ? '' : this.cliente.email) + (this.cliente.telefono == null ? '' : ' - ' + this.cliente.telefono);
+        },
+        
     },
     components: {
-        item: {
-            props: [
-                'productos',
-                'linea',
-            ],
-            template: '<tr><td style="width: 20%"><div class="delete-wpr"><select class="form-control-plaintext form-control-sm editable" v-model="linea.producto"><option disabled value="null">Seleccione un producto</option><option v-for="producto in productos" :key="producto.id" :value="producto"> {{ producto.nombre }} </option></select><a class="delete" role="button" @click="eliminarLinea(index)" title="Eliminar línea">X</a></div></td><td style="width: 30%"><input type="text" class="editable" maxlength="50" size="27" v-model="linea.producto.descripcion"></td><td style="width: 10%"><input type="number" class="editable dcha" style="width: 100%" step="0.01" v-model="linea.producto.precio"></td><td style="width: 10%"><input type="text"  readonly maxlength="10" size="10" tabindex="-1" v-model="linea.producto.unidad"></td><td style="width: 10%"><input type="number" class="editable dcha" style="width: 100%" v-model="linea.cantidad" value="1"></td><td style="width: 10%"><input type="number" readonly class="dcha" style="width: 100%" tabindex="-1" v-model="subtotal" @change="calculaBase"></td><td style="width: 10%"><input type="hidden"  readonly maxlength="10" size="10" tabindex="-1" v-model="linea.producto.actividades_codigo"></td></tr>',
-            computed: {
-                subtotal: function() { //este dato no se almacena
-                    return this.linea.producto.precio * this.linea.cantidad;
-                }
-            }
-        }
+        item
     },
     created(){
-        this.datosFactura();
-        this.hoy(); //fecha inicial para fra. modificable.
-        console.log(typeof this.productos);
     },
     mounted() {
         //MIN Y MAX FECHA FRA: en base al trimestre en el que estamos.
+        this.datosFactura();
+        this.hoy(); //fecha inicial para fra. modificable.
         this.minFecha();
         this.maxFecha();
 
@@ -341,60 +361,13 @@ export default{
             this.$notification.error("Necesitas NIF para emitir facturas", {  timer: 4, position:'topRigth' });
     },
     methods:{
-        calculaBase(){
-            //1---cuando cambie subtotal, recoge impuesto de la línea y 
-            //busca impto_facturacion en array of objects impuestosfacturacion
-            var devReact = this.impuestosfacturacion.filter(obj => obj.tipo.includes(this.cliente.tipo)).map(obj => ({"impto_linea":obj.impto_linea_fra, "retencion_linea":obj.retencion_linea_fra}));
-            console.log(devReact);
-            //2---una vez tiene el tipo a aplicar: tipo*subtotal y lo añade a base que corresponda
-        },
-        encuentraImpuesto(tipo, ambito, impto_act){ //ej: PERSONA FISICA NACIONAL GE
-            // var filter = {
-            //     tipo: tipo,  //'PERSONA FISICA'
-            //     ambito: ambito, //'NACIONAL'
-            //     impto_act: impto_act,  //'GE'
-            // };
-            // for (var key in filter) {
-            //     if (filter[key] === undefined || filter[key] != this.[key])
-            //     return false;
-            // }
-            //     return true;
-        },
-        
-        hoy(){
-            let fecha = new Date();
-            let mes = fecha.getMonth()+1;
-            if(mes.toString().length == 1)
-                mes = '0'+mes;
-            let dia = fecha.getDate();
-            if(dia.toString().length == 1)
-                dia = '0'+dia;
-            console.log('hoy!!!'+fecha.getFullYear()+'-'+mes+'-'+dia);
-            return this.nuevaFactura.fecha = fecha.getFullYear()+'-'+mes+'-'+dia;
-        },
-        clFra(event){
-            //si cliente no NACIONAL y no tenemos NIVA en emisor:
-            if(this.cliente.ambito !== 'NACIONAL' && this.emisor.niva === null){
-                this.$notification.error("Necesitas NIVA para emitir a extranjeros", {  timer: 2, position:'topRigth' });
-            }
-            //calcula vencimiento
-            let v = new Date(this.nuevaFactura.fecha);
-            v.setDate(v.getDate() + parseInt(this.cliente.dias_pago));
-            let mes = v.getMonth()+1;
-            let dia = v.getDate();
-            if (mes < 10) 
-                mes = "0" + mes;
-            if (dia < 10) 
-                dia = "0" + dia;
-            this.nuevaFactura.vencimiento =v.getFullYear()+'-'+(mes)+'-'+dia;
-        },
         //RECUPERA DEL SERVER DATOS PARA INICIALIZAR NUEVA FRA
         datosFactura(){
             if(!this.ultima)
                     this.nuevaFactura.numero = 1;
-                else
-                    this.nuevaFactura.numero += this.ultima;
-                this.nuevaFactura.ejercicio = new Date().getFullYear();
+            else
+                this.nuevaFactura.numero += this.ultima.numero+1;
+            this.nuevaFactura.ejercicio = new Date().getFullYear();
         },
         minFecha(){
             let mesHoy = (new Date().getMonth()+1);
@@ -407,10 +380,9 @@ export default{
                 minMes='04';
             else
                 minMes='01';
-            let minDia = '01';
-            let minFecha = new Date().getFullYear()+'-'+minMes+'-'+minDia;
+            let minFecha = new Date().getFullYear()+'-'+minMes+'-'+'01';
             document.getElementById("fecha").setAttribute("min", minFecha);
-            console.log('minFecha: '+minFecha);
+            // console.log('minFecha: '+minFecha);
         },
         maxFecha(){
             let mesHoy = (new Date().getMonth()+1);
@@ -431,17 +403,224 @@ export default{
             }
             let maxFecha = new Date().getFullYear()+'-'+maxMes+'-'+maxDia;
             document.getElementById("fecha").setAttribute("max", maxFecha);
-            console.log('maxFecha: '+maxFecha);
+            // console.log('maxFecha: '+maxFecha);
         },
-        //MÉTODOS GESTIÓN INTERFAZ
+        hoy(){
+            let fecha = new Date();
+            let mes = fecha.getMonth()+1;
+            if(mes.toString().length == 1)
+                mes = '0'+mes;
+            let dia = fecha.getDate();
+            if(dia.toString().length == 1)
+                dia = '0'+dia;
+            // console.log('hoy!!!'+fecha.getFullYear()+'-'+mes+'-'+dia);
+            return this.nuevaFactura.fecha = fecha.getFullYear()+'-'+mes+'-'+dia;
+        },
+        //EVENTO AL ELEGIR CLIENTE
+        clFra(event){
+            //si cliente no NACIONAL y no tenemos NIVA en emisor:
+            if(this.cliente.ambito !== 'NACIONAL' && this.emisor.niva === null){
+                this.$notification.error("Necesitas NIVA para emitir a extranjeros", {  timer: 2, position:'topRigth' });
+            }
+            //calcula vencimiento
+            let v = new Date(this.nuevaFactura.fecha);
+            v.setDate(v.getDate() + parseInt(this.cliente.dias_pago));
+            let mes = v.getMonth()+1;
+            let dia = v.getDate();
+            if (mes < 10) 
+                mes = "0" + mes;
+            if (dia < 10) 
+                dia = "0" + dia;
+            this.nuevaFactura.vencimiento =v.getFullYear()+'-'+(mes)+'-'+dia;
+        },
         //NUEVA LÍNEA FRA
         crearLinea() {
+            console.log('crearLinea');
             this.lineas.push(Vue.util.extend({}, this.linea));
-            this.lineas.slice(-1)[0].id = this.lineas.length+1;
+            console.log(this.lineas);
+            this.lineas.slice(-1)[0].id = this.lineas.length;
+            
         },
         //ELIMINA LÍNEA FRA
         eliminarLinea(index){
             Vue.delete(this.lineas, index);
+        },
+        formatPrice(value) {
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        },
+        //CALCULAR CORRESPONDENCIA EN BASES PARA ESA LÍNEA
+        calculaBase(impto){
+            //1---cuando cambie subtotal, recoge impuesto de la actividad para poder hacer cruce
+            // console.log(impto);
+            //ahora ya tenemos los tres parámetros para buscar en impuesto_facturacions => array of objects
+            let buscar = {
+                tipo_cl: this.cliente.tipo,
+                ambito_cl: this.cliente.ambito,
+                impto_act: impto,
+            };
+            console.log('datos a localizar!');
+            console.log(buscar);
+
+            for(var i=0; i<this.impuestosfacturacion.length; i++){
+                console.log('analizando.......................'+i);
+                console.log(this.impuestosfacturacion[i]);
+                let instancia = {
+                    tipo_cl: this.impuestosfacturacion[i].tipo_cl,
+                    ambito_cl: this.impuestosfacturacion[i].ambito_cl,
+                    impto_act: this.impuestosfacturacion[i].impto_act,
+                    impto_linea: this.impuestosfacturacion[i].impto_linea,
+                    retencion_linea: this.impuestosfacturacion[i].retencion_linea
+                }
+
+                if(instancia.tipo_cl == buscar.tipo_cl && instancia.ambito_cl == buscar.ambito_cl && instancia.impto_act == buscar.impto_act){
+                    console.log('se dieron las 3 condiciones!')
+                    //recoge datos para linea
+                    this.lineas[this.lineas.length-1].impuesto = instancia.impto_linea;
+                    this.lineas[this.lineas.length-1].retencion = instancia.retencion_linea;
+
+                    return true;
+                }
+
+                console.log('no se cumplen condiciones!');
+            }
+
+        },
+        calculaTotales(){
+            //blanquea totales
+            this.nuevaFactura.base21 = 0;
+            this.nuevaFactura.base10 = 0;
+            this.nuevaFactura.base04 = 0;
+            this.nuevaFactura.base00 = 0;
+            this.nuevaFactura.retencion = 0;
+            this.nuevaFactura.impuesto = 0;
+            this.nuevaFactura.gransubtotal = 0;
+            this.nuevaFactura.total = 0;
+
+            if(this.lineas.length==0){
+                this.$notification.error("Debes introducir líneas primero!", {  timer: 4, position:'topRigth' });
+                return false;
+            }
+
+            //calcula totales en bases más retención fra
+            for(var i=0; i<this.lineas.length; i++){
+                
+                //suma a basexx según corresponda
+                if(this.lineas[i].impuesto == 21)
+                    this.nuevaFactura.base21 += (this.lineas[i].producto.precio * this.lineas[i].cantidad);
+                
+                if(this.lineas[i].impuesto == 10)
+                    this.nuevaFactura.base10 += (this.lineas[i].producto.precio * this.lineas[i].cantidad);
+
+                if(this.lineas[i].impuesto == 4)
+                    this.nuevaFactura.base04 += (this.lineas[i].producto.precio * this.lineas[i].cantidad);
+                
+                if(this.lineas[i].impuesto == 0)
+                    this.nuevaFactura.base00 += (this.lineas[i].producto.precio * this.lineas[i].cantidad);
+                
+                //suma a retención fra
+                if(this.lineas[i].retencion !== 0)
+                    this.nuevaFactura.retencion += ((this.lineas[i].producto.precio * this.lineas[i].cantidad)*0.15);
+
+            }
+            //suma a impuestos, grantotal y total
+            this.nuevaFactura.impuesto += (this.nuevaFactura.base21*0.21+this.nuevaFactura.base10*0.10+this.nuevaFactura.base04*0.04);
+            this.nuevaFactura.gransubtotal = parseFloat(this.gransubtotal);
+            this.nuevaFactura.total += (this.nuevaFactura.gransubtotal + parseFloat(this.nuevaFactura.impuesto + this.nuevaFactura.retencion)).toFixed(2);
+
+            //asigna el resto de valores a nuevaFactura
+            //de emisor
+            this.nuevaFactura.emi_id = this.emisor.id;
+            this.nuevaFactura.emi_nif = this.emisor.nombre_fiscal;
+            this.nuevaFactura.emi_niva = this.emisor.nif;
+            this.nuevaFactura.emi_nombre_fiscal = this.emisor.niva;
+            this.nuevaFactura.emi_direccion_fiscal = this.emisor.direccion_fiscal;
+            this.nuevaFactura.emi_cp_fiscal = this.emisor.cp_fiscal;
+            this.nuevaFactura.emi_provincia_fiscal = this.emisor.provincia_fiscal;
+            this.nuevaFactura.emi_pais_fiscal = this.emisor.pais_fiscal;
+            this.nuevaFactura.emi_telefono = this.emisor.email;
+            this.nuevaFactura.emi_email = this.emisor.telefono;
+            //de cliente
+            this.nuevaFactura.cli_id = this. cliente.id;
+            this.nuevaFactura.cli_razon_social = this.cliente.razon_social;
+            this.nuevaFactura.cli_nif = this.cliente.nif;
+            this.nuevaFactura.cli_niva = this.cliente.niva;
+            this.nuevaFactura.cli_direccion = this.cliente.direccion;
+            this.nuevaFactura.cli_cp = this.cliente.cp;
+            this.nuevaFactura.cli_provincia = this.cliente.provincia;
+            this.nuevaFactura.cli_pais = this.cliente.pais;
+            this.nuevaFactura.cli_telefono = this.cliente.telefono;
+            this.nuevaFactura.cli_email = this.cliente.email;
+            this.nuevaFactura.cli_ambito = this.cliente.ambito;
+            this.nuevaFactura.cli_tipo = this.cliente.tipo;
+            this.nuevaFactura.cli_forma_pago = this.cliente.forma_pago;
+            this.nuevaFactura.cli_dias_pago = this.cliente.dias_pago;
+
+            //datos de líneas
+            for(var i=0; i<this.lineas.length; i++){
+                this.lineas[i].ejercicio = this.nuevaFactura.ejercicio;
+                this.lineas[i].serie = this.nuevaFactura.serie;
+                this.lineas[i].numero = this.nuevaFactura.numero;
+            }
+        },
+        enviar(){
+            let url='/facturas/store';
+            axios.post(url, {
+                ejercicio: this.nuevaFactura.ejercicio,
+                serie: this.nuevaFactura.serie,
+                numero: this.nuevaFactura.numero,
+                fecha: this.nuevaFactura.fecha,
+                vencimiento: this.nuevaFactura.vencimiento,
+                observaciones: this.nuevaFactura.observaciones,
+                gransubtotal: this.nuevaFactura.gransubtotal,
+                base21: this.nuevaFactura.base21,
+                base10: this.nuevaFactura.base10,
+                base04: this.nuevaFactura.base04,
+                base00: this.nuevaFactura.base00,
+                impuesto: this.nuevaFactura.impuesto,
+                retencion: this.nuevaFactura.retencion,
+                total: this.nuevaFactura.total,
+                emisores_id: this.nuevaFactura.emi_id,
+                emi_nif: this.nuevaFactura.emi_nif,
+                emi_niva: this.nuevaFactura.emi_niva,
+                emi_nombre_fiscal: this.nuevaFactura.emi_nombre_fiscal,
+                emi_direccion_fiscal: this.nuevaFactura.emi_direccion_fiscal,
+                emi_cp_fiscal: this.nuevaFactura.emi_cp_fiscal,
+                emi_provincia_fiscal: this.nuevaFactura.emi_provincia_fiscal,
+                emi_pais_fiscal: this.nuevaFactura.emi_pais_fiscal,
+                emi_telefono: this.nuevaFactura.emi_telefono,
+                emi_email: this.nuevaFactura.emi_email,
+                clientes_id: this.nuevaFactura.cli_id,
+                cli_razon_social: this.nuevaFactura.cli_razon_social,
+                cli_nif: this.nuevaFactura.cli_nif,
+                cli_niva: this.nuevaFactura.cli_niva,
+                cli_direccion: this.nuevaFactura.cli_direccion,
+                cli_cp: this.nuevaFactura.cli_cp,
+                cli_provincia: this.nuevaFactura.cli_provincia,
+                cli_pais: this.nuevaFactura.cli_pais,
+                cli_telefono: this.nuevaFactura.cli_telefono,
+                cli_email: this.nuevaFactura.cli_email,
+                cli_ambito: this.nuevaFactura.cli_ambito,
+                cli_tipo: this.nuevaFactura.cli_tipo,
+                cli_forma_pago: this.nuevaFactura.cli_forma_pago,
+                cli_dias_pago: this.nuevaFactura.cli_dias_pago,
+            }).then(response => {
+                console.log(response);
+                let url2 = 'lineas';
+                for(var i=0; i<this.lineas.length; i++){
+                    this.lineas[i] = response.data.last_insert_id;
+                }
+                axios.post(url2, {
+                    lineas: this.lineas,
+                }).then(response => {
+                    console.log(response);
+                    this.$notification.success("Factura creada correctamente!", {  timer: 4, position:'topRigth' });
+                }).catch((error) => {
+                    console.log(error); // error = Error object
+                });
+            }).catch((error) => { //(error) es el param que le paso a la funcion anónima
+                console.log(error); // error = Error object
+            });
         }
     } //end methods
 }

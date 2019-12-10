@@ -2,29 +2,30 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class FacturaLinea extends Model
 {
-    protected $table ='factura_lineas';
+    protected $table ='lineas';
     
     use SoftDeletes;
 
     protected $fillable = [
-        'users_id', //recoge id del user
-        'factura_cabeceras_id', //recoge id de la cabecera
-        'fra_ejercicio',
-        'fra_serie',
-        'fra_numero',
-        'numero',
+        'factura_id', //recoge id de la cabecera
+        'ejercicio',
         'serie',
-        'linea_id', //recoge id del producto
-        'linea_nombre', 
-        'linea_descripcion', 
-        'linea_precio', 
-        'linea_unidad', 
-        'linea_cantidad', 
-        'linea_actividad_id', 
+        'numero_fra',
+        'numero',
+        'producto_id',  //recoge id del producto
+        'producto_nombre', 
+        'producto_descripcion', 
+        'producto_precio', 
+        'producto_unidad', 
+        'producto_act_impto', 
+        'cantidad', 
+        'impuesto', 
+        'retencion', 
     ];
     
     protected $dates = ['deleted_at'];
@@ -33,14 +34,14 @@ class FacturaLinea extends Model
      * Relación de factura_cabeceras con factura_lineas. 
      */
      public function producto(){
-        return $this->hasOne('App\Producto')
+        return $this->hasOne('App\Producto', 'producto_id');
     }
 
     /**
      * Relación de factura_lineas con actividad. 
      */
      public function cabecera(){
-        return $this->belongsTo('App\FacturaCabeceras')
+        return $this->belongsTo('App\FacturaCabeceras', 'factura_id');
     }
 
 }

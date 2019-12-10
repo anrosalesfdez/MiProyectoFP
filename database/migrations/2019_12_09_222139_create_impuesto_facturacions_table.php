@@ -18,8 +18,8 @@ class CreateImpuestoFacturacionsTable extends Migration
             $table->string('tipo_cl');
             $table->string('ambito_cl');
             $table->string('impto_act');
-            $table->string('impto_linea_fra');
-            $table->string('retencion_linea_fra');
+            $table->integer('impto_linea');
+            $table->integer('retencion_linea');
             $table->timestamps();
             //trabaja con eliminación en vistas, no en tabla
             $table->softDeletes();

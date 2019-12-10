@@ -27,10 +27,10 @@
             <input type="text" name="unidad" id="unidad"
                                 v-model="nuevo.unidad"
                                 placeholder="unidad">
-            <select class="form-control-plaintext editable" id="actividades_id" 
-                                v-model="nuevo.actividades_id">
+            <select class="form-control-plaintext editable" id="actividad" 
+                                v-model="actividad">
                 <option disabled value="null">Código CNAE actividad</option>
-                <option v-for="actividad in actividades" :key="actividad.id" :value="actividad.id"> {{ actividad.codigo }} - {{ actividad.titulo }} </option>
+                <option v-for="actividad in actividades" :key="actividad.id" :value="actividad" @change="actividadData"> {{ actividad.codigo }} - {{ actividad.titulo }} </option>
             </select>
             <button title="crear" class="crearButton" @click="crear" >Crear</button>
             <button title="crear" class="cancelarButton" @click="isActive = !isActive" >Cancelar</button>
@@ -103,7 +103,8 @@ export default {
                 descripcion:'',
                 precio:'',
                 unidad:'',
-                actividades_id:''
+                actividades_id:'',
+                actividades_impuesto:'',
             },
             editado: {
                 id: '',
@@ -119,7 +120,9 @@ export default {
                 codigo:'',
                 titulo:'',
                 descripcion:'',
-                impuesto:''
+                serie:'',
+                impuesto:'',
+                // impuesto:''
             },
             validado: '', //recoge mensajes de errores front end y back end en caso de haberlos.
             cnae:'',
@@ -129,7 +132,7 @@ export default {
             filterByColumn: false,
 
             options:{
-                sortable: ['nombre', 'precio', 'unidad', 'actividades_id'],
+                sortable: ['nombre', 'precio', 'unidad', 'cnae'],
                 filterable: false, //OCULTA FILTRO
                 headings: {
                         nombre: 'NOMBRE',
@@ -174,11 +177,15 @@ export default {
 
     },
     methods: {
+        actividadData(){
+            console.log('actividad data....');
+            
+        },
         getCnae(idPto){
             let actividad = this.misProductos.find(x => x.id == idPto).actividades_id;
                             // this.misProductos.find(x => x.id === id).actividdes_id;
             console.log(actividad);
-            return this.actividades.find(x => x.id == actividad).codigo;
+            return this.actividades.find(x => x.id == actividad).titulo;
         },
         getActividades(){
             let url = "/actividades";
@@ -237,9 +244,14 @@ export default {
             this.nuevo.precio = '';
             this.nuevo.unidad = '';
             this.nuevo.actividades_id='';
+            this.nuevo.actividades_impuesto='';
+            this.actividad=null;
         },
         //ENVÍA A SERVIDOR PETICIÓN AJAX CON DATOS DE NUEVO PRODUCTO PARA GUARDAR EN BD
         crear(){
+            //recoge valores:
+            this.nuevo.actividades_id = this.actividad.id;
+            this.nuevo.actividades_impuesto = this.actividad.impuesto;
             //Ejecuta validaciones en cliente
             this.validado=''; //blanquea
             this.controlNombre(this.nuevo.nombre);
@@ -258,7 +270,8 @@ export default {
                 descripcion: this.nuevo.descripcion,
                 precio: this.nuevo.precio,
                 unidad: this.nuevo.unidad,
-                actividades_id: this.nuevo.actividades_id
+                actividades_id: this.nuevo.actividades_id,
+                actividades_impuesto: this.nuevo.actividades_impuesto
             }).then(response => {
                 console.log(response);
                 this.$notification.success("Producto creado correctamente!", {  timer: 4, position:'topRigth' });

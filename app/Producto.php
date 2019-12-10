@@ -17,6 +17,7 @@ class Producto extends Model
         'precio',
         'unidad',
         'actividades_id',
+        'actividades_impuesto',
         'users_id'
     ];
     protected $dates = ['deleted_at'];

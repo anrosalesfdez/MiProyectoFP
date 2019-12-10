@@ -7024,187 +7024,629 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+/* harmony import */ var _item_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./item.vue */ "./resources/js/components/item.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    //datos del componente
+    return {
+      nuevaFactura: {
+        // datos de factura creada
+        //propios fra (se calculan al iniciar factura)
+        ejercicio: '',
+        serie: 'VEND',
+        numero: '',
+        fecha: '',
+        vencimiento: '',
+        observ: '',
+        //se calculan con el método calcularTotales()
+        base00: 0,
+        base04: 0,
+        base10: 0,
+        base21: 0,
+        retencion: 0,
+        impuesto: 0,
+        gransubtotal: 0,
+        total: 0,
+        //de emisor
+        emi_id: '',
+        emi_nif: '',
+        emi_niva: '',
+        emi_nombre_fiscal: '',
+        emi_direccion_fiscal: '',
+        emi_cp_fiscal: '',
+        emi_provincia_fiscal: '',
+        emi_pais_fiscal: '',
+        emi_telefono: '',
+        emi_email: '',
+        //de cliente
+        cli_id: '',
+        cli_razon_social: '',
+        cli_nif: '',
+        cli_niva: '',
+        cli_direccion: '',
+        cli_cp: '',
+        cli_provincia: '',
+        cli_pais: '',
+        cli_telefono: '',
+        cli_email: '',
+        cli_ambito: '',
+        cli_tipo: '',
+        cli_forma_pago: '',
+        cli_dias_pago: ''
+      },
+      cliente: {
+        // cliente seleccionado para emitir fra
+        id: '',
+        razon_social: '',
+        nif: '',
+        niva: '',
+        direccion: '',
+        provincia: '',
+        pais: '',
+        cp: '',
+        tlfn: '',
+        email: '',
+        ambito: '',
+        tipo: '',
+        forma_pago: '',
+        dias_pago: ''
+      },
+      lineas: [],
+      //array de líneas de la factura
+      linea: {
+        id: '',
+        factura_id: '',
+        ejercicio: '',
+        serie: '',
+        numero_fra: '',
+        numero: '',
+        producto: {
+          id: '',
+          nombre: '',
+          descripcion: '',
+          precio: 0,
+          unidad: '',
+          actividades_impuesto: ''
+        },
+        cantidad: 1,
+        impuesto: 0,
+        retencion: 0
+      },
+      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      validado: '' //recoge errores
+
+    };
+  },
+  props: ['olds', 'errors', //lo genera Laravel
+  'emisor', 'clientes', 'productos', 'ultima', 'impuestosfacturacion'],
+  computed: {
+    gransubtotal: function gransubtotal() {
+      return parseFloat(this.lineas.reduce(function (sum, i) {
+        return sum + i.cantidad * i.producto.precio;
+      }, 0)).toFixed(2);
+    },
+    emi_direccion1: function emi_direccion1() {
+      return this.emisor.direccion_fiscal + ' - ' + this.emisor.cp_fiscal;
+    },
+    emi_direccion2: function emi_direccion2() {
+      return this.emisor.provincia_fiscal + ' - ' + this.emisor.pais_fiscal;
+    },
+    emi_contacto: function emi_contacto() {
+      return this.emisor.email + ' - ' + this.emisor.telefono;
+    },
+    cli_direccion1: function cli_direccion1() {
+      return this.cliente.direccion + ' - ' + this.cliente.cp;
+    },
+    cli_direccion2: function cli_direccion2() {
+      return this.cliente.provincia + ' - ' + this.cliente.pais;
+    },
+    cli_contacto: function cli_contacto() {
+      return (this.cliente.email == null ? '' : this.cliente.email) + (this.cliente.telefono == null ? '' : ' - ' + this.cliente.telefono);
+    }
+  },
+  components: {
+    item: _item_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  created: function created() {},
+  mounted: function mounted() {
+    //MIN Y MAX FECHA FRA: en base al trimestre en el que estamos.
+    this.datosFactura();
+    this.hoy(); //fecha inicial para fra. modificable.
+
+    this.minFecha();
+    this.maxFecha();
+    if (!this.emisor.nif) this.$notification.error("Necesitas NIF para emitir facturas", {
+      timer: 4,
+      position: 'topRigth'
+    });
+  },
+  methods: {
+    //RECUPERA DEL SERVER DATOS PARA INICIALIZAR NUEVA FRA
+    datosFactura: function datosFactura() {
+      if (!this.ultima) this.nuevaFactura.numero = 1;else this.nuevaFactura.numero += this.ultima.numero + 1;
+      this.nuevaFactura.ejercicio = new Date().getFullYear();
+    },
+    minFecha: function minFecha() {
+      var mesHoy = new Date().getMonth() + 1;
+      var minMes = '';
+      if (mesHoy >= 10) minMes = '10';else if (mesHoy >= 7) minMes = '07';else if (mesHoy >= 4) minMes = '04';else minMes = '01';
+      var minFecha = new Date().getFullYear() + '-' + minMes + '-' + '01';
+      document.getElementById("fecha").setAttribute("min", minFecha); // console.log('minFecha: '+minFecha);
+    },
+    maxFecha: function maxFecha() {
+      var mesHoy = new Date().getMonth() + 1;
+      var maxMes = '';
+      var maxDia = '';
+
+      if (mesHoy >= 10) {
+        maxMes = '12';
+        maxDia = '31';
+      } else if (mesHoy >= 7) {
+        maxMes = '09';
+        maxDia = '30';
+      } else if (mesHoy >= 4) {
+        maxMes = '06';
+        maxDia = '30';
+      } else {
+        maxMes = '03';
+        maxDia = '31';
+      }
+
+      var maxFecha = new Date().getFullYear() + '-' + maxMes + '-' + maxDia;
+      document.getElementById("fecha").setAttribute("max", maxFecha); // console.log('maxFecha: '+maxFecha);
+    },
+    hoy: function hoy() {
+      var fecha = new Date();
+      var mes = fecha.getMonth() + 1;
+      if (mes.toString().length == 1) mes = '0' + mes;
+      var dia = fecha.getDate();
+      if (dia.toString().length == 1) dia = '0' + dia; // console.log('hoy!!!'+fecha.getFullYear()+'-'+mes+'-'+dia);
+
+      return this.nuevaFactura.fecha = fecha.getFullYear() + '-' + mes + '-' + dia;
+    },
+    //EVENTO AL ELEGIR CLIENTE
+    clFra: function clFra(event) {
+      //si cliente no NACIONAL y no tenemos NIVA en emisor:
+      if (this.cliente.ambito !== 'NACIONAL' && this.emisor.niva === null) {
+        this.$notification.error("Necesitas NIVA para emitir a extranjeros", {
+          timer: 2,
+          position: 'topRigth'
+        });
+      } //calcula vencimiento
+
+
+      var v = new Date(this.nuevaFactura.fecha);
+      v.setDate(v.getDate() + parseInt(this.cliente.dias_pago));
+      var mes = v.getMonth() + 1;
+      var dia = v.getDate();
+      if (mes < 10) mes = "0" + mes;
+      if (dia < 10) dia = "0" + dia;
+      this.nuevaFactura.vencimiento = v.getFullYear() + '-' + mes + '-' + dia;
+    },
+    //NUEVA LÍNEA FRA
+    crearLinea: function crearLinea() {
+      console.log('crearLinea');
+      this.lineas.push(Vue.util.extend({}, this.linea));
+      console.log(this.lineas);
+      this.lineas.slice(-1)[0].id = this.lineas.length;
+    },
+    //ELIMINA LÍNEA FRA
+    eliminarLinea: function eliminarLinea(index) {
+      Vue["delete"](this.lineas, index);
+    },
+    formatPrice: function formatPrice(value) {
+      var val = (value / 1).toFixed(2).replace('.', ',');
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
+    //CALCULAR CORRESPONDENCIA EN BASES PARA ESA LÍNEA
+    calculaBase: function calculaBase(impto) {
+      //1---cuando cambie subtotal, recoge impuesto de la actividad para poder hacer cruce
+      // console.log(impto);
+      //ahora ya tenemos los tres parámetros para buscar en impuesto_facturacions => array of objects
+      var buscar = {
+        tipo_cl: this.cliente.tipo,
+        ambito_cl: this.cliente.ambito,
+        impto_act: impto
+      };
+      console.log('datos a localizar!');
+      console.log(buscar);
+
+      for (var i = 0; i < this.impuestosfacturacion.length; i++) {
+        console.log('analizando.......................' + i);
+        console.log(this.impuestosfacturacion[i]);
+        var instancia = {
+          tipo_cl: this.impuestosfacturacion[i].tipo_cl,
+          ambito_cl: this.impuestosfacturacion[i].ambito_cl,
+          impto_act: this.impuestosfacturacion[i].impto_act,
+          impto_linea: this.impuestosfacturacion[i].impto_linea,
+          retencion_linea: this.impuestosfacturacion[i].retencion_linea
+        };
+
+        if (instancia.tipo_cl == buscar.tipo_cl && instancia.ambito_cl == buscar.ambito_cl && instancia.impto_act == buscar.impto_act) {
+          console.log('se dieron las 3 condiciones!'); //recoge datos para linea
+
+          this.lineas[this.lineas.length - 1].impuesto = instancia.impto_linea;
+          this.lineas[this.lineas.length - 1].retencion = instancia.retencion_linea;
+          return true;
+        }
+
+        console.log('no se cumplen condiciones!');
+      }
+    },
+    calculaTotales: function calculaTotales() {
+      //blanquea totales
+      this.nuevaFactura.base21 = 0;
+      this.nuevaFactura.base10 = 0;
+      this.nuevaFactura.base04 = 0;
+      this.nuevaFactura.base00 = 0;
+      this.nuevaFactura.retencion = 0;
+      this.nuevaFactura.impuesto = 0;
+      this.nuevaFactura.gransubtotal = 0;
+      this.nuevaFactura.total = 0;
+
+      if (this.lineas.length == 0) {
+        this.$notification.error("Debes introducir líneas primero!", {
+          timer: 4,
+          position: 'topRigth'
+        });
+        return false;
+      } //calcula totales en bases más retención fra
+
+
+      for (var i = 0; i < this.lineas.length; i++) {
+        //suma a basexx según corresponda
+        if (this.lineas[i].impuesto == 21) this.nuevaFactura.base21 += this.lineas[i].producto.precio * this.lineas[i].cantidad;
+        if (this.lineas[i].impuesto == 10) this.nuevaFactura.base10 += this.lineas[i].producto.precio * this.lineas[i].cantidad;
+        if (this.lineas[i].impuesto == 4) this.nuevaFactura.base04 += this.lineas[i].producto.precio * this.lineas[i].cantidad;
+        if (this.lineas[i].impuesto == 0) this.nuevaFactura.base00 += this.lineas[i].producto.precio * this.lineas[i].cantidad; //suma a retención fra
+
+        if (this.lineas[i].retencion !== 0) this.nuevaFactura.retencion += this.lineas[i].producto.precio * this.lineas[i].cantidad * 0.15;
+      } //suma a impuestos, grantotal y total
+
+
+      this.nuevaFactura.impuesto += this.nuevaFactura.base21 * 0.21 + this.nuevaFactura.base10 * 0.10 + this.nuevaFactura.base04 * 0.04;
+      this.nuevaFactura.gransubtotal = parseFloat(this.gransubtotal);
+      this.nuevaFactura.total += (this.nuevaFactura.gransubtotal + parseFloat(this.nuevaFactura.impuesto + this.nuevaFactura.retencion)).toFixed(2); //asigna el resto de valores a nuevaFactura
+      //de emisor
+
+      this.nuevaFactura.emi_id = this.emisor.id;
+      this.nuevaFactura.emi_nif = this.emisor.nombre_fiscal;
+      this.nuevaFactura.emi_niva = this.emisor.nif;
+      this.nuevaFactura.emi_nombre_fiscal = this.emisor.niva;
+      this.nuevaFactura.emi_direccion_fiscal = this.emisor.direccion_fiscal;
+      this.nuevaFactura.emi_cp_fiscal = this.emisor.cp_fiscal;
+      this.nuevaFactura.emi_provincia_fiscal = this.emisor.provincia_fiscal;
+      this.nuevaFactura.emi_pais_fiscal = this.emisor.pais_fiscal;
+      this.nuevaFactura.emi_telefono = this.emisor.email;
+      this.nuevaFactura.emi_email = this.emisor.telefono; //de cliente
+
+      this.nuevaFactura.cli_id = this.cliente.id;
+      this.nuevaFactura.cli_razon_social = this.cliente.razon_social;
+      this.nuevaFactura.cli_nif = this.cliente.nif;
+      this.nuevaFactura.cli_niva = this.cliente.niva;
+      this.nuevaFactura.cli_direccion = this.cliente.direccion;
+      this.nuevaFactura.cli_cp = this.cliente.cp;
+      this.nuevaFactura.cli_provincia = this.cliente.provincia;
+      this.nuevaFactura.cli_pais = this.cliente.pais;
+      this.nuevaFactura.cli_telefono = this.cliente.telefono;
+      this.nuevaFactura.cli_email = this.cliente.email;
+      this.nuevaFactura.cli_ambito = this.cliente.ambito;
+      this.nuevaFactura.cli_tipo = this.cliente.tipo;
+      this.nuevaFactura.cli_forma_pago = this.cliente.forma_pago;
+      this.nuevaFactura.cli_dias_pago = this.cliente.dias_pago; //datos de líneas
+
+      for (var i = 0; i < this.lineas.length; i++) {
+        this.lineas[i].ejercicio = this.nuevaFactura.ejercicio;
+        this.lineas[i].serie = this.nuevaFactura.serie;
+        this.lineas[i].numero = this.nuevaFactura.numero;
+      }
+    },
+    enviar: function enviar() {
+      var _this = this;
+
+      var url = '/facturas/store';
+      axios.post(url, {
+        ejercicio: this.nuevaFactura.ejercicio,
+        serie: this.nuevaFactura.serie,
+        numero: this.nuevaFactura.numero,
+        fecha: this.nuevaFactura.fecha,
+        vencimiento: this.nuevaFactura.vencimiento,
+        observaciones: this.nuevaFactura.observaciones,
+        gransubtotal: this.nuevaFactura.gransubtotal,
+        base21: this.nuevaFactura.base21,
+        base10: this.nuevaFactura.base10,
+        base04: this.nuevaFactura.base04,
+        base00: this.nuevaFactura.base00,
+        impuesto: this.nuevaFactura.impuesto,
+        retencion: this.nuevaFactura.retencion,
+        total: this.nuevaFactura.total,
+        emisores_id: this.nuevaFactura.emi_id,
+        emi_nif: this.nuevaFactura.emi_nif,
+        emi_niva: this.nuevaFactura.emi_niva,
+        emi_nombre_fiscal: this.nuevaFactura.emi_nombre_fiscal,
+        emi_direccion_fiscal: this.nuevaFactura.emi_direccion_fiscal,
+        emi_cp_fiscal: this.nuevaFactura.emi_cp_fiscal,
+        emi_provincia_fiscal: this.nuevaFactura.emi_provincia_fiscal,
+        emi_pais_fiscal: this.nuevaFactura.emi_pais_fiscal,
+        emi_telefono: this.nuevaFactura.emi_telefono,
+        emi_email: this.nuevaFactura.emi_email,
+        clientes_id: this.nuevaFactura.cli_id,
+        cli_razon_social: this.nuevaFactura.cli_razon_social,
+        cli_nif: this.nuevaFactura.cli_nif,
+        cli_niva: this.nuevaFactura.cli_niva,
+        cli_direccion: this.nuevaFactura.cli_direccion,
+        cli_cp: this.nuevaFactura.cli_cp,
+        cli_provincia: this.nuevaFactura.cli_provincia,
+        cli_pais: this.nuevaFactura.cli_pais,
+        cli_telefono: this.nuevaFactura.cli_telefono,
+        cli_email: this.nuevaFactura.cli_email,
+        cli_ambito: this.nuevaFactura.cli_ambito,
+        cli_tipo: this.nuevaFactura.cli_tipo,
+        cli_forma_pago: this.nuevaFactura.cli_forma_pago,
+        cli_dias_pago: this.nuevaFactura.cli_dias_pago
+      }).then(function (response) {
+        console.log(response);
+        var url2 = 'lineas';
+
+        for (var i = 0; i < _this.lineas.length; i++) {
+          _this.lineas[i] = response.data.last_insert_id;
+        }
+
+        axios.post(url2, {
+          lineas: _this.lineas
+        }).then(function (response) {
+          console.log(response);
+
+          _this.$notification.success("Factura creada correctamente!", {
+            timer: 4,
+            position: 'topRigth'
+          });
+        })["catch"](function (error) {
+          console.log(error); // error = Error object
+        });
+      })["catch"](function (error) {
+        //(error) es el param que le paso a la funcion anónima
+        console.log(error); // error = Error object
+      });
+    }
+  } //end methods
+
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/item.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/item.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 //
 //
 //
@@ -7238,238 +7680,17 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  data: function data() {
-    //datos del componente
-    return {
-      nuevaFactura: {
-        // datos de factura creada
-        //propios fra
-        ejercicio: '',
-        serie: 'VEND',
-        numero: '',
-        fecha: '',
-        vencimiento: '',
-        observ: '',
-        base00: '',
-        base04: '',
-        base10: '',
-        base21: '',
-        //de emisor
-        emi_nif: '',
-        emi_niva: '',
-        emi_nombre_fiscal: '',
-        emi_nombre_comercial: '',
-        emi_direccion_fiscal: '',
-        emi_direccion_comercial: '',
-        emi_cp_fiscal: '',
-        emi_cp_comercial: '',
-        emi_provincia_fiscal: '',
-        emi_provincia_comercial: '',
-        emi_pais_fiscal: '',
-        emi_pais_comercial: '',
-        emi_telefono: '',
-        emi_email: '',
-        //de cliente
-        cliId: '',
-        cliRazon_social: '',
-        cliNif: '',
-        cliNiva: '',
-        cliDireccion: '',
-        cliProvincia: '',
-        cliPais: '',
-        cliCp: '',
-        cliTlfn: '',
-        cliEmail: '',
-        cliAmbito_cl: '',
-        cliTipo_cl: '',
-        cliForma_pago: '',
-        cliDias_pago: ''
-      },
-      cliente: {
-        // cliente seleccionado para emitir fra
-        id: '',
-        razon_social: '',
-        nif: '',
-        niva: '',
-        direccion: '',
-        provincia: '',
-        pais: '',
-        cp: '',
-        tlfn: '',
-        email: '',
-        ambito_cl: '',
-        tipo_cl: '',
-        forma_pago: '',
-        dias_pago: ''
-      },
-      lineas: [],
-      //array de líneas de la factura
-      linea: {
-        id: '',
-        producto: {
-          id: '',
-          nombre: '',
-          descripcion: '',
-          precio: 0,
-          unidad: '',
-          actividades_codigo: ''
-        },
-        cantidad: 1
-      },
-      csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-      validado: '' //recoge errores
-
-    };
-  },
-  props: ['olds', 'errors', //lo genera Laravel
-  'emisor', 'clientes', 'productos', 'ultima', 'impuestosfacturacion'],
+  name: "item",
+  props: ['productos', 'linea'],
   computed: {
-    gransubtotal: function gransubtotal() {
-      return this.lineas.reduce(function (sum, i) {
-        return sum + i.cantidad * i.producto.precio;
-      }, 0);
-    },
-    impuestos: function impuestos() {
-      return;
-    },
-    retencion: function retencion() {
-      return;
-    },
-    total: function total() {
-      return this.gransubtotal + this.impuestos + this.retencion;
+    subtotal: function subtotal() {
+      //este dato no se almacena
+      var impto = this.linea.producto.actividades_impuesto;
+      this.$emit('calcula', impto);
+      return parseFloat(this.linea.producto.precio * this.linea.cantidad).toFixed(2);
+      ;
     }
-  },
-  components: {
-    item: {
-      props: ['productos', 'linea'],
-      template: '<tr><td style="width: 20%"><div class="delete-wpr"><select class="form-control-plaintext form-control-sm editable" v-model="linea.producto"><option disabled value="null">Seleccione un producto</option><option v-for="producto in productos" :key="producto.id" :value="producto"> {{ producto.nombre }} </option></select><a class="delete" role="button" @click="eliminarLinea(index)" title="Eliminar línea">X</a></div></td><td style="width: 30%"><input type="text" class="editable" maxlength="50" size="27" v-model="linea.producto.descripcion"></td><td style="width: 10%"><input type="number" class="editable dcha" style="width: 100%" step="0.01" v-model="linea.producto.precio"></td><td style="width: 10%"><input type="text"  readonly maxlength="10" size="10" tabindex="-1" v-model="linea.producto.unidad"></td><td style="width: 10%"><input type="number" class="editable dcha" style="width: 100%" v-model="linea.cantidad" value="1"></td><td style="width: 10%"><input type="number" readonly class="dcha" style="width: 100%" tabindex="-1" v-model="subtotal" @change="calculaBase"></td><td style="width: 10%"><input type="hidden"  readonly maxlength="10" size="10" tabindex="-1" v-model="linea.producto.actividades_codigo"></td></tr>',
-      computed: {
-        subtotal: function subtotal() {
-          //este dato no se almacena
-          return this.linea.producto.precio * this.linea.cantidad;
-        }
-      }
-    }
-  },
-  created: function created() {
-    this.datosFactura();
-    this.hoy(); //fecha inicial para fra. modificable.
-
-    console.log(_typeof(this.productos));
-  },
-  mounted: function mounted() {
-    //MIN Y MAX FECHA FRA: en base al trimestre en el que estamos.
-    this.minFecha();
-    this.maxFecha();
-    if (!this.emisor.nif) this.$notification.error("Necesitas NIF para emitir facturas", {
-      timer: 4,
-      position: 'topRigth'
-    });
-  },
-  methods: {
-    calculaBase: function calculaBase() {
-      var _this = this;
-
-      //1---cuando cambie subtotal, recoge impuesto de la línea y 
-      //busca impto_facturacion en array of objects impuestosfacturacion
-      var devReact = this.impuestosfacturacion.filter(function (obj) {
-        return obj.tipo.includes(_this.cliente.tipo);
-      }).map(function (obj) {
-        return {
-          "impto_linea": obj.impto_linea_fra,
-          "retencion_linea": obj.retencion_linea_fra
-        };
-      });
-      console.log(devReact); //2---una vez tiene el tipo a aplicar: tipo*subtotal y lo añade a base que corresponda
-    },
-    encuentraImpuesto: function encuentraImpuesto(tipo, ambito, impto_act) {//ej: PERSONA FISICA NACIONAL GE
-      // var filter = {
-      //     tipo: tipo,  //'PERSONA FISICA'
-      //     ambito: ambito, //'NACIONAL'
-      //     impto_act: impto_act,  //'GE'
-      // };
-      // for (var key in filter) {
-      //     if (filter[key] === undefined || filter[key] != this.[key])
-      //     return false;
-      // }
-      //     return true;
-    },
-    hoy: function hoy() {
-      var fecha = new Date();
-      var mes = fecha.getMonth() + 1;
-      if (mes.toString().length == 1) mes = '0' + mes;
-      var dia = fecha.getDate();
-      if (dia.toString().length == 1) dia = '0' + dia;
-      console.log('hoy!!!' + fecha.getFullYear() + '-' + mes + '-' + dia);
-      return this.nuevaFactura.fecha = fecha.getFullYear() + '-' + mes + '-' + dia;
-    },
-    clFra: function clFra(event) {
-      //si cliente no NACIONAL y no tenemos NIVA en emisor:
-      if (this.cliente.ambito !== 'NACIONAL' && this.emisor.niva === null) {
-        this.$notification.error("Necesitas NIVA para emitir a extranjeros", {
-          timer: 2,
-          position: 'topRigth'
-        });
-      } //calcula vencimiento
-
-
-      var v = new Date(this.nuevaFactura.fecha);
-      v.setDate(v.getDate() + parseInt(this.cliente.dias_pago));
-      var mes = v.getMonth() + 1;
-      var dia = v.getDate();
-      if (mes < 10) mes = "0" + mes;
-      if (dia < 10) dia = "0" + dia;
-      this.nuevaFactura.vencimiento = v.getFullYear() + '-' + mes + '-' + dia;
-    },
-    //RECUPERA DEL SERVER DATOS PARA INICIALIZAR NUEVA FRA
-    datosFactura: function datosFactura() {
-      if (!this.ultima) this.nuevaFactura.numero = 1;else this.nuevaFactura.numero += this.ultima;
-      this.nuevaFactura.ejercicio = new Date().getFullYear();
-    },
-    minFecha: function minFecha() {
-      var mesHoy = new Date().getMonth() + 1;
-      var minMes = '';
-      if (mesHoy >= 10) minMes = '10';else if (mesHoy >= 7) minMes = '07';else if (mesHoy >= 4) minMes = '04';else minMes = '01';
-      var minDia = '01';
-      var minFecha = new Date().getFullYear() + '-' + minMes + '-' + minDia;
-      document.getElementById("fecha").setAttribute("min", minFecha);
-      console.log('minFecha: ' + minFecha);
-    },
-    maxFecha: function maxFecha() {
-      var mesHoy = new Date().getMonth() + 1;
-      var maxMes = '';
-      var maxDia = '';
-
-      if (mesHoy >= 10) {
-        maxMes = '12';
-        maxDia = '31';
-      } else if (mesHoy >= 7) {
-        maxMes = '09';
-        maxDia = '30';
-      } else if (mesHoy >= 4) {
-        maxMes = '06';
-        maxDia = '30';
-      } else {
-        maxMes = '03';
-        maxDia = '31';
-      }
-
-      var maxFecha = new Date().getFullYear() + '-' + maxMes + '-' + maxDia;
-      document.getElementById("fecha").setAttribute("max", maxFecha);
-      console.log('maxFecha: ' + maxFecha);
-    },
-    //MÉTODOS GESTIÓN INTERFAZ
-    //NUEVA LÍNEA FRA
-    crearLinea: function crearLinea() {
-      this.lineas.push(Vue.util.extend({}, this.linea));
-      this.lineas.slice(-1)[0].id = this.lineas.length + 1;
-    },
-    //ELIMINA LÍNEA FRA
-    eliminarLinea: function eliminarLinea(index) {
-      Vue["delete"](this.lineas, index);
-    }
-  } //end methods
-
+  }
 });
 
 /***/ }),
@@ -7591,7 +7812,8 @@ __webpack_require__.r(__webpack_exports__);
         descripcion: '',
         precio: '',
         unidad: '',
-        actividades_id: ''
+        actividades_id: '',
+        actividades_impuesto: ''
       },
       editado: {
         id: '',
@@ -7607,7 +7829,9 @@ __webpack_require__.r(__webpack_exports__);
         codigo: '',
         titulo: '',
         descripcion: '',
-        impuesto: ''
+        serie: '',
+        impuesto: '' // impuesto:''
+
       },
       validado: '',
       //recoge mensajes de errores front end y back end en caso de haberlos.
@@ -7616,7 +7840,7 @@ __webpack_require__.r(__webpack_exports__);
       columns: ['nombre', 'descripcion', 'precio', 'unidad', 'cnae', 'acciones'],
       filterByColumn: false,
       options: {
-        sortable: ['nombre', 'precio', 'unidad', 'actividades_id'],
+        sortable: ['nombre', 'precio', 'unidad', 'cnae'],
         filterable: false,
         //OCULTA FILTRO
         headings: {
@@ -7665,6 +7889,9 @@ __webpack_require__.r(__webpack_exports__);
     this.getActividades();
   },
   methods: {
+    actividadData: function actividadData() {
+      console.log('actividad data....');
+    },
     getCnae: function getCnae(idPto) {
       var actividad = this.misProductos.find(function (x) {
         return x.id == idPto;
@@ -7673,7 +7900,7 @@ __webpack_require__.r(__webpack_exports__);
       console.log(actividad);
       return this.actividades.find(function (x) {
         return x.id == actividad;
-      }).codigo;
+      }).titulo;
     },
     getActividades: function getActividades() {
       var _this = this;
@@ -7728,12 +7955,17 @@ __webpack_require__.r(__webpack_exports__);
       this.nuevo.precio = '';
       this.nuevo.unidad = '';
       this.nuevo.actividades_id = '';
+      this.nuevo.actividades_impuesto = '';
+      this.actividad = null;
     },
     //ENVÍA A SERVIDOR PETICIÓN AJAX CON DATOS DE NUEVO PRODUCTO PARA GUARDAR EN BD
     crear: function crear() {
       var _this2 = this;
 
-      //Ejecuta validaciones en cliente
+      //recoge valores:
+      this.nuevo.actividades_id = this.actividad.id;
+      this.nuevo.actividades_impuesto = this.actividad.impuesto; //Ejecuta validaciones en cliente
+
       this.validado = ''; //blanquea
 
       this.controlNombre(this.nuevo.nombre);
@@ -7757,7 +7989,8 @@ __webpack_require__.r(__webpack_exports__);
         descripcion: this.nuevo.descripcion,
         precio: this.nuevo.precio,
         unidad: this.nuevo.unidad,
-        actividades_id: this.nuevo.actividades_id
+        actividades_id: this.nuevo.actividades_id,
+        actividades_impuesto: this.nuevo.actividades_impuesto
       }).then(function (response) {
         console.log(response);
 
@@ -81991,7 +82224,7 @@ var render = function() {
                   staticClass: "col-form-label",
                   attrs: { for: "provincia_fiscal" }
                 },
-                [_vm._v("Ciudad: ")]
+                [_vm._v("Provincia: ")]
               ),
               _vm._v(" "),
               _c("input", {
@@ -82209,7 +82442,7 @@ var render = function() {
                   staticClass: "col-form-label",
                   attrs: { for: "provincia_comercial" }
                 },
-                [_vm._v("Ciudad: ")]
+                [_vm._v("Provincia: ")]
               ),
               _vm._v(" "),
               _c("input", {
@@ -82523,13 +82756,38 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row card", attrs: { id: "page-wrap" } }, [
-    _vm._m(0),
+    _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticStyle: { display: "inline" } }, [
+        _vm._v("Alta nueva factura")
+      ]),
+      _vm._v(" "),
+      _c("div", { staticStyle: { display: "inline", float: "right" } }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-success",
+            attrs: { type: "submit" },
+            on: { click: _vm.enviar }
+          },
+          [_vm._v("Guardar")]
+        ),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
+            staticClass: "btn btn-danger",
+            attrs: { href: "/facturas/listar" }
+          },
+          [_vm._v("Cancelar")]
+        )
+      ])
+    ]),
     _vm._v(" "),
     _c("div", { staticClass: "card-body espacios" }, [
-      _vm._m(1),
+      _vm._m(0),
       _vm._v(" "),
       _c("div", { staticClass: "row espacios" }, [
-        _vm._m(2),
+        _vm._m(1),
         _vm._v(" "),
         _c(
           "div",
@@ -82539,6 +82797,27 @@ var render = function() {
             attrs: { id: "emisor" }
           },
           [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.emisor.id,
+                  expression: "emisor.id"
+                }
+              ],
+              attrs: { type: "hidden" },
+              domProps: { value: _vm.emisor.id },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.emisor, "id", $event.target.value)
+                }
+              }
+            }),
+            _vm._v(" "),
             _c("input", {
               directives: [
                 {
@@ -82625,24 +82904,24 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.emisor.direccion_fiscal,
-                  expression: "emisor.direccion_fiscal"
+                  value: _vm.emi_direccion1,
+                  expression: "emi_direccion1"
                 }
               ],
               attrs: {
                 type: "text",
-                id: "emi_direccion_fiscal",
+                id: "emi_direccion1",
                 size: "50",
                 readonly: "",
                 tabindex: "-1"
               },
-              domProps: { value: _vm.emisor.direccion_fiscal },
+              domProps: { value: _vm.emi_direccion1 },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.emisor, "direccion_fiscal", $event.target.value)
+                  _vm.emi_direccion1 = $event.target.value
                 }
               }
             }),
@@ -82652,24 +82931,24 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.emisor.email,
-                  expression: "emisor.email"
+                  value: _vm.emi_direccion2,
+                  expression: "emi_direccion2"
                 }
               ],
               attrs: {
                 type: "text",
-                id: "emi_email",
+                id: "emi_direccion2",
                 size: "50",
                 readonly: "",
                 tabindex: "-1"
               },
-              domProps: { value: _vm.emisor.email },
+              domProps: { value: _vm.emi_direccion2 },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.emisor, "email", $event.target.value)
+                  _vm.emi_direccion2 = $event.target.value
                 }
               }
             }),
@@ -82679,24 +82958,24 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.emisor.telefono,
-                  expression: "emisor.telefono"
+                  value: _vm.emi_contacto,
+                  expression: "emi_contacto"
                 }
               ],
               attrs: {
                 type: "text",
-                id: "emi_telefono",
+                id: "emi_contacto",
                 size: "50",
                 readonly: "",
                 tabindex: "-1"
               },
-              domProps: { value: _vm.emisor.telefono },
+              domProps: { value: _vm.emi_contacto },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.emisor, "telefono", $event.target.value)
+                  _vm.emi_contacto = $event.target.value
                 }
               }
             })
@@ -82773,8 +83052,7 @@ var render = function() {
                 id: "cli_nif",
                 size: "50",
                 readonly: "",
-                tabindex: "-1",
-                value: "cliente.nif"
+                tabindex: "-1"
               },
               domProps: { value: _vm.cliente.nif },
               on: {
@@ -82792,25 +83070,78 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.cliente.direccion,
-                  expression: "cliente.direccion"
+                  value: _vm.cli_direccion1,
+                  expression: "cli_direccion1"
                 }
               ],
               attrs: {
                 type: "text",
-                id: "cli_direccion",
+                id: "cli_direccion1",
                 size: "50",
                 readonly: "",
-                tabindex: "-1",
-                value: "cliente.direccion"
+                tabindex: "-1"
               },
-              domProps: { value: _vm.cliente.direccion },
+              domProps: { value: _vm.cli_direccion1 },
               on: {
                 input: function($event) {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.$set(_vm.cliente, "direccion", $event.target.value)
+                  _vm.cli_direccion1 = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.cli_direccion2,
+                  expression: "cli_direccion2"
+                }
+              ],
+              attrs: {
+                type: "text",
+                id: "cli_direccion2",
+                size: "50",
+                readonly: "",
+                tabindex: "-1"
+              },
+              domProps: { value: _vm.cli_direccion2 },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.cli_direccion2 = $event.target.value
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.cli_contacto,
+                  expression: "cli_contacto"
+                }
+              ],
+              attrs: {
+                type: "text",
+                id: "cli_contacto",
+                size: "50",
+                readonly: "",
+                tabindex: "-1"
+              },
+              domProps: { value: _vm.cli_contacto },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.cli_contacto = $event.target.value
                 }
               }
             })
@@ -82911,16 +83242,22 @@ var render = function() {
         { staticClass: "col-md-12 espacios", attrs: { id: "cuerpoFra" } },
         [
           _c("table", { attrs: { id: "items" } }, [
-            _vm._m(3),
+            _vm._m(2),
             _vm._v(" "),
             _c(
               "tbody",
-              _vm._l(_vm.lineas, function(linea) {
+              _vm._l(_vm.lineas, function(linea, index) {
                 return _c("item", {
                   key: linea.id,
                   tag: "tr",
                   staticClass: "row",
-                  attrs: { linea: linea, productos: _vm.productos }
+                  attrs: { linea: linea, productos: _vm.productos },
+                  on: {
+                    calcula: _vm.calculaBase,
+                    elimina: function($event) {
+                      return _vm.eliminarLinea(index)
+                    }
+                  }
                 })
               }),
               1
@@ -82936,6 +83273,20 @@ var render = function() {
               [
                 _vm._v(
                   "\r\n                    Nueva línea\r\n                "
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn-default btn-xs",
+                attrs: { title: "calculaTotales" },
+                on: { click: _vm.calculaTotales }
+              },
+              [
+                _vm._v(
+                  "\r\n                    Calcular factura\r\n                "
                 )
               ]
             )
@@ -83044,29 +83395,9 @@ var render = function() {
                 { staticClass: "cabecera-text", staticStyle: { width: "20%" } },
                 [
                   _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.nuevaFactura.base10,
-                        expression: "nuevaFactura.base10"
-                      }
-                    ],
                     staticClass: "dcha",
                     attrs: { type: "number", readonly: "", tabindex: "-1" },
-                    domProps: { value: _vm.nuevaFactura.base10 },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(
-                          _vm.nuevaFactura,
-                          "base10",
-                          $event.target.value
-                        )
-                      }
-                    }
+                    domProps: { innerHTML: _vm._s(_vm.nuevaFactura.base10) }
                   })
                 ]
               ),
@@ -83082,19 +83413,23 @@ var render = function() {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.impuestos,
-                      expression: "impuestos"
+                      value: _vm.nuevaFactura.impuesto,
+                      expression: "nuevaFactura.impuesto"
                     }
                   ],
                   staticClass: "dcha",
                   attrs: { type: "number", readonly: "", tabindex: "-1" },
-                  domProps: { value: _vm.impuestos },
+                  domProps: { value: _vm.nuevaFactura.impuesto },
                   on: {
                     input: function($event) {
                       if ($event.target.composing) {
                         return
                       }
-                      _vm.impuestos = $event.target.value
+                      _vm.$set(
+                        _vm.nuevaFactura,
+                        "impuesto",
+                        $event.target.value
+                      )
                     }
                   }
                 })
@@ -83154,19 +83489,23 @@ var render = function() {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.retencion,
-                      expression: "retencion"
+                      value: _vm.nuevaFactura.retencion,
+                      expression: "nuevaFactura.retencion"
                     }
                   ],
                   staticClass: "dcha",
                   attrs: { type: "number", readonly: "", tabindex: "-1" },
-                  domProps: { value: _vm.retencion },
+                  domProps: { value: _vm.nuevaFactura.retencion },
                   on: {
                     input: function($event) {
                       if ($event.target.composing) {
                         return
                       }
-                      _vm.retencion = $event.target.value
+                      _vm.$set(
+                        _vm.nuevaFactura,
+                        "retencion",
+                        $event.target.value
+                      )
                     }
                   }
                 })
@@ -83226,19 +83565,19 @@ var render = function() {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.total,
-                      expression: "total"
+                      value: _vm.nuevaFactura.total,
+                      expression: "nuevaFactura.total"
                     }
                   ],
                   staticClass: "dcha",
                   attrs: { type: "number", readonly: "", tabindex: "-1" },
-                  domProps: { value: _vm.total },
+                  domProps: { value: _vm.nuevaFactura.total },
                   on: {
                     input: function($event) {
                       if ($event.target.composing) {
                         return
                       }
-                      _vm.total = $event.target.value
+                      _vm.$set(_vm.nuevaFactura, "total", $event.target.value)
                     }
                   }
                 })
@@ -83246,7 +83585,41 @@ var render = function() {
             ])
           ]),
           _vm._v(" "),
-          _vm._m(4)
+          _c("table", [
+            _c("tr", [
+              _c("td", { staticStyle: { width: "100%" } }, [
+                _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.nuevaFactura.observaciones,
+                      expression: "nuevaFactura.observaciones"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    name: "observaciones",
+                    id: "observaciones",
+                    placeholder: "Observaciones"
+                  },
+                  domProps: { value: _vm.nuevaFactura.observaciones },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.nuevaFactura,
+                        "observaciones",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ])
+            ])
+          ])
         ]
       ),
       _vm._v(" "),
@@ -83267,33 +83640,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-header" }, [
-      _c("h3", { staticStyle: { display: "inline" } }, [
-        _vm._v("Alta nueva factura")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticStyle: { display: "inline", float: "right" } }, [
-        _c(
-          "button",
-          { staticClass: "btn btn-success", attrs: { type: "submit" } },
-          [_vm._v("Guardar")]
-        ),
-        _vm._v(" "),
-        _c(
-          "a",
-          {
-            staticClass: "btn btn-danger",
-            attrs: { href: "/facturas/listar" }
-          },
-          [_vm._v("Cancelar")]
-        )
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -83332,51 +83678,279 @@ var staticRenderFns = [
         _vm._v(" "),
         _c(
           "th",
-          { staticClass: "cabecera-title", staticStyle: { width: "30%" } },
+          { staticClass: "cabecera-title", staticStyle: { width: "20%" } },
           [_vm._v("Descripción")]
         ),
         _vm._v(" "),
         _c(
           "th",
-          { staticClass: "cabecera-title", staticStyle: { width: "10%" } },
+          { staticClass: "cabecera-title", staticStyle: { width: "15%" } },
           [_vm._v("Precio")]
         ),
         _vm._v(" "),
         _c(
           "th",
-          { staticClass: "cabecera-title", staticStyle: { width: "10%" } },
+          { staticClass: "cabecera-title", staticStyle: { width: "15%" } },
           [_vm._v("Unidad")]
         ),
         _vm._v(" "),
         _c(
           "th",
-          { staticClass: "cabecera-title", staticStyle: { width: "10%" } },
+          { staticClass: "cabecera-title", staticStyle: { width: "15%" } },
           [_vm._v("Cantidad")]
         ),
         _vm._v(" "),
         _c(
           "th",
-          { staticClass: "cabecera-title", staticStyle: { width: "20%" } },
+          { staticClass: "cabecera-title", staticStyle: { width: "15%" } },
           [_vm._v("Subtotal")]
         )
       ])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("table", [
-      _c("tr", [
-        _c("td", { staticStyle: { width: "100%" }, attrs: { rowspan: "12" } }, [
-          _c("textarea", {
-            attrs: { rows: "12", cols: "20", placeholder: "Observaciones..." }
-          })
-        ])
-      ])
-    ])
   }
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/item.vue?vue&type=template&id=34166744&":
+/*!*******************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/item.vue?vue&type=template&id=34166744& ***!
+  \*******************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("tr", [
+    _c("td", { staticStyle: { width: "20%" } }, [
+      _c("div", { staticClass: "delete-wpr" }, [
+        _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.linea.producto,
+                expression: "linea.producto"
+              }
+            ],
+            staticClass: "form-control-plaintext form-control-sm editable",
+            on: {
+              change: function($event) {
+                var $$selectedVal = Array.prototype.filter
+                  .call($event.target.options, function(o) {
+                    return o.selected
+                  })
+                  .map(function(o) {
+                    var val = "_value" in o ? o._value : o.value
+                    return val
+                  })
+                _vm.$set(
+                  _vm.linea,
+                  "producto",
+                  $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                )
+              }
+            }
+          },
+          [
+            _c("option", { attrs: { disabled: "", value: "null" } }, [
+              _vm._v("Seleccione un producto")
+            ]),
+            _vm._v(" "),
+            _vm._l(_vm.productos, function(producto) {
+              return _c(
+                "option",
+                { key: producto.id, domProps: { value: producto } },
+                [_vm._v(" " + _vm._s(producto.nombre) + " ")]
+              )
+            })
+          ],
+          2
+        ),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
+            staticClass: "delete",
+            attrs: { role: "button", title: "Eliminar línea" },
+            on: {
+              click: function($event) {
+                return _vm.$emit("elimina", "index")
+              }
+            }
+          },
+          [_vm._v("X")]
+        )
+      ])
+    ]),
+    _vm._v(" "),
+    _c("td", { staticStyle: { width: "20%" } }, [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.linea.producto.descripcion,
+            expression: "linea.producto.descripcion"
+          }
+        ],
+        staticClass: "editable",
+        attrs: { type: "text", maxlength: "50", size: "16" },
+        domProps: { value: _vm.linea.producto.descripcion },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.linea.producto, "descripcion", $event.target.value)
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("td", { staticStyle: { width: "15%" } }, [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.linea.producto.precio,
+            expression: "linea.producto.precio"
+          }
+        ],
+        staticClass: "editable dcha",
+        staticStyle: { width: "100%" },
+        attrs: { type: "number", step: "0.01" },
+        domProps: { value: _vm.linea.producto.precio },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.linea.producto, "precio", $event.target.value)
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("td", { staticStyle: { width: "15%" } }, [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.linea.producto.unidad,
+            expression: "linea.producto.unidad"
+          }
+        ],
+        staticClass: "editable",
+        attrs: { type: "text", maxlength: "18", size: "11", tabindex: "-1" },
+        domProps: { value: _vm.linea.producto.unidad },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.linea.producto, "unidad", $event.target.value)
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("td", { staticStyle: { width: "15%" } }, [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.linea.cantidad,
+            expression: "linea.cantidad"
+          }
+        ],
+        staticClass: "editable dcha",
+        staticStyle: { width: "100%" },
+        attrs: { type: "number", value: "1" },
+        domProps: { value: _vm.linea.cantidad },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.linea, "cantidad", $event.target.value)
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("td", { staticStyle: { width: "15%" } }, [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.subtotal,
+            expression: "subtotal"
+          }
+        ],
+        staticClass: "dcha",
+        staticStyle: { width: "100%" },
+        attrs: { type: "number", readonly: "", tabindex: "-1" },
+        domProps: { value: _vm.subtotal },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.subtotal = $event.target.value
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("input", {
+      directives: [
+        {
+          name: "model",
+          rawName: "v-model",
+          value: _vm.linea.producto.actividades_impuesto,
+          expression: "linea.producto.actividades_impuesto"
+        }
+      ],
+      attrs: {
+        type: "hidden",
+        readonly: "",
+        maxlength: "10",
+        size: "10",
+        tabindex: "-1"
+      },
+      domProps: { value: _vm.linea.producto.actividades_impuesto },
+      on: {
+        input: function($event) {
+          if ($event.target.composing) {
+            return
+          }
+          _vm.$set(
+            _vm.linea.producto,
+            "actividades_impuesto",
+            $event.target.value
+          )
+        }
+      }
+    })
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -83534,12 +84108,12 @@ var render = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.nuevo.actividades_id,
-                  expression: "nuevo.actividades_id"
+                  value: _vm.actividad,
+                  expression: "actividad"
                 }
               ],
               staticClass: "form-control-plaintext editable",
-              attrs: { id: "actividades_id" },
+              attrs: { id: "actividad" },
               on: {
                 change: function($event) {
                   var $$selectedVal = Array.prototype.filter
@@ -83550,11 +84124,9 @@ var render = function() {
                       var val = "_value" in o ? o._value : o.value
                       return val
                     })
-                  _vm.$set(
-                    _vm.nuevo,
-                    "actividades_id",
-                    $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-                  )
+                  _vm.actividad = $event.target.multiple
+                    ? $$selectedVal
+                    : $$selectedVal[0]
                 }
               }
             },
@@ -83566,7 +84138,11 @@ var render = function() {
               _vm._l(_vm.actividades, function(actividad) {
                 return _c(
                   "option",
-                  { key: actividad.id, domProps: { value: actividad.id } },
+                  {
+                    key: actividad.id,
+                    domProps: { value: actividad },
+                    on: { change: _vm.actividadData }
+                  },
                   [
                     _vm._v(
                       " " +
@@ -103070,6 +103646,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_facturas_nuevo_vue_vue_type_template_id_50f872fe___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_facturas_nuevo_vue_vue_type_template_id_50f872fe___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/item.vue":
+/*!******************************************!*\
+  !*** ./resources/js/components/item.vue ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _item_vue_vue_type_template_id_34166744___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./item.vue?vue&type=template&id=34166744& */ "./resources/js/components/item.vue?vue&type=template&id=34166744&");
+/* harmony import */ var _item_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./item.vue?vue&type=script&lang=js& */ "./resources/js/components/item.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _item_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _item_vue_vue_type_template_id_34166744___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _item_vue_vue_type_template_id_34166744___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/item.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/item.vue?vue&type=script&lang=js&":
+/*!*******************************************************************!*\
+  !*** ./resources/js/components/item.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_item_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./item.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/item.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_item_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/item.vue?vue&type=template&id=34166744&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/item.vue?vue&type=template&id=34166744& ***!
+  \*************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_item_vue_vue_type_template_id_34166744___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./item.vue?vue&type=template&id=34166744& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/item.vue?vue&type=template&id=34166744&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_item_vue_vue_type_template_id_34166744___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_item_vue_vue_type_template_id_34166744___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

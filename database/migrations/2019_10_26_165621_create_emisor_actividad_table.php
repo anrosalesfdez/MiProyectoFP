@@ -15,11 +15,12 @@ class CreateEmisorActividadTable extends Migration
     {
         Schema::create('emisores_actividades', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('users_id')->unsigned();
             $table->integer('emisores_id')->unsigned();
             $table->integer('actividades_id')->unsigned();
+
              //fecha de creacion
              $table->timestamps();
+
              //trabaja con eliminación en vistas, no en tabla
              $table->softDeletes();
 
@@ -27,11 +28,6 @@ class CreateEmisorActividadTable extends Migration
             // $table->primary(['users_id', 'emi_nif', 'actividades_id']);
              
             //foreign key
-            $table->foreign('users_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
             $table->foreign('emisores_id')
                 ->references('id')
                 ->on('emisores')

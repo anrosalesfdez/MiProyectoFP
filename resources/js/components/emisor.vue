@@ -53,7 +53,7 @@
                                                 value="usuariofactura.cp_fiscal">
                         </div>
                         <div class="form-group col-md-3">
-                            <label for="provincia_fiscal" class="col-form-label">Ciudad: </label>
+                            <label for="provincia_fiscal" class="col-form-label">Provincia: </label>
                             <input type="text" name="provincia_fiscal" id="provincia_fiscal"  class="form-control" 
                                                 v-model="usuariofactura.provincia_fiscal"
                                                 value="usuariofactura.provincia_fiscal">
@@ -91,7 +91,7 @@
                                                 value="usuariofactura.cp_comercial">
                         </div>
                         <div class="form-group col-md-3">
-                            <label for="provincia_comercial" class="col-form-label">Ciudad: </label>
+                            <label for="provincia_comercial" class="col-form-label">Provincia: </label>
                             <input type="text" name="provincia_comercial" id="provincia_comercial"  class="form-control" 
                                                 v-model="usuariofactura.provincia_comercial"
                                                 value="usuariofactura.provincia_comercial">

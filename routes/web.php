@@ -80,7 +80,12 @@ Route::prefix('/facturas')->group(function () {
     Route::post('/store', 'FacturaCabeceraController@store');
     
     Route::post('/delete/{id}', 'FacturaCabeceraController@anular'); // DATOS 
+
+    Route::post('/lineas', 'FacturaLineaController@store')->name('lineas');
+
 });
+
+
 
 /**
  * Rutas para gestión de PRODUCTOS

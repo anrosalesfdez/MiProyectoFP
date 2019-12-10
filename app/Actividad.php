@@ -15,9 +15,8 @@ class Actividad extends Model
         'codigo',
         'titulo',
         'descripcion',
-        'impuesto',
         'serie',
-        'impuesto_liquidables_id'
+        'impuesto_codigo'
     ];
 
     protected $dates = ['deleted_at'];
@@ -46,10 +45,4 @@ class Actividad extends Model
                     ->using('App\EmisorActividad');
     }
 
-    /**
-     * Relación de actividad con impuestos. 
-     */
-     public function impuestos(){
-        return $this->belongsTo('App\ImpuestoLiquidable');
-    }
 }

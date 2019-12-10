@@ -16,7 +16,7 @@ class CreateClientesTable extends Migration
         Schema::create('clientes', function (Blueprint $table) {
             $table->increments('id');
             $table->bigInteger('users_id')->unsigned();
-            //incluimos los atributos básicos de la tabla producto
+
             $table->string('razon_social');
             $table->string('nif')->unique();
             $table->string('niva')->nullable()->unique();

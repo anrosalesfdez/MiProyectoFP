@@ -39,4 +39,19 @@ class FacturaCabeceraController extends Controller
 
         return view('facturas/crear', ['olds' => json_encode(old()), 'emisor'=> $emisor, 'clientes'=>$clientes, 'productos'=>$productos, 'ultima'=>$ultima, 'impuestosfacturacion'=>$impuestosfacturacion]);
     }
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+     public function store(Request $request) {
+        
+        // $this->validate($request, $this->rules(), $this->messages());
+        $factura = FacturaCabecera::create($request->all());
+        return response()->json(array('success' => true, 'last_insert_id' => $factura->id), 200);
+
+    }
 }
