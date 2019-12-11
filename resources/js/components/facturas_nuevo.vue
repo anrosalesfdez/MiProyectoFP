@@ -297,7 +297,7 @@ export default{
                 numero_fra:'',
                 numero:'',
                 producto:{
-                    id:'',
+                    producto_id:'',
                     nombre:'',
                     descripcion: '',
                     precio:0,
@@ -560,7 +560,9 @@ export default{
             for(var i=0; i<this.lineas.length; i++){
                 this.lineas[i].ejercicio = this.nuevaFactura.ejercicio;
                 this.lineas[i].serie = this.nuevaFactura.serie;
-                this.lineas[i].numero = this.nuevaFactura.numero;
+                this.lineas[i].factura_id = this.nuevaFactura.factura_id;
+                this.lineas[i].numero_fra = this.nuevaFactura.numero;
+                this.lineas[i].numero = this.lineas[i].id;
             }
         },
         enviar(){
@@ -608,13 +610,15 @@ export default{
                 console.log(response);
                 let url2 = 'lineas';
                 for(var i=0; i<this.lineas.length; i++){
-                    this.lineas[i] = response.data.last_insert_id;
+                    this.lineas[i].factura_id = response.data.last_insert_id;
                 }
                 axios.post(url2, {
-                    lineas: this.lineas,
+                    lineas: (this.lineas),
                 }).then(response => {
                     console.log(response);
                     this.$notification.success("Factura creada correctamente!", {  timer: 4, position:'topRigth' });
+                    // location.href('facturas/listas');
+                    $(location).attr('href', 'listar')
                 }).catch((error) => {
                     console.log(error); // error = Error object
                 });

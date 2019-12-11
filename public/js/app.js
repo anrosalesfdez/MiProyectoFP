@@ -7324,7 +7324,7 @@ __webpack_require__.r(__webpack_exports__);
         numero_fra: '',
         numero: '',
         producto: {
-          id: '',
+          producto_id: '',
           nombre: '',
           descripcion: '',
           precio: 0,
@@ -7561,7 +7561,9 @@ __webpack_require__.r(__webpack_exports__);
       for (var i = 0; i < this.lineas.length; i++) {
         this.lineas[i].ejercicio = this.nuevaFactura.ejercicio;
         this.lineas[i].serie = this.nuevaFactura.serie;
-        this.lineas[i].numero = this.nuevaFactura.numero;
+        this.lineas[i].factura_id = this.nuevaFactura.factura_id;
+        this.lineas[i].numero_fra = this.nuevaFactura.numero;
+        this.lineas[i].numero = this.lineas[i].id;
       }
     },
     enviar: function enviar() {
@@ -7612,7 +7614,7 @@ __webpack_require__.r(__webpack_exports__);
         var url2 = 'lineas';
 
         for (var i = 0; i < _this.lineas.length; i++) {
-          _this.lineas[i] = response.data.last_insert_id;
+          _this.lineas[i].factura_id = response.data.last_insert_id;
         }
 
         axios.post(url2, {
@@ -7623,7 +7625,10 @@ __webpack_require__.r(__webpack_exports__);
           _this.$notification.success("Factura creada correctamente!", {
             timer: 4,
             position: 'topRigth'
-          });
+          }); // location.href('facturas/listas');
+
+
+          $(location).attr('href', 'listar');
         })["catch"](function (error) {
           console.log(error); // error = Error object
         });
@@ -83771,7 +83776,7 @@ var render = function() {
             _vm._l(_vm.productos, function(producto) {
               return _c(
                 "option",
-                { key: producto.id, domProps: { value: producto } },
+                { key: producto.producto_id, domProps: { value: producto } },
                 [_vm._v(" " + _vm._s(producto.nombre) + " ")]
               )
             })

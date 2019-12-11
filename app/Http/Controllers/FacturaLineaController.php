@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\FacturaLinea;
 
 class FacturaLineaController extends Controller
 {
@@ -13,10 +14,17 @@ class FacturaLineaController extends Controller
      * @return \Illuminate\Http\Response
      */
      public function store(Request $request) {
-        dd($request);
         // $this->validate($request, $this->rules(), $this->messages());
-        $linea = FacturaLinea::create($request->all());
-        return redirect('/facturas/listar');
-
+        $lineas = $request->all();
+        foreach ($lineas['lineas'] as $value) {
+            $value['producto_id'] = $value['producto']['id'];
+            $value['producto_nombre'] = $value['producto']['nombre'];
+            $value['producto_descripcion'] = $value['producto']['descripcion'];
+            $value['producto_precio'] = $value['producto']['precio'];
+            $value['producto_unidad'] = $value['producto']['unidad'];
+            $value['producto_act_impto'] = $value['producto']['actividades_impuesto'];
+            FacturaLinea::create($value);
+        }
+        
     }
 }

@@ -5,7 +5,7 @@
             <div class="delete-wpr">
                 <select class="form-control-plaintext form-control-sm editable" v-model="linea.producto">
                     <option disabled value="null">Seleccione un producto</option>
-                    <option v-for="producto in productos" :key="producto.id" :value="producto"> {{ producto.nombre }} </option>
+                    <option v-for="producto in productos" :key="producto.producto_id" :value="producto"> {{ producto.nombre }} </option>
                 </select>
                 <a class="delete" role="button" v-on:click="$emit('elimina', 'index')" title="Eliminar línea">X</a>
             </div>
