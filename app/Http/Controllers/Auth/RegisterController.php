@@ -71,10 +71,11 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-
-
+        
         //crea también un insert de UsuarioFactura
         DB::insert('insert into emisores (email, users_id) values (?, ?)', array($data['email'], $user->id));
+
+        return $user;
 
     }
 }

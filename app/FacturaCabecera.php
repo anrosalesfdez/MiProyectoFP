@@ -66,7 +66,7 @@ class FacturaCabecera extends Model
      * Relación de factura_cabeceras con factura_lineas. 
      */
      public function lineas(){
-        return $this->hasMany('App\FacturaLineas');
+        return $this->hasMany('App\FacturaLineas'. 'factura_id');
     }
 
     /**

@@ -1,7 +1,6 @@
 <template>
 <div class="row" id="clientes_editado">
-<!-- <span>------ {{token}}-----</span> -->
-<!-- <span>------ {{editadocliente}}-----</span> -->
+    <notifications classes="my-style" position="top right"/>
 
     <div class="col-sm-12">
         
@@ -187,8 +186,10 @@ export default{
             for(let i=0; i < this.errors.length; i++){
                 this.validado += this.errors[i];
             }
-            
-            this.$notification.error(this.validado, {  timer: 2, position:'topRigth' });
+            this.$notify({
+                text: this.validado,
+                type: 'error',
+            });
         }
     },
     methods:{
@@ -211,36 +212,36 @@ export default{
         //VALIDA EN CLIENTE. Se ejecutan todas de golpe al click en crear/actualizar
         controlRazonSocial(e, razon_social){
             if(!razon_social)
-                this.validado += "RAZÓN SOCIAL es campo obligatorio\n";
+                this.validado += "RAZÓN SOCIAL es campo obligatorio<br>";
             else if(razon_social.length > 50)
-                this.validado += "RAZÓN SOCIAL máximo de caracteres: 50\n";
+                this.validado += "RAZÓN SOCIAL máximo de caracteres: 50<br>";
         },
         controlEmail(e, email) {
             if(email){
                let emailPatron = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 if(!emailPatron.test(email))
-                    this.validado += "Formato email inválido\n";
+                    this.validado += "Formato email inválido<br>";
             }
         },
         controlPais(e, pais){
             if(!pais)
-                this.validado += "Campo pais obligatorio\n";
+                this.validado += "Campo pais obligatorio<br>";
         },
         controlAmbito(e, ambito, niva, pais){
             if(!ambito)
-                this.validado += "ÁMBITO es campo obligatorio\n";
+                this.validado += "ÁMBITO es campo obligatorio<br>";
 
             if(ambito == 'NACIONAL' && pais!=='ESPAÑA')
-                this.validado += "ÁMBITO: "+ambito+ " incorrecto para PAÏS: "+pais+"\n";
+                this.validado += "ÁMBITO: "+ambito+ " incorrecto para PAÏS: "+pais+"<br>";
             
             if(ambito !== 'NACIONAL' && pais =='ESPAÑA')
-                this.validado += "ÁMBITO: "+ambito+ " incorrecto para PAÏS: "+pais+"\n";
+                this.validado += "ÁMBITO: "+ambito+ " incorrecto para PAÏS: "+pais+"<br>";
 
             if(ambito == 'INTRACOMUNITARIO' && !niva)
-                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito+"\n";
+                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito+"<br>";
 
             if((ambito == 'EXTRACOMUNITARIO') && !niva)
-                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito+"\n";
+                this.validado += "NIVA es campo obligatorio para ÁMBITO: "+ambito+"<br>";
         },
         controlTipo(e, tipo, ambito, nif){
             if(!tipo)
@@ -257,7 +258,7 @@ export default{
                     let letra = nif.substr(nif.length - 1, 1);
                     
                     if(letra != letraTeorica)
-                        this.validado += "Formato NIF para NACIONAL + PERSONA FÍSICA inválido\n";
+                        this.validado += "Formato NIF para NACIONAL + PERSONA FÍSICA inválido<br>";
                 }
                 
                 if(dniPatron2.test(nif)){ //residentes extranjeros
@@ -284,7 +285,7 @@ export default{
                     letra = nif.substr(nif.length - 1, 1);
                     
                     if(letra != letraTeorica)
-                        this.validado += "Formato NIF para NACIONAL + PERSONA FÍSICA (RESIDENTE EXTRANJERO) inválido\n";
+                        this.validado += "Formato NIF para NACIONAL + PERSONA FÍSICA (RESIDENTE EXTRANJERO) inválido<br>";
                 }   
             }
         }

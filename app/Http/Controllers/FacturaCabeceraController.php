@@ -54,4 +54,17 @@ class FacturaCabeceraController extends Controller
         return response()->json(array('success' => true, 'last_insert_id' => $factura->id), 200);
 
     }
+
+    
+    public function getFactura($id) {
+
+        $emisor = auth()->user()->emisor->first();
+        $facturas = $emisor->cabeceras;
+        $factura = $facturas->find($id);
+
+        $lineas = $factura->lineas;
+        dd($lineas);
+
+        return view('facturas/ver', ['factura'=> $factura, 'lineas' => $lineas]);
+    }
 }

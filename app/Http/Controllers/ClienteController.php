@@ -40,7 +40,7 @@ class ClienteController extends Controller
     // Recoge un cliente de la BD y lo envía a la vista
     public function getCliente($id){
  
-        $cliente = auth()->user()->clientes->where('id', '=', $id)->first();
+        $cliente = $this->getClientes()->find($id);
 
 
         return $cliente;
@@ -113,9 +113,7 @@ class ClienteController extends Controller
     // Remove the specified resource from storage.
     public function destroy($id) {
 
-        $cliente = Cliente::findOrFail($id);
-
-        $cliente->delete(); //soft delete
+        $this->getCliente($id)->delete(); //soft delete
     }
 
 

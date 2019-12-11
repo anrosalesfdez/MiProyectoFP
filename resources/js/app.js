@@ -19,31 +19,11 @@ Vue.directive( 'touppercase', {
     },
 })
 
+import Notifications from 'vue-notification';
+// import velocity from 'velocity-animate';
+Vue.use(Notifications)
+// Vue.use(Notifications, { velocity })
 
-import VueNotification from "@kugatsu/vuenotification";
-Vue.use(VueNotification, {
-  timer: 3,
-  animateIn: function() {
-    var tl = new TimelineMax()
-      .from(this.notificationEl, 0.6, {
-        opacity: 0
-      })
-      .from(this.notificationEl, 0.4, {
-        borderRadius: 100,
-        width: 58,
-        height: 58
-      })
-      .from(this.notificationElContent, 0.3, {
-        opacity: 0
-      });
-    return tl;
-  },
-  error: {
-    background: "red",
-    color: "white",
-    text: "error genérico"
-  }
-});
 
 
 import {ServerTable, ClientTable, Event} from 'vue-tables-2';
@@ -64,6 +44,7 @@ Vue.use(Print);
 //sacar la dependencia de toastr
 //sacar la dependencia de vue-notifications
 //sacar la dependencia de VuePaginate
+//sacar la dependencia de VueNotification
 
 /**
  * Componentes

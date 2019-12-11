@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Producto;
+use App\Actividad;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -25,7 +26,7 @@ class ProductoController extends Controller
         
         $productos = Producto::where("users_id", "=", auth()->user()->id)->get();
         //si utilizase el belongsTo user, no necesita el get()
-        //$productos = auth()->user()->productos();
+        // $productos = auth()->user()->productos();
         
         return $productos;
     }
@@ -36,9 +37,10 @@ class ProductoController extends Controller
      */
      public function listarProductos(){
         
-        $productos = $this->getProductos();
+        $productos = $this->getProductos(); //filtrado por usuario
+        $actividades = Actividad::get();  //sin filtro, comunes a todos
         
-        return view('productos', ['productos' => $productos]);
+        return view('productos', ['productos' => $productos, 'actividades' => $actividades]);
     }
 
 
@@ -47,10 +49,7 @@ class ProductoController extends Controller
      */
      public function getProducto($id){
 
-        // $producto = Producto::where("users_id", "=", auth()->user()->id)
-        //                         ->where("id", "=", $id)
-        //                         ->first();
-        $producto = auth()->user()->find($id);
+        $producto = $this->getProductos()->find($id);
         
         return $producto;
     }

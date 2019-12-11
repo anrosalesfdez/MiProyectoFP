@@ -1,72 +1,113 @@
 <template>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" id="productos">
+        <notifications classes="my-style" position="top right"/>
+
       
         <div class="col-md-12 espacios">
             <h3>Mantenimiento de Productos</h3>
-            <button v-if="mostrarCrear" class="nuevaPag" @click="toggler">
+            <button v-if="botonCrear" class="nuevaPag" @click="toggler">
                 <i class="material-icons">control_point</i>
                 Nuevo producto
-                <!-- <span class="oi oi-plus"></span> -->
             </button>
         </div>
         
-        <div class="col-md-12 espacios" v-if="isActive">
+        <div class="col-md-12 espacios" v-if="isCreating">
             <p><strong>Nuevo producto:</strong></p>
-            <input type="text" name="nombre" id="nombre" 
-                                v-model="nuevo.nombre"
-                                placeholder="nombre">
-            <input type="text" name="descripcion" id="descripcion"
-                                v-model="nuevo.descripcion"
-                                placeholder="descripcion">
-            <input type="number" name="precio" id="precio"
-                                v-model="nuevo.precio"
-                                placeholder="precio"
-                                step="0.01"
-                                min="0.00"
-                                value="0.00">
-            <input type="text" name="unidad" id="unidad"
-                                v-model="nuevo.unidad"
-                                placeholder="unidad">
-            <select class="form-control-plaintext editable" id="actividad" 
-                                v-model="actividad">
-                <option disabled value="null">Código CNAE actividad</option>
-                <option v-for="actividad in actividades" :key="actividad.id" :value="actividad" @change="actividadData"> {{ actividad.codigo }} - {{ actividad.titulo }} </option>
-            </select>
-            <button title="crear" class="crearButton" @click="crear" >Crear</button>
-            <button title="crear" class="cancelarButton" @click="isActive = !isActive" >Cancelar</button>
+            <div class="form-row">    
+                <div class="form-group col-md-3">
+                    <label for="nombre" class="col-form-label">Nombre: </label>
+                    <input type="text" name="nombre" id="nombre" 
+                                    v-model="nuevo.nombre"
+                                    placeholder="nombre">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="descripcion" class="col-form-label">Descripción: </label>
+                    <input type="text" name="descripcion" id="descripcion"
+                                    v-model="nuevo.descripcion"
+                                    placeholder="descripcion">
+                </div>
+            </div>
+            <div class="form-row">    
+                <div class="form-group col-md-3">
+                    <label for="precio" class="col-form-label">Precio: </label>
+                    <input type="number" name="precio" id="precio"
+                                    v-model="nuevo.precio"
+                                    placeholder="precio"
+                                    step="0.01"
+                                    min="0.00"
+                                    value="0.00">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="unidad" class="col-form-label">Unidad: </label>
+                    <input type="text" name="unidad" id="unidad"
+                                    v-model="nuevo.unidad"
+                                    placeholder="unidad">
+                </div>
+            </div>
+            <div class="form-row">    
+                <div class="form-group col-md-4">
+                    <select class="custom-select custom-select-sm" id="actividad" data-width="auto"
+                                    v-model="actividad">
+                        <option disabled value="null">Código CNAE actividad</option>
+                        <option v-for="actividad in actividades" :key="actividad.id" :value="actividad" @change="actividadData"> {{ actividad.codigo }} - {{ actividad.titulo }} </option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button title="crear" class="crearButton" @click="crear" >Crear</button>
+                <button title="crear" class="cancelarButton" @click="cancelar" >Cancelar</button>
+            </div>
         </div>
 
         <div class="col-md-12 espacios" v-if="isEditing">
             <p><strong>Editando producto:</strong></p>
-            <input type="hide" name="idUser" id="idUser"
-                v-model="editado.users_id">
-            <input type="text" name="idEdit" id="idEdit" class="col-md-1"
-                                v-model="editado.id"
-                                value="editado.id"
-                                readonly
-                                disabled>
-            <input type="text" name="nombreEdit" id="nombre"
-                                v-model="editado.nombre"
-                                value="editado.nombre">
-            <input type="text" name="descripcion" id="descripcion"
-                                v-model="editado.descripcion"
-                                value="editado.descripcion">
-            <input type="number" name="precio" id="precio"
-                                v-model="editado.precio"
-                                value="editado.precio"
-                                step="0.01"
-                                min="0.00">
-            <input type="text" name="unidad" id="unidad"
-                                v-model="editado.unidad"
-                                value="editado.unidad">
-            <input type="text" name="actividades_id" id="actividades_id"
-                                v-model="editado.actividades_id"
-                                value="editado.actividades_id"
-                                readonly
-                                disabled>
+            <input type="hidden" name="idEdit" id="idEdit"
+                v-model="editado.id">
+            <div class="form-row">    
+                <div class="form-group col-md-3">
+                    <label for="nombre" class="col-form-label">Nombre: </label>
+                    <input type="text" name="nombreEdit" id="nombre"
+                                        v-model="editado.nombre"
+                                        value="editado.nombre">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="nombre" class="col-form-label">Descripción: </label>
+                    <input type="text" name="descripcion" id="descripcion"
+                                        v-model="editado.descripcion"
+                                        value="editado.descripcion">
+                </div>
+            </div>
+            <div class="form-row">    
+                <div class="form-group col-md-3">
+                    <label for="nombre" class="col-form-label">Precio: </label>
+                    <input type="number" name="precio" id="precio"
+                                        v-model="editado.precio"
+                                        value="editado.precio"
+                                        step="0.01"
+                                        min="0.00">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="nombre" class="col-form-label">Unidad: </label>
+                    <input type="text" name="unidad" id="unidad"
+                                        v-model="editado.unidad"
+                                        value="editado.unidad">
+                </div>
+            </div>
+            <div class="form-row">    
+                <div class="form-group col-md-4">
+                    <label for="nombre" class="col-form-label">Código CNAE actividad: </label>
+                    <!-- <span>{{ getCnae(editado.id)}}</span> -->
+                    <input type="text" name="actividadPto" id="actividadPto" size="50"
+                                        v-model="actividadPto"
+                                        readonly
+                                        disabled>
+                    
+                </div>
+            </div>
+
             <div style="padding: 15px 0px;">
                 <button title="crear" class="crearButton" @click="actualizar(editado.id)" >Actualizar</button>
-                <button title="crear" class="cancelarButton" @click="isEditing = !isEditing; mostrarCrear= !mostrarCrear" >Cancelar</button>
+                <button title="crear" class="cancelarButton" @click="isEditing = !isEditing; botonCrear= !botonCrear" >Cancelar</button>
             </div>
         </div>
 
@@ -95,9 +136,9 @@ export default {
     data(){
         return{
             misProductos: this.productos, //necesario pq no se puede modif la prop de padre por hijo
-            isActive: false, //div crear producto
+            isCreating: false, //div crear producto
             isEditing: false, //div editar producto
-            mostrarCrear: true, //botón nuevo producto
+            botonCrear: true, //botón nuevo producto
             nuevo: {
                 nombre: '',
                 descripcion:'',
@@ -114,7 +155,6 @@ export default {
                 unidad:'',
                 actividades_id:'',
             },
-            actividades: [],
             actividad: {
                 id:'',
                 codigo:'',
@@ -165,16 +205,21 @@ export default {
         }
     },
     props: [
-        'productos'
+        'productos',
+        'actividades',
     ],
-    computed: { //TOFIX 
-        // cnaeCode: function(actividad_id){
-        //     return this.actividades.find(actividad => actividad.id === actividad_id).codigo;
-        // }
+    computed: {
+        actividadPto:{
+            get(){
+                return this.actividades.find(act => act.id == this.editado.actividades_id).titulo;
+            },
+            set(){
+
+            },
+            
+        },
     },
     created: function(){
-        this.getActividades();
-
     },
     methods: {
         actividadData(){
@@ -187,40 +232,32 @@ export default {
             console.log(actividad);
             return this.actividades.find(x => x.id == actividad).titulo;
         },
-        getActividades(){
-            let url = "/actividades";
-            axios.get(url).then(response => {
-                this.actividades = response.data;
-                console.log(this.actividades);
-            }).catch((error) => {
-                console.log(error);
-            });
-        },
+
         //VALIDA EN CLIENTE. Se ejecutan todas de golpe al click en crear/actualizar
         //si se superan (this.validado =''), se envía la petición AJAX
         controlNombre(nombre){
             if(!nombre)
-                this.validado = "NOMBRE: Campo obligatorio\n";
+                this.validado = "NOMBRE: Campo obligatorio<br>";
             if(nombre.length > 20)
-                this.validado += "NOMBRE: Máximo 20 caracteres\n";
+                this.validado += "NOMBRE: Máximo 20 caracteres<br>";
         },
         controlDescripcion(descripcion){
             if(descripcion.length > 50)
-                this.validado += "DESCRIPCION: Máximo 50 caracteres\n";
+                this.validado += "DESCRIPCION: Máximo 50 caracteres<br>";
         },
         controlPrecio(precio){
             if(!precio)
-                this.validado += "PRECIO: Campo obligatorio\n";
+                this.validado += "PRECIO: Campo obligatorio<br>";
         },
         controlUnidad(unidad){
             if(!unidad)
-                this.validado += "UNIDAD: Campo obligatorio\n";
+                this.validado += "UNIDAD: Campo obligatorio<br>";
             if(unidad.length > 10)
-                this.validado += "UNIDAD: Máximo 10 caracteres\n";
+                this.validado += "UNIDAD: Máximo 10 caracteres<br>";
         },
         controlActividad(actividades_id){
             if(!actividades_id)
-                this.validado += "ACTIVIDAD CNAE: Campo obligatorio\n";
+                this.validado += "ACTIVIDAD CNAE: Campo obligatorio<br>";
         },
         //VALIDA EN SERVIDOR. Se ejecutan en caso de que el servidor devuelva un error 422
         validarServer(errors){
@@ -230,15 +267,15 @@ export default {
                 if(errors[element]) {
                     errors[element].forEach(element => {
                         console.log(element)
-                        validadoServer += element+"\n";
+                        validadoServer += element+"<br>";
                     })
                 }
             })
             return validadoServer;
         },
-        //MUESTRA u OCULTA DIV CON INPUTS PARA NUEVO PRODUCTO
+        //MUESTRA u OCULTA DIV CON INPUTS PARA NUEVO PRODUCTO => evento de botonCrear
         toggler(){
-            this.isActive = !this.isActive; //mostrar div
+            this.isCreating = !this.isCreating; //mostrar div
             this.nuevo.nombre = '';
             this.nuevo.descripcion = '';
             this.nuevo.precio = '';
@@ -246,12 +283,15 @@ export default {
             this.nuevo.actividades_id='';
             this.nuevo.actividades_impuesto='';
             this.actividad=null;
+            this.botonCrear = false;//ocultar buttonc crear!
         },
         //ENVÍA A SERVIDOR PETICIÓN AJAX CON DATOS DE NUEVO PRODUCTO PARA GUARDAR EN BD
         crear(){
             //recoge valores:
-            this.nuevo.actividades_id = this.actividad.id;
-            this.nuevo.actividades_impuesto = this.actividad.impuesto;
+            if(this.actividad){
+                this.nuevo.actividades_id = this.actividad.id;
+                this.nuevo.actividades_impuesto = this.actividad.impuesto;
+            }
             //Ejecuta validaciones en cliente
             this.validado=''; //blanquea
             this.controlNombre(this.nuevo.nombre);
@@ -260,7 +300,12 @@ export default {
             this.controlUnidad(this.nuevo.unidad);
             this.controlActividad(this.nuevo.actividades_id);
             if(this.validado !== ''){
-                this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
+                this.$notify({
+                    title: 'ERRORES DETECTADOS',
+                    text: this.validado,
+                    type: 'error',
+                    
+                });
                 return;
             }
             //si no hubo errores, envía AJAX
@@ -274,28 +319,44 @@ export default {
                 actividades_impuesto: this.nuevo.actividades_impuesto
             }).then(response => {
                 console.log(response);
-                this.$notification.success("Producto creado correctamente!", {  timer: 4, position:'topRigth' });
+                this.$notify({
+                    text: 'Producto creado correctamente',
+                    type: 'success',
+                });
                 this.misProductos = response.data;
                 this.toggler();
-                // location.reload(); //para que carguen bien las fechas...
+                this.botonCrear = true; //sobreescribe comportamiento de toggler()
 
             }).catch((error) => { //(error) es el param que le paso a la funcion anónima
                 console.log(error); // error = Error object
                 if(error.response.status == 422){
                     let validadoServer = this.validarServer(error.response.data.errors);
-                    if(validadoServer!=='')
-                        this.$notification.error(validadoServer, {  timer: 4, position:'topRigth' });
+                    if(validadoServer!==''){
+                        this.$notify({
+                            text: validadoServer,
+                            type: 'error',
+                        });
+                    }
+                        // this.$notification.error(validadoServer, {  timer: 4, position:'topRigth' });
                 }else{
-                    this.$notification.error(error.response.data.errors, {  timer: 4, position:'topRigth' });
+                    this.$notify({
+                        text: error.response.data.errors,
+                        type: 'error',
+                    });
                 }
             });
         },
-        
+        cancelar(){
+            this.isCreating = !this.isCreating;
+            this.botonCrear = true;
+        },
         //MUESTRA DIV CON DATOS DEL PRODUCTO A EDITAR
         editar(id){
             console.log(this.editado)
             // this.isEditing = !this.isEditing; NO VALE! PORQUE SI PULSA EDITAR UNO, Y LUEGO OTRO, LO QUE HACE ES OCULTAR EL 2º.... :/
+             window.scrollTo(0,0);
             this.isEditing = true; //muestra div editar
+            this.isCreating = false;
             //
             this.editado.id = this.misProductos.find(x => x.id === id).id;
             this.editado.nombre = this.misProductos.find(x => x.id === id).nombre;
@@ -305,7 +366,7 @@ export default {
             this.editado.actividades_id = this.misProductos.find(x => x.id === id).actividades_id;
             this.editado.users_id = this.misProductos.find(x => x.id === id).users_id;
 
-            this.mostrarCrear = !this.mostrarCrear; //muestra botón de crear producto
+            this.botonCrear = !this.botonCrear; //muestra botón de crear producto
 
         },
         //ENVÍA A SERVIDOR PETICIÓN AJAX CON DATOS DE PRODUCTO EDITADO PARA GUARDAR EN BD
@@ -318,7 +379,10 @@ export default {
             this.controlUnidad(this.editado.unidad);
             this.controlActividad(this.editado.actividades_id);
             if(this.validado !== ''){
-                this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
+                this.$notify({
+                    text: this.validado,
+                    type: 'error',
+                });
                 return;
             }
             //si no hubo errores, envía AJAX
@@ -341,73 +405,47 @@ export default {
                 this.editado.precio = '';
                 this.editado.unidad = '';
                 this.editado.actividades_id = '';
-                // location.reload(); //para que carguen bien las fechas...
 
             }).catch((error) => {
                 if(error.response.status == 422){
                     let validadoServer = this.validarServer(error.response.data.errors);
                     if(validadoServer!=='')
-                        this.$notification.error(validadoServer, {  timer: 4, position:'topRigth' });
+                        this.$notify({
+                            text: validadoServer,
+                            type: 'error',
+                        });
                 }else{
-                    this.$notification.error(error.response.data.errors, {  timer: 4, position:'topRigth' });
+                    this.$notify({
+                        text: error.response.data.errors,
+                        type: 'error',
+                    });
                 }
              
             });
         },
         //ENVÍA PETICIÓN AJAX PARA ELIMINAR PRODUCTO SELECCIONADO.
-        eliminar(id){   
+        eliminar(id){
+            
             if(confirm("Estás seguro de eliminar?")){
                 let url='/productos/' + id;
                 console.log('eliminando: '+id)
                 axios.delete(url)
                 .then(response => {
                     console.log(response);
-                    this.$notification.success("Producto eliminado correctamente!", {  timer: 4, position:'topRigth' });
+                    this.$notify({
+                        text: 'Producto eliminado correctamente',
+                        type: 'success',
+                    });
                     this.misProductos = response.data;
-                    location.reload(); //para que carguen bien las fechas...
                 }).catch((error) => {
                     console.log(error);
-                    this.$notification.error(error, {  timer: 4, position:'topRigth' });
+                    this.$notify({
+                        text: error,
+                        type: 'error',
+                    });
                 });
             }
         }
     }
 }
 </script>
-
-<style>
-.VueTables__child-row-toggler {
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-    display: block;
-    margin: auto;
-    text-align: center;
-}
- 
-.VueTables__child-row-toggler--closed::before {
-    content: "+";
-}
- 
-.VueTables__child-row-toggler--open::before {
-    content: "-";
-}
-.menu-contain {
-  width: 100%;
-  height: 0px;
-  background-color: #09333C;
-  transition: all 0.5s linear;
-}
-.VueTables__limit {
-display: none;
-}
-
-/* mío */
-.espacios {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-.VueTables{
-    padding-left: 0px;
-}
-</style>

@@ -1,6 +1,6 @@
 <template>
 <div class="row" id="clientes">
-
+    <notifications classes="my-style" position="top right"/>
 
         <div class="col-md-12 espacios">
             <h3 style="display: inline">Mantenimiento de Clientes</h3>
@@ -87,10 +87,16 @@ export default{
                 axios.delete(url).then(response => {
                     // console.log(response.error);
                     if(response.error){
-                        this.$notification.error("response.error", {  timer: 3, position:'topRigth' });
+                        this.$notify({
+                            text: response.error,
+                            type: 'error',
+                        });
                     }else{
+                        this.$notify({
+                            text: 'Cliente eliminado correctamente',
+                            type: 'success',
+                        });
                         let vue = this;
-                        this.$notification.success("Cliente eliminado correctamente!", {  timer: 3, position:'topRigth' });
                         vue.clientes = _.remove(vue.clientes, user => {
                             return user.id != id;
                         });

@@ -11,8 +11,11 @@
         </div> 
                 
         <v-client-table ref="tabla" class="col-md-12" :data="facturas" :columns="columns" :options="options">
-            <div slot="razon_social" slot-scope="props" style="display: inline">
-                <a :href="'/facturas/ver/'+props.row.id" >{{props.row.id}}</a>
+            <div slot="numero" slot-scope="props" style="display: inline">
+                <a :href="'ver/'+props.row.id" >{{props.row.numero}}</a>
+            </div>
+            <div slot="anulada" slot-scope="props" style="display: inline">
+                <input type="checkbox" name="anulada" value="props.row.id"> {{hola}}
             </div>
             <div slot="acciones" slot-scope="props" style="display: inline">
                 <a title="duplicar" class="btn btn-xs" :href="'/clientes/editar/'+props.row.id" >
@@ -33,18 +36,21 @@
 export default{
     data(){ //datos del componente
         return {
-            columns: ['serie', 'numero', 'fecha_fra', 'cliente_id', 'total', 'anulada', 'pagada', 'presentada'],
+            columns: ['serie', 'numero', 'fecha', 'cli_razon_social', 'total', 'anulada', 'pagada', 'presentada'],
             
             filterByColumn: true,
 
             options:{
-                sortable: ['serie', 'numero', 'fecha_fra', 'cliente_id', 'anulada', 'pagada', 'presentada'],
+                dateColumns:['created_at','updated_at'],
+                toMomentFormat: 'YYYY-MM-DD',
+                sortable: ['serie', 'numero', 'fecha', 'cli_razon_social', 'total', 'anulada', 'pagada', 'presentada'],
                 filterable: ['serie', 'numero', 'cliente_id'],
                 headings: {
                         serie: 'SERIE',
                         numero: 'NÚMERO',
-                        fecha_fra: 'FECHA',
-                        cliente_id: 'CLIENTE',
+                        fecha: 'FECHA',
+                        cli_razon_social: 'CLIENTE',
+                        total: 'TOTAL',
                         anulada: 'ANULADA',
                         pagada: 'PAGADA',
                         presentada: 'PRESENTADA',
