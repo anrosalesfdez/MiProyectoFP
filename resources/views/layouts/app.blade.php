@@ -7,13 +7,11 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'MiProyecto') }}</title>
+    <title>{{ config('app.name', 'SELF') }}</title>
 
     <!-- Styles -->
     <link rel="stylesheet" href="/css/app.css" type="text/css">
     <link rel="stylesheet" href="/css/all.css" type="text/css">
-    {{-- others --}}
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
 
     <!-- open-material icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
@@ -39,6 +37,8 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
     <!--DEFER When present, it specifies that the script is executed when the page has finished parsing.-->
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-currency-input"></script>
 
 </body>
 

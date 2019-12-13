@@ -73,15 +73,18 @@ Route::prefix('/clientes')->group(function () {
  */
 Route::prefix('/facturas')->group(function () {
 
-    Route::get('/listar', 'FacturaCabeceraController@getFacturas')->name('listar');
-    Route::get('/ver/{id}', 'FacturaCabeceraController@getFactura')->name('ver');
+    Route::get('/listar', 'FacturaCabeceraController@listarFacturas')->name('listar');
+    Route::get('/ver/{id}', 'FacturaCabeceraController@verFactura')->name('ver');
 
     Route::get('/crear', 'FacturaCabeceraController@create')->name('crear');
     Route::post('/store', 'FacturaCabeceraController@store');
-    
-    Route::post('/delete/{id}', 'FacturaCabeceraController@anular'); // DATOS 
-
     Route::post('/lineas', 'FacturaLineaController@store')->name('lineas');
+    
+    Route::delete('/delete/{id}', 'FacturaCabeceraController@delete');
+    Route::post('/pagar/{id}', 'FacturaCabeceraController@pagar');
+    Route::post('/presentar/{id}', 'FacturaCabeceraController@presentar');
+
+    Route::get('imprimir/{id}', 'FacturaCabeceraController@imprimir');
 
 });
 

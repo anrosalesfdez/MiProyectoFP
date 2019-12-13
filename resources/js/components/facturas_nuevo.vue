@@ -1,11 +1,12 @@
 <template>
 <div class="row card" id="page-wrap">
+    <notifications classes="my-style" position="top right"/>
 
     <div class="card-header">
         <h3 style="display: inline">Alta nueva factura</h3>
         <div style="display: inline; float: right">
-            <button type="submit" class="btn btn-success" @click="enviar">Guardar</button>
-            <a href="/facturas/listar" class="btn btn-danger">Cancelar</a>
+            <button type="submit" class="crearButton" @click="enviar">Guardar</button>
+            <a href="/facturas/listar" class="cancelarButton">Cancelar</a>
         </div>
     </div>
 
@@ -74,22 +75,21 @@
                             <!-- <input type="text" id="cliDireccion" size="50" readonly
                                     tabindex="-1" 
                                     value="nuevaFactura.serie+'/'+nuevaFactura.numero"> -->
-                            <span type="text" readonly
-                                    v-text="nuevaFactura.serie+'/'+nuevaFactura.numero">
-                            </span>
+                            <p class="h5" style="text-align: center; font-weight: bold;" v-text="nuevaFactura.serie+'/'+nuevaFactura.numero">
+                            </p>
                         </td>
                     </tr>
                     <tr>
                         <td class="cabecera-title">Fecha factura</td>
                         <td class="cabecera-text">
-                            <input type="date" id="fecha" class="editable"
+                            <input type="date" id="fecha" class="editable"  style="text-align: right"
                                     v-model="nuevaFactura.fecha">
                         </td>
                     </tr>
                     <tr>
                         <td class="cabecera-title">Vencimiento</td>
                         <td class="cabecera-text">
-                            <input type="date" readonly
+                            <input type="date" readonly style="text-align: right"
                                     tabindex="-1" 
                                     v-model="nuevaFactura.vencimiento">
                         </td>
@@ -118,12 +118,14 @@
                     <!-- <tr class="row" v-for="linea in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos" v-on:calcula="calculaBase" v-on:elimina="eliminarLinea(index)"></tr> -->
                     <tr class="row" v-for="(linea, index) in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos" v-on:calcula="calculaBase" v-on:elimina="eliminarLinea(index)"></tr>
                 </tbody>
-                <button title="nuevaLinea" class="btn-default btn-xs" @click="crearLinea">
-                    Nueva línea
-                </button>
-                <button title="calculaTotales" class="btn-default btn-xs" @click="calculaTotales">
-                    Calcular factura
-                </button>
+                <div>
+                    <button title="nuevaLinea" class="btn-default btn-xs" @click="crearLinea">
+                        Nueva línea
+                    </button>
+                    <button title="calculaTotales" class="btn-default btn-xs" @click="calculaTotales">
+                        Calcular factura
+                    </button>
+                </div>
             </table>
         </div>
 
@@ -131,83 +133,86 @@
             <table id="totalesFra">
                 <tr>
                     <td class="cabecera-title" style="width: 10%">21%</td>
-                    <td class="cabecera-text" style="width: 10%">
-                        <input type="number" class="dcha"
+                    <td class="cabecera-text">
+                        <currency-input style="text-align: right"
                                     v-model="nuevaFactura.base21"
                                     readonly
-                                    tabindex="-1">
-                    </td>
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/></td>
                     <td style="width: 50%">
                     <td class="cabecera-title" style="width: 15%">Subtotal</td>
-                    <td class="cabecera-text" style="width: 15%">
-                        <input type="number" class="dcha"
+                    <td class="cabecera-text">
+                        <currency-input style="text-align: right"
                                     v-model="gransubtotal"
                                     readonly
-                                    tabindex="-1">
-                    </td>
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/></td>
                 </tr>
                 <tr>
-                    <td class="cabecera-title" style="width: 20%">10%</td>
-                    <td class="cabecera-text" style="width: 20%">
-                        <input type="number" class="dcha"
-                                    v-html="nuevaFactura.base10"
-                                    readonly
-                                    tabindex="-1">
-                    </td>
-                    <td style="width: 50%">
-                    <td class="cabecera-title">Impuestos</td>
+                    <td class="cabecera-title" style="width: 10%">10%</td>
                     <td class="cabecera-text">
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
+                                    v-model="nuevaFactura.base10"
+                                    readonly
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/></td>
+                    <td style="width: 50%">
+                    <td class="cabecera-title" style="width: 15%">Impuestos</td>
+                    <td class="cabecera-text">
+                        <currency-input style="text-align: right"
                                     v-model="nuevaFactura.impuesto"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                 </tr>
                 <tr>
-                    <td class="cabecera-title" style="width: 20%">4%</td>
-                    <td class="cabecera-text" style="width: 20%">
-                        <input type="number" class="dcha"
+                    <td class="cabecera-title" style="width: 10%">4%</td>
+                    <td class="cabecera-text">
+                        <currency-input style="text-align: right"
                                     v-model="nuevaFactura.base04"
                                     readonly
-                                    tabindex="-1">
-                    </td>
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/></td>
                     <td style="width: 50%">
-                    <td class="cabecera-title">Retención</td>
+                    <td class="cabecera-title" style="width: 15%">Retención</td>
                     <td class="cabecera-text">
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
                                     v-model="nuevaFactura.retencion"
                                     readonly
-                                    tabindex="-1">
-                    </td>
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/></td>
                 </tr>
                 <tr>
-                    <td class="cabecera-title" style="width: 20%">0%</td>
-                    <td class="cabecera-text" style="width: 20%">
-                        <input type="number" class="dcha"
+                    <td class="cabecera-title" style="width: 10%">0%</td>
+                    <td class="cabecera-text">
+                        <currency-input style="text-align: right"
                                     v-model="nuevaFactura.base00"
                                     readonly
-                                    tabindex="-1">
-                    </td>
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/></td>
                     <td style="width: 50%">
-                    <td class="cabecera-title">Total Factura</td>
+                    <td class="cabecera-title" style="width: 15%">Total Factura</td>
                     <td class="cabecera-text">
-                        <!-- <span>{{ formatPrice(nuevaFactura.total) € }}</span> -->
-                        <input type="number" class="dcha"
+                        <!-- <span>{{ formatPrice(nuevaFactura.total) € }}</span>-->
+                        <currency-input style="text-align: right"
                                     v-model="nuevaFactura.total"
                                     readonly
-                                    tabindex="-1">
-                    </td>
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/></td>
                 </tr>
             </table>
-            <table>
-                <tr>
-                    <td style="width: 100%">
-                        <textarea class="form-control" name="observaciones" id="observaciones"
-                                placeholder="Observaciones"
-                                v-model="nuevaFactura.observaciones"></textarea>
-                    </td>
-                </tr>
-            </table>
+            <div class="form-group">
+                <textarea style="margin-top:20px;" class="form-control" id="observaciones" rows="3" placeholder="Observaciones" v-model="nuevaFactura.observaciones"></textarea>
+            </div>
         </div>
 		
 		<div id="terms" class="espacios">
@@ -349,6 +354,7 @@ export default{
         item
     },
     created(){
+        window.scrollTo(0,0);
     },
     mounted() {
         //MIN Y MAX FECHA FRA: en base al trimestre en el que estamos.
@@ -478,6 +484,8 @@ export default{
                     //recoge datos para linea
                     this.lineas[this.lineas.length-1].impuesto = instancia.impto_linea;
                     this.lineas[this.lineas.length-1].retencion = instancia.retencion_linea;
+                    console.log('impto linea'+this.lineas[this.lineas.length-1].impuesto);
+                    console.log('impto linea'+this.lineas[this.lineas.length-1].retencion);
 
                     return true;
                 }
@@ -506,7 +514,7 @@ export default{
             for(var i=0; i<this.lineas.length; i++){
                 
                 //suma a basexx según corresponda
-                if(this.lineas[i].impuesto == 21)
+                if(this.lineas[i].impuesto == 21)//linea impto es INTEGER, base21 DECIMAL igual que producto_precio y cantidad
                     this.nuevaFactura.base21 += (this.lineas[i].producto.precio * this.lineas[i].cantidad);
                 
                 if(this.lineas[i].impuesto == 10)
@@ -520,20 +528,20 @@ export default{
                 
                 //suma a retención fra
                 if(this.lineas[i].retencion !== 0)
-                    this.nuevaFactura.retencion += ((this.lineas[i].producto.precio * this.lineas[i].cantidad)*0.15);
+                    this.nuevaFactura.retencion += parseFloat((this.lineas[i].producto.precio * this.lineas[i].cantidad)*0.15);
 
             }
             //suma a impuestos, grantotal y total
-            this.nuevaFactura.impuesto += (this.nuevaFactura.base21*0.21+this.nuevaFactura.base10*0.10+this.nuevaFactura.base04*0.04);
+            this.nuevaFactura.impuesto += parseFloat(this.nuevaFactura.base21 * 0.21 + this.nuevaFactura.base10 * 0.10 + this.nuevaFactura.base04 * 0.04);
             this.nuevaFactura.gransubtotal = parseFloat(this.gransubtotal);
             this.nuevaFactura.total += (this.nuevaFactura.gransubtotal + parseFloat(this.nuevaFactura.impuesto + this.nuevaFactura.retencion)).toFixed(2);
 
             //asigna el resto de valores a nuevaFactura
             //de emisor
             this.nuevaFactura.emi_id = this.emisor.id;
-            this.nuevaFactura.emi_nif = this.emisor.nombre_fiscal;
-            this.nuevaFactura.emi_niva = this.emisor.nif;
-            this.nuevaFactura.emi_nombre_fiscal = this.emisor.niva;
+            this.nuevaFactura.emi_nif = this.emisor.nif;
+            this.nuevaFactura.emi_niva = this.emisor.niva;
+            this.nuevaFactura.emi_nombre_fiscal = this.emisor.nombre_fiscal;
             this.nuevaFactura.emi_direccion_fiscal = this.emisor.direccion_fiscal;
             this.nuevaFactura.emi_cp_fiscal = this.emisor.cp_fiscal;
             this.nuevaFactura.emi_provincia_fiscal = this.emisor.provincia_fiscal;
@@ -565,7 +573,42 @@ export default{
                 this.lineas[i].numero = this.lineas[i].id;
             }
         },
+        validarServerFactura(errors){
+            let campos = ['emisores_id', 'clientes_id', 'fecha', 'vencimiento', 'total'];
+            let validadoServer = '';
+            campos.forEach(element =>{
+                if(errors[element]) {
+                    errors[element].forEach(element => {
+                        console.log(element)
+                        validadoServer += element+"<br>";
+                    })
+                }
+            })
+            return validadoServer;
+        },
         enviar(){
+            if(!this.cliente.id){
+                this.$notify({
+                    text: 'No hay cliente seleccionado!',
+                    type: 'error',
+                });
+                return;
+            }
+            if(this.lineas.length <= 0){
+                this.$notify({
+                    text: 'No hay lineas de factura!',
+                    type: 'error',
+                });
+                return;
+            }
+            if(this.nuevaFactura.total == 0){
+                this.$notify({
+                    text: 'No se ha calculado la factura!',
+                    type: 'error',
+                });
+                return;
+            }
+            
             let url='/facturas/store';
             axios.post(url, {
                 ejercicio: this.nuevaFactura.ejercicio,
@@ -616,55 +659,43 @@ export default{
                     lineas: (this.lineas),
                 }).then(response => {
                     console.log(response);
-                    this.$notification.success("Factura creada correctamente!", {  timer: 4, position:'topRigth' });
-                    // location.href('facturas/listas');
+                    this.$notify({
+                            text: "Factura creada correctamente!",
+                            type: 'success',
+                        });
                     $(location).attr('href', 'listar')
                 }).catch((error) => {
                     console.log(error); // error = Error object
+                    if(error.response.status == 422){
+                        let validadoServer = this.validarServerFactura(error.response.data.errors);
+                        if(validadoServer!=='')
+                            this.$notify({
+                                text: 'Revise datos factura!',
+                                type: 'error',
+                            });
+                    }else{
+                        this.$notify({
+                            text: error.response.data.errors,
+                            type: 'error',
+                        });
+                    }
+                    
                 });
             }).catch((error) => { //(error) es el param que le paso a la funcion anónima
                 console.log(error); // error = Error object
+                if(error.response.status == 422 || error.response.status == 500){
+                            this.$notify({
+                                text: 'Revise datos factura!',
+                                type: 'error',
+                            });
+                    }else{
+                        this.$notify({
+                            text: error.response.data.errors,
+                            type: 'error',
+                        });
+                    }
             });
         }
     } //end methods
 }
 </script>
-
-<style>
-.espacios { margin-top: 20px; margin-bottom: 20px; }
-* { margin: 0; padding: 0; }
-body { font: 14px/1.4 Georgia, serif; }
-#page-wrap { width: 800px; margin: 0 auto; } /* tamaño A4¿? */
-/**titulo: F A C T U R A */
-#tituloFact { width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px; }
-/*logo */
-#logo { text-align: right; float: right; position: relative; border: 1px solid #fff; max-width: 540px; max-height: 100px; overflow: hidden; }
-/*inputs // span */
-input { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px; }
-span { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px; }
-.editable { background-color:#08FBA1; }
-td {padding: 5px;}
-.dcha{float: right; text-align: right;}
-/* todas las tablas */
-table { border-collapse: collapse; } /** solapa los bordes*/
-.cabecera-title{ padding: 5px; text-align: left; font-weight: bold;  background: #eee; border: 1px solid black;}
-.cabecera-text{ padding: 5px; text-align: rigth; float: rigth; border: 1px solid black;}
-#items{width: 100%;}
-#totalesFra{width: 100%;}
-/*terminos de la fra */
-#terms { text-align: center; margin: 20px 0 0 0; }
-#terms h5 { text-transform: uppercase; font: 13px Helvetica, Sans-Serif; letter-spacing: 10px; border-bottom: 1px solid black; padding: 0 0 8px 0; margin: 0 0 8px 0; }
-/* textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; } */
-/* textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; } */
-/*#items { clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid black; }
-#items textarea { width: 80px; height: 50px; }
-#items tr.item-row td { border: 0; vertical-align: top; }
-#items td.total-line { border-right: 0; text-align: right; }
-#items td.total-value { border-left: 0; padding: 10px; }
-#items td.total-value textarea { height: 20px; background: none; }
-#items td.balance { background: #eee; }
-#items td.blank { border: 0; }
-textarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; }*/
-.delete-wpr { position: relative; }
-.delete { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px; }
-</style>

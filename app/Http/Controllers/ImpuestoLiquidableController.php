@@ -7,12 +7,5 @@ use App\ImpuestoLiquidable;
 
 class ImpuestoLiquidableController extends Controller
 {
-    /**
-     * Send a listing of the resource.
-     */
-    public function get(){
-        
-        return Actividad::get();
-        
-    }
+    
 }

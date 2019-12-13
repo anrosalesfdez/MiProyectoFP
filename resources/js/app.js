@@ -25,6 +25,15 @@ Vue.use(Notifications)
 // Vue.use(Notifications, { velocity })
 
 
+import VueCurrencyInput from 'vue-currency-input'
+
+const pluginOptions = {
+  /* see config reference */
+  globalOptions: { currency: 'USD' }
+}
+Vue.use(VueCurrencyInput, pluginOptions);
+
+
 
 import {ServerTable, ClientTable, Event} from 'vue-tables-2';
 let options = {};

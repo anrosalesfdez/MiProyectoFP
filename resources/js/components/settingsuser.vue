@@ -244,9 +244,3 @@ export default {
     
 }
 </script>
-<style>
-.espacios {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-</style>

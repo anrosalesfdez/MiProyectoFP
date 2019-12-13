@@ -10,21 +10,24 @@
             </a>
         </div> 
                 
-        <v-client-table ref="tabla" class="col-md-12" :data="facturas" :columns="columns" :options="options">
+        <v-client-table ref="tabla" class="col-md-12" :data="misFacturas" :columns="columns" :options="options">
+            
             <div slot="numero" slot-scope="props" style="display: inline">
                 <a :href="'ver/'+props.row.id" >{{props.row.numero}}</a>
             </div>
+
             <div slot="anulada" slot-scope="props" style="display: inline">
-                <input type="checkbox" name="anulada" value="props.row.id"> {{hola}}
+                <input type="checkbox" :checked="props.row.anulada == 1" name="anulada" @click.prevent="anular(props.row.id)">
             </div>
-            <div slot="acciones" slot-scope="props" style="display: inline">
-                <a title="duplicar" class="btn btn-xs" :href="'/clientes/editar/'+props.row.id" >
-                    Duplicar
-                </a>
-                <button title="anular" class="btn btn-xs" @click.prevent="anular(props.row.id)">
-                   Anular
-                </button>
+
+            <div slot="pagada" slot-scope="props" style="display: inline">
+                <input type="checkbox" :checked="props.row.pagada == 1" name="pagada" @click.prevent="pagar(props.row.id)">
             </div>
+
+            <div slot="presentada" slot-scope="props" style="display: inline">
+                <input type="checkbox" :checked="props.row.presentada == 1" name="presentada" @click.prevent="presentar(props.row.id)">
+            </div>
+
         </v-client-table> 
 </div>
 </template>
@@ -36,6 +39,8 @@
 export default{
     data(){ //datos del componente
         return {
+            misFacturas: this.facturas,
+
             columns: ['serie', 'numero', 'fecha', 'cli_razon_social', 'total', 'anulada', 'pagada', 'presentada'],
             
             filterByColumn: true,
@@ -54,7 +59,6 @@ export default{
                         anulada: 'ANULADA',
                         pagada: 'PAGADA',
                         presentada: 'PRESENTADA',
-                        'acciones': 'ACCIONES'
                     },
 
                 orderBy: {
@@ -86,103 +90,88 @@ export default{
     props:[
         'facturas'
     ],
-    methods:{
+    computed: {
+
+    },
+    created() {
         
-    }
+    },
+    methods:{
+        //mostrar datos
+        pagar(){
+            for(var i=0; i< this.facturas.length; i++){
+                console.log(this.facturas[i].pagada == 0)
+                if(this.facturas[i].pagada == 0){
+                    this.pagada.push('NO PAGADA');
+                    console.log(this.pagada);
+                }else{
+                    this.pagada.push('PAGADA');
+                    console.log(this.pagada);
+                }
+            }
+        },
+        
+        //acciones
+        anular(id){
+            console.log(this.facturas);
+            console.log(id)
+            console.log(typeof(this.facturas[id].anulada))
+            let anu = this.facturas[id].anulada
+            if( anu !== 1){
+                if(confirm("Estás seguro de querer anular la factura?")){
+                    let url='/facturas/delete/' + id;
+                    console.log('eliminando: '+id)
+                    axios.delete(url)
+                    .then(response => {
+                        console.log(response);
+                        this.misFacturas = response.data;
+                        this.$notify({
+                            text: 'Factura anulada correctamente',
+                            type: 'success',
+                        });
+                    }).catch((error) => {
+                        console.log(error);
+                        this.$notify({
+                            text: error,
+                            type: 'error',
+                        });
+                    });
+                }
+            }
+        },
+
+        pagar(id){
+            let url='/facturas/pagar/' + id;
+            console.log('pagando: '+id)
+            axios.post(url, {id})
+            .then(response => {
+                console.log(response);
+                this.misFacturas = response.data;
+            }).catch((error) => {
+                console.log(error);
+                this.$notify({
+                    text: error,
+                    type: 'error',
+                });
+            });
+        },
+
+        presentar(id){
+            let url='/facturas/presentar/' + id;
+            console.log('presentando: '+id)
+            axios.post(url, {id})
+            .then(response => {
+                console.log(response);
+                this.misFacturas = response.data;
+            }).catch((error) => {
+                console.log(error);
+                this.$notify({
+                    text: error,
+                    type: 'error',
+                });
+            });
+        }
+    },
+
 }
 </script>
-
-<style>
-  .paginate-links{
-    width:100%;
-    list-style: none;
-    text-align: center;
-}
-.paginate-links li {
-    display: inline;
-    background-color:#6c757d;
-    color:white;
-    padding:0.5rem;
-    margin-left:0.3rem;
-    margin-right: 0.3rem;
-    cursor:pointer;
-    border-radius: 3px;
-}
-.paginate-result{
-    width: 100%;
-    text-align:center;
-    margin-bottom: 1rem;
-}
-
-/* mio */
-.espacios{
-    margin-top: 10px;
-}
-.checkbox label:after, 
-.radio label:after {
-    content: '';
-    display: table;
-    clear: both;
-}
-
-/* s */
-.checkbox .cr,
-.radio .cr {
-    position: relative;
-    display: inline-block;
-    border: 1px solid #a9a9a9;
-    border-radius: .25em;
-    width: 1.3em;
-    height: 1.3em;
-    /* float: left; */
-    margin-right: .5em;
-}
-
-.radio .cr {
-    border-radius: 50%;
-}
-
-.checkbox .cr .cr-icon,
-.radio .cr .cr-icon {
-    position: absolute;
-    font-size: .8em;
-    line-height: 0;
-    top: 50%;
-    left: 20%;
-}
-
-.radio .cr .cr-icon {
-    margin-left: 0.04em;
-}
-
-.checkbox label input[type="checkbox"],
-.radio label input[type="radio"] {
-    display: none;
-}
-
-.checkbox label input[type="checkbox"] + .cr > .cr-icon,
-.radio label input[type="radio"] + .cr > .cr-icon {
-    transform: scale(3) rotateZ(-20deg);
-    opacity: 0;
-    transition: all .3s ease-in;
-}
-
-.checkbox label input[type="checkbox"]:checked + .cr > .cr-icon,
-.radio label input[type="radio"]:checked + .cr > .cr-icon {
-    transform: scale(1) rotateZ(0deg);
-    opacity: 1;
-}
-
-.checkbox label input[type="checkbox"]:disabled + .cr,
-.radio label input[type="radio"]:disabled + .cr {
-    opacity: .5;
-}
-
-/* vye tables 2 */
-.VueTables__date-filter {
-  border: 1px solid #ccc;
-  padding: 6px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-</style>

@@ -4,7 +4,7 @@
 
 <nav class="navbar sticky-top flex-md-nowrap p-0 navhome">
     <a href="{{ url('/home') }}">
-        <img src="../pictures/otro1.png" width="120" height="50" alt="mi_logo" style="padding: 10px; padding-left:30px;">
+        <img src="/pictures/otro1.png" width="120" height="50" alt="mi_logo" style="padding: 10px; padding-left:30px;">
     </a>
     {{-- <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="{{ url('/home') }}">
         <h1>{{ config('app.name', 'MiProyecto') }}</h1>
@@ -60,7 +60,7 @@
                     </li>
                 </ul>
 
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                {{-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                 GESTIÓN FISCAL
                 </h6>
                 <ul class="nav flex-column mb-2">
@@ -82,7 +82,7 @@
                     Años anteriores
                     </a>
                 </li>
-                </ul>
+                </ul> --}}
 
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                 CONFIGURACIÓN
@@ -95,14 +95,14 @@
                         </a>
                     </li>
                 </ul>
-                <ul class="nav flex-column nav-pills">
+                {{-- <ul class="nav flex-column nav-pills">
                     <li class='nav-item'>
                         <a class="{{ request()->route()->getName() === 'impuestos' ? 'nav-item nav-link active' : 'nav-item nav-link' }}" href="">
                             <i class="material-icons">settings_applications</i>
                             Impuestos
                         </a>
                     </li>
-                </ul>
+                </ul> --}}
 
             </div>
         </nav>

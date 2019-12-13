@@ -25,6 +25,8 @@ class FacturaCabecera extends Model
         'base10', 
         'base04', 
         'base00', 
+        'retencion', 
+        'impuesto', 
         'total',
         'observaciones',
         'emi_nif', 
@@ -66,7 +68,7 @@ class FacturaCabecera extends Model
      * Relación de factura_cabeceras con factura_lineas. 
      */
      public function lineas(){
-        return $this->hasMany('App\FacturaLineas'. 'factura_id');
+        return $this->hasMany('App\FacturaLinea'. 'factura_id');
     }
 
     /**

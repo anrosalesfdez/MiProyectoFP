@@ -3150,6 +3150,54 @@ font-family: 'Lato', sans-serif;
 font-weight: bold;
 }
 
+/* NECESARIO PARA FACTURAS */
+.espacios { margin-top: 20px; margin-bottom: 20px; }
+* { margin: 0; padding: 0; }
+body { font: 14px/1.4 Georgia, serif; }
+#page-wrap { width: 800px; margin: 0 auto; } /* tamaño A4¿? */
+/**titulo: F A C T U R A */
+#tituloFact { width: 100%; margin: 20px 0; background: #222; text-align: center; color: white; font: bold 15px Helvetica, Sans-Serif; text-decoration: uppercase; letter-spacing: 20px; padding: 8px 0px; }
+/*logo */
+#logo { text-align: right; float: right; position: relative; border: 1px solid #fff; max-width: 540px; max-height: 100px; overflow: hidden; }
+/*inputs // span */
+input { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px; }
+input.numero { text-align: right;}
+span { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; padding: 5px; }
+.editable { background-color:#08FBA1; }
+td {padding: 5px;}
+span.dcha{
+  float: right;
+  text-align: right;
+  padding-right: 30px !important;
+  font: 14px "Lato" sans-serif !important;
+  }
+centro{
+  text-align: left;
+  padding-left:30px !important;
+}
+/* todas las tablas */
+table { border-collapse: collapse; } /** solapa los bordes*/
+.cabecera-title{ padding: 5px; text-align: left; font-weight: bold;  background: #eee; border: 1px solid black;}
+.cabecera-text{ padding: 5px; text-align: right; border: 1px solid black;}
+#items{width: 100%;}
+#totalesFra{width: 100%;}
+/*terminos de la fra */
+#terms { text-align: center; margin: 20px 0 0 0; }
+#terms h5 { text-transform: uppercase; font: 13px Helvetica, Sans-Serif; letter-spacing: 10px; border-bottom: 1px solid black; padding: 0 0 8px 0; margin: 0 0 8px 0; }
+/* textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; } */
+/* textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; } */
+/*#items { clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid black; }
+#items textarea { width: 80px; height: 50px; }
+#items tr.item-row td { border: 0; vertical-align: top; }
+#items td.total-line { border-right: 0; text-align: right; }
+#items td.total-value { border-left: 0; padding: 10px; }
+#items td.total-value textarea { height: 20px; background: none; }
+#items td.balance { background: #eee; }
+#items td.blank { border: 0; }
+textarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; }*/
+.delete-wpr { position: relative; }
+.delete { display: block; color: #000; text-decoration: none; position: absolute; background: #EEEEEE; font-weight: bold; padding: 0px 3px; border: 1px solid; top: -6px; left: -22px; font-family: Verdana; font-size: 12px; }
+
 /* BOTONES GENERAL */
 a,
 .button {
@@ -4966,8 +5014,6 @@ top: 0; // required as well.
 	top: -5px;
 	padding-bottom: 3px;
 }
-@import url("https://fonts.googleapis.com/css?family=Poppins:200,200i,300,300i,400,400i,500,500i,600,600i,700,800&display=swap");
-@import url("https://fonts.googleapis.com/css?family=Poppins:200,200i,300,300i,400,400i,500,500i,600,600i,700,800&display=swap");
 /* line 1, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_extend.scss */
 .boxed-btn3, .boxed-btn3-text:hover, .footer .footer_top .footer_widget .newsletter_form button, .footer .socail_links ul li a:hover {
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#ff008c+0,ff6357+100 */
@@ -4991,7 +5037,7 @@ top: 0; // required as well.
 /* 1. Theme default css */
 /* line 5, ../../Arafath/CL/CL October/219. SEO/HTML/scss/theme-default.scss */
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: normal;
   font-style: normal;
 }
@@ -5043,7 +5089,7 @@ button {
 
 /* line 39, ../../Arafath/CL/CL October/219. SEO/HTML/scss/theme-default.scss */
 h1, h2, h3, h4, h5 {
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   color: #001D38;
 }
 
@@ -5076,7 +5122,7 @@ p {
   line-height: 28px;
   margin-bottom: 26px;
   margin-bottom: 13px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
 }
 
 /* line 69, ../../Arafath/CL/CL October/219. SEO/HTML/scss/theme-default.scss */
@@ -5383,7 +5429,7 @@ h3 {
   color: #131313;
   display: inline-block;
   padding: 18px 44px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 14px;
   font-weight: 400;
   border: 0;
@@ -5414,7 +5460,7 @@ h3 {
 
 /* line 29, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
 .boxed-btn3 {
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 15px;
   font-weight: 500;
   color: #fff;
@@ -5450,7 +5496,7 @@ h3 {
 
 /* line 64, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_btn.scss */
 .boxed-btn3-text {
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 15px;
   font-weight: 500;
   color: #fff;
@@ -5485,7 +5531,7 @@ h3 {
   color: #fff;
   display: inline-block;
   padding: 14px 27px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 16px;
   font-weight: 500;
   border: 0;
@@ -5524,7 +5570,7 @@ h3 {
   color: #fff;
   display: inline-block;
   padding: 13px 27px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 14px;
   font-weight: 400;
   border: 0;
@@ -5570,7 +5616,7 @@ h3 {
   color: #FF008C !important;
   display: inline-block;
   padding: 14px 31px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 14px;
   font-weight: 400;
   border: 0;
@@ -5611,7 +5657,7 @@ h3 {
   color: #fff;
   display: inline-block;
   padding: 18px 24px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 14px;
   font-weight: 400;
   border: 0;
@@ -6077,7 +6123,7 @@ h3 {
   font-weight: 400;
   display: inline-block;
   padding: 0px 0px 0px 0px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   position: relative;
   text-transform: capitalize;
 }
@@ -6432,7 +6478,7 @@ h3 {
 /* line 56, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
 .slider_area .single_slider .slider_text h3 {
   color: #001D38;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 50px;
   text-transform: capitalize;
   font-weight: 500;
@@ -7142,7 +7188,7 @@ h3 {
 /* line 103, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_gallery.scss */
 .portfolio_details_area .portfolio_details_content p {
   font-size: 16px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   color: #727272;
   line-height: 28px;
 }
@@ -7663,7 +7709,7 @@ h3 {
   cursor: pointer;
   display: block;
   float: left;
-  font-family: "Poppins", sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: normal;
   width: 100% !important;
   /* height: 42px; */
