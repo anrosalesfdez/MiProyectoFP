@@ -12,8 +12,8 @@
         </div> 
                 
         <v-client-table ref="tabla" class="col-md-12" :data="clientes" :columns="columns" :options="options">
-            <div slot="razon_social" slot-scope="props" style="display: inline">
-                <a :href="'/clientes/ver/'+props.row.id" >{{props.row.razon_social}}</a>
+            <div slot="razon_social" slot-scope="props" style="display: inline;">
+                <a :href="'/clientes/ver/'+props.row.id">{{props.row.razon_social}}</a>
             </div>
             <div slot="acciones" slot-scope="props" style="display: inline">
                 <a title="editar" class="btn btn-xs" :href="'/clientes/editar/'+props.row.id" >

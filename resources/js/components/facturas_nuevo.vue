@@ -116,7 +116,8 @@
                     <!-- CADA LÍNEA DE FACTURA -->
                     <!-- trae el componente "item" con las propiedades linea y productos -->
                     <!-- <tr class="row" v-for="linea in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos" v-on:calcula="calculaBase" v-on:elimina="eliminarLinea(index)"></tr> -->
-                    <tr class="row" v-for="(linea, index) in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos" v-on:calcula="calculaBase" v-on:elimina="eliminarLinea(index)"></tr>
+                    <!-- <tr class="row" v-for="(linea, index) in lineas" :key="linea.id" is="item" :linea="linea" :productos="productos" v-on:calcula="calculaBase" v-on:elimina="eliminarLinea(index)"></tr> -->
+                    <tr class="row" v-for="(linea, index) in lineas" :key="linea.id" is="item" :linea="linea" v-on:calcula="calculaBase" v-on:elimina="eliminarLinea(index)"></tr>
                 </tbody>
                 <div>
                     <button title="nuevaLinea" class="btn-default btn-xs" @click="crearLinea">
@@ -216,10 +217,14 @@
 		
 		<div id="terms" class="espacios">
 		  <h5>Condiciones</h5>
-		  <span>Forma de pago: {{this.cliente.forma_pago}} a {{this.cliente.dias_pago}} días.</span>
+		  <span style="font-family: 'Lato', sans-serif !important;">Forma de pago: {{this.cliente.forma_pago}} a {{this.cliente.dias_pago}} días.</span>
 		</div>
 	
 	</div>
+    <div class="modal-footer">
+        <button type="submit" class="crearButton" @click="enviar">Guardar</button>
+        <a href="/facturas/listar" class="cancelarButton">Cancelar</a>
+    </div>
 </div>
 </template> 
 
@@ -440,9 +445,12 @@ export default{
         },
         //NUEVA LÍNEA FRA
         crearLinea() {
-            console.log('crearLinea');
-            this.lineas.push(Vue.util.extend({}, this.linea));
-            console.log(this.lineas);
+            // this.lineas.push(Object.assign({}, this.linea));
+            // this.lineas.slice(-1)[0].id = this.lineas.length;
+            let nuevaLinea =Object.assign({}, this.linea);
+            // Clonamos los productos
+            nuevaLinea.productos = JSON.parse(JSON.stringify(this.productos));
+            this.lineas.push(nuevaLinea);
             this.lineas.slice(-1)[0].id = this.lineas.length;
             
         },

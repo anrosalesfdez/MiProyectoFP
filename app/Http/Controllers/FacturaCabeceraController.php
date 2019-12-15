@@ -209,4 +209,10 @@ class FacturaCabeceraController extends Controller
         // $mpdf->WriteHTML(var_dump($factura));
         return $mpdf->Output();
     }
+
+    public function imprimir2($id){
+        $factura = $this->getFactura($id);
+        return view('facturas/impresion2', ['factura' => $factura]);
+
+    }
 }

@@ -3948,6 +3948,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {};
@@ -3977,6 +3982,18 @@ __webpack_require__.r(__webpack_exports__);
     subtotal: function subtotal(p, c) {
       //este dato no se almacena
       return parseFloat(p * c).toFixed(2);
+    },
+    imprimir: function imprimir(id) {
+      console.log("hola");
+      var printWindow = window.open("/facturas/imprimir2/" + id, '_blank', 'height=600,width=980'); // printWindow.document.write(this.texto);
+
+      printWindow.document.close();
+
+      printWindow.onload = function () {
+        printWindow.focus();
+        printWindow.print(); // printWindow.close();
+        // window.location.reload(true);
+      };
     }
   }
 });
@@ -3993,6 +4010,11 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _item_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./item.vue */ "./resources/js/components/item.vue");
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4422,9 +4444,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     //NUEVA LÍNEA FRA
     crearLinea: function crearLinea() {
-      console.log('crearLinea');
-      this.lineas.push(Vue.util.extend({}, this.linea));
-      console.log(this.lineas);
+      // this.lineas.push(Object.assign({}, this.linea));
+      // this.lineas.slice(-1)[0].id = this.lineas.length;
+      var nuevaLinea = Object.assign({}, this.linea); // Clonamos los productos
+
+      nuevaLinea.productos = JSON.parse(JSON.stringify(this.productos));
+      this.lineas.push(nuevaLinea);
       this.lineas.slice(-1)[0].id = this.lineas.length;
     },
     //ELIMINA LÍNEA FRA
@@ -4725,14 +4750,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "item",
-  props: ['productos', 'linea'],
+  props: [// 'productos',
+  'linea'],
   computed: {
     subtotal: function subtotal() {
       //este dato no se almacena
       var impto = this.linea.producto.actividades_impuesto;
       this.$emit('calcula', impto);
       return parseFloat(this.linea.producto.precio * this.linea.cantidad).toFixed(2);
-      ;
+    }
+  },
+  methods: {
+    asignaPto: function asignaPto(prod) {
+      this.linea.producto = {
+        id: prod.id + "",
+        nombre: prod.nombre,
+        descripcion: prod.descripcion + "",
+        precio: prod.precio,
+        unidad: prod.unidad
+      };
     }
   }
 });
@@ -5450,13 +5486,14 @@ __webpack_require__.r(__webpack_exports__);
         console.log(this.usuario.passwordCurrent);
         this.controlPassword0(this.passwordNew);
         this.controlPassword1(this.usuario.passwordNew, this.usuario.passwordNew_confirmation);
-      } //Si errores, muestra notificación conjunta
+      }
 
+      console.log(this.validado); //Si errores, muestra notificación conjunta
 
       if (this.validado !== '') {
-        this.$notification.error(this.validado, {
-          timer: 4,
-          position: 'topRigth'
+        this.$notify({
+          text: this.validado,
+          type: 'error'
         });
         return;
       } //si no hubo errores, envía AJAX
@@ -5482,22 +5519,24 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         console.log(response);
 
-        _this.$notification.success("Usuario actualizado correctamente!", {
-          timer: 4,
-          position: 'topRigth'
+        _this.$notify({
+          text: 'Usuario actualizado correctamente',
+          type: 'success'
         });
       })["catch"](function (error) {
         if (error.response.status == 422) {
           var validadoServer = _this.validarServer(error.response.data.errors);
 
-          if (validadoServer !== '') _this.$notification.error(validadoServer, {
-            timer: 4,
-            position: 'topRigth'
-          });
+          if (validadoServer !== '') {
+            _this.$notify({
+              text: validadoServer,
+              type: 'error'
+            });
+          }
         } else {
-          _this.$notification.error(error.response.data.errors, {
-            timer: 4,
-            position: 'topRigth'
+          _this.$notify({
+            text: error.response.data.errors,
+            type: 'error'
           });
         }
       });
@@ -71192,7 +71231,11 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "row card", attrs: { id: "factura_nueva" } },
+    {
+      staticClass: "row card container col-md-10",
+      staticStyle: { "margin-left": "80px" },
+      attrs: { id: "factura_nueva" }
+    },
     [
       _c("div", { staticClass: "card-header" }, [
         _c("h3", { staticStyle: { display: "inline" } }, [
@@ -71210,12 +71253,13 @@ var render = function() {
         _vm._v(" "),
         _c("div", { staticStyle: { display: "inline", float: "right" } }, [
           _c(
-            "a",
+            "button",
             {
               staticClass: "crearButton",
-              attrs: {
-                target: "_blank",
-                href: "/facturas/imprimir/" + _vm.factura.id
+              on: {
+                click: function($event) {
+                  return _vm.imprimir(_vm.factura.id)
+                }
               }
             },
             [_vm._v("Imprimir")]
@@ -71572,8 +71616,12 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("td", { staticClass: "cabecera-text" }, [
-                    _c("span", {
-                      attrs: { type: "text", readonly: "" },
+                    _c("p", {
+                      staticClass: "h5",
+                      staticStyle: {
+                        "text-align": "center",
+                        "font-weight": "bold"
+                      },
                       domProps: {
                         textContent: _vm._s(
                           _vm.factura.serie + "/" + _vm.factura.numero
@@ -71598,6 +71646,7 @@ var render = function() {
                           expression: "factura.fecha"
                         }
                       ],
+                      staticStyle: { "text-align": "right" },
                       attrs: { type: "date", id: "fecha", readonly: "" },
                       domProps: { value: _vm.factura.fecha },
                       on: {
@@ -71627,6 +71676,7 @@ var render = function() {
                           expression: "factura.vencimiento"
                         }
                       ],
+                      staticStyle: { "text-align": "right" },
                       attrs: { type: "date", readonly: "", tabindex: "-1" },
                       domProps: { value: _vm.factura.vencimiento },
                       on: {
@@ -72144,16 +72194,43 @@ var render = function() {
         _c("div", { staticClass: "espacios", attrs: { id: "terms" } }, [
           _c("h5", [_vm._v("Condiciones")]),
           _vm._v(" "),
-          _c("span", [
-            _vm._v(
-              "Forma de pago: " +
-                _vm._s(this.factura.cli_forma_pago) +
-                " a " +
-                _vm._s(this.factura.cli_dias_pago) +
-                " días."
-            )
-          ])
+          _c(
+            "span",
+            { staticStyle: { "font-family": "'Lato', sans-serif !important" } },
+            [
+              _vm._v(
+                "Forma de pago: " +
+                  _vm._s(this.factura.cli_forma_pago) +
+                  " a " +
+                  _vm._s(this.factura.cli_dias_pago) +
+                  " días."
+              )
+            ]
+          )
         ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "modal-footer" }, [
+        _c(
+          "a",
+          {
+            staticClass: "crearButton",
+            attrs: {
+              target: "_blank",
+              href: "/facturas/imprimir/" + _vm.factura.id
+            }
+          },
+          [_vm._v("Imprimir")]
+        ),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
+            staticClass: "cancelarButton",
+            attrs: { href: "/facturas/listar" }
+          },
+          [_vm._v("Cancelar")]
+        )
       ])
     ]
   )
@@ -72762,7 +72839,7 @@ var render = function() {
                     key: linea.id,
                     tag: "tr",
                     staticClass: "row",
-                    attrs: { linea: linea, productos: _vm.productos },
+                    attrs: { linea: linea },
                     on: {
                       calcula: _vm.calculaBase,
                       elimina: function($event) {
@@ -73127,16 +73204,41 @@ var render = function() {
         _c("div", { staticClass: "espacios", attrs: { id: "terms" } }, [
           _c("h5", [_vm._v("Condiciones")]),
           _vm._v(" "),
-          _c("span", [
-            _vm._v(
-              "Forma de pago: " +
-                _vm._s(this.cliente.forma_pago) +
-                " a " +
-                _vm._s(this.cliente.dias_pago) +
-                " días."
-            )
-          ])
+          _c(
+            "span",
+            { staticStyle: { "font-family": "'Lato', sans-serif !important" } },
+            [
+              _vm._v(
+                "Forma de pago: " +
+                  _vm._s(this.cliente.forma_pago) +
+                  " a " +
+                  _vm._s(this.cliente.dias_pago) +
+                  " días."
+              )
+            ]
+          )
         ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "modal-footer" }, [
+        _c(
+          "button",
+          {
+            staticClass: "crearButton",
+            attrs: { type: "submit" },
+            on: { click: _vm.enviar }
+          },
+          [_vm._v("Guardar")]
+        ),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
+            staticClass: "cancelarButton",
+            attrs: { href: "/facturas/listar" }
+          },
+          [_vm._v("Cancelar")]
+        )
       ])
     ],
     1
@@ -73271,7 +73373,7 @@ var render = function() {
               _vm._v("Seleccione un producto")
             ]),
             _vm._v(" "),
-            _vm._l(_vm.productos, function(producto) {
+            _vm._l(_vm.linea.productos, function(producto) {
               return _c(
                 "option",
                 { key: producto.producto_id, domProps: { value: producto } },

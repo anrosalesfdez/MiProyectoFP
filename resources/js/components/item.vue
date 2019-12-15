@@ -3,9 +3,9 @@
     <tr>
         <td style="width: 20%">
             <div class="delete-wpr">
-                <select class="form-control-plaintext form-control-sm editable" v-model="linea.producto">
+                <select class="form-control-plaintext form-control-sm editable" v-model="linea.producto" >
                     <option disabled value="null">Seleccione un producto</option>
-                    <option v-for="producto in productos" :key="producto.producto_id" :value="producto"> {{ producto.nombre }} </option>
+                    <option v-for="producto in linea.productos" :key="producto.producto_id" :value="producto"> {{ producto.nombre }} </option>
                 </select>
                 <a class="delete" role="button" v-on:click="$emit('elimina', 'index')" title="Eliminar línea">X</a>
             </div>
@@ -34,15 +34,26 @@
 export default {
     name: "item",
     props: [
-        'productos',
+        // 'productos',
         'linea',
     ],
     computed: {
         subtotal: function() { //este dato no se almacena
             let impto = this.linea.producto.actividades_impuesto;
             this.$emit('calcula', impto);
-            return parseFloat(this.linea.producto.precio * this.linea.cantidad).toFixed(2);;
+            return parseFloat(this.linea.producto.precio * this.linea.cantidad).toFixed(2);
         }
-    }
+    },
+    methods: {
+        asignaPto(prod){
+            this.linea.producto = {
+                id: prod.id+"",
+                nombre: prod.nombre,
+                descripcion: prod.descripcion+"",
+                precio: prod.precio,
+                unidad: prod.unidad
+            }
+        }
+    },
 }
 </script>

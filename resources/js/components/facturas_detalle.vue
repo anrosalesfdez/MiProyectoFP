@@ -1,15 +1,16 @@
 <template>
-<div class="row card" id="factura_nueva">
+<div class="row card container col-md-10" style="margin-left: 80px;" id="factura_nueva">
 
-    <div class="card-header">
+    <div class="card-header" >
         <h3 style="display: inline">Factura: {{ factura.ejercicio +' '+factura.serie+' '+factura.numero}}</h3>
         <div style="display: inline; float: right">
-            <a target="_blank" :href="'/facturas/imprimir/'+factura.id" class="crearButton">Imprimir</a>
+            <button class="crearButton" @click="imprimir(factura.id)">Imprimir</button>
+            <!-- <a target="_blank" :href="'/facturas/imprimir2/'+factura.id" class="crearButton" @click="imprimir">Imprimir</a> -->
             <a href="/facturas/listar" class="cancelarButton">Cancelar</a>
         </div>
     </div>
 
-    <div class="card-body espacios">
+    <div class="card-body espacios" >
 
         <div class="row espacios">
             <h3 id="tituloFact">FACTURA</h3>
@@ -72,22 +73,22 @@
                             <!-- <input type="text" id="cliDireccion" size="50" readonly
                                     tabindex="-1" 
                                     value="nuevaFactura.serie+'/'+nuevaFactura.numero"> -->
-                            <span type="text" readonly
+                            <p class="h5" style="text-align: center; font-weight: bold;" 
                                     v-text="factura.serie+'/'+factura.numero">
-                            </span>
+                            </p>
                         </td>
                     </tr>
                     <tr>
                         <td class="cabecera-title">Fecha factura</td>
                         <td class="cabecera-text">
-                            <input type="date" id="fecha" readonly
+                            <input type="date" id="fecha" readonly style="text-align: right"
                                     v-model="factura.fecha">
                         </td>
                     </tr>
                     <tr>
                         <td class="cabecera-title">Vencimiento</td>
                         <td class="cabecera-text">
-                            <input type="date" readonly
+                            <input type="date" readonly style="text-align: right"
                                     tabindex="-1" 
                                     v-model="factura.vencimiento">
                         </td>
@@ -231,10 +232,14 @@
 		
 		<div id="terms" class="espacios">
 		  <h5>Condiciones</h5>
-		  <span>Forma de pago: {{this.factura.cli_forma_pago}} a {{this.factura.cli_dias_pago}} días.</span>
+		  <span style="font-family: 'Lato', sans-serif !important;">Forma de pago: {{this.factura.cli_forma_pago}} a {{this.factura.cli_dias_pago}} días.</span>
 		</div>
 	
 	</div>
+    <div class="modal-footer">
+        <a target="_blank" :href="'/facturas/imprimir/'+factura.id" class="crearButton">Imprimir</a>
+        <a href="/facturas/listar" class="cancelarButton">Cancelar</a>
+    </div>
 </div>
 </template>
 
@@ -275,6 +280,18 @@ export default{
         subtotal(p, c) { //este dato no se almacena
             return parseFloat(p * c).toFixed(2);
         },
+        imprimir(id){
+            console.log("hola")
+            var printWindow = window.open("/facturas/imprimir2/"+id, '_blank', 'height=600,width=980');
+            // printWindow.document.write(this.texto);
+            printWindow.document.close();
+            printWindow.onload = function(){
+                printWindow.focus();
+                printWindow.print();
+                // printWindow.close();
+            // window.location.reload(true);
+            }
+        }
     }
 }
 </script>

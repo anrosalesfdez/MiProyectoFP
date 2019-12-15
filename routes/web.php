@@ -85,6 +85,7 @@ Route::prefix('/facturas')->group(function () {
     Route::post('/presentar/{id}', 'FacturaCabeceraController@presentar');
 
     Route::get('imprimir/{id}', 'FacturaCabeceraController@imprimir');
+    Route::get('imprimir2/{id}', 'FacturaCabeceraController@imprimir2');
 
 });
 

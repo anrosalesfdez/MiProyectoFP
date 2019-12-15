@@ -33,9 +33,9 @@ class UserController extends Controller
         
         if($request->input('passwordCurrent')){
             $this->validate($request, $this->rules(), $this->messages());
-        }
+            return User::findOrFail($id)->update(request()->all()); //ya hace findOrFail por detrás
+    }
 
-        $usuario = User::findOrFail($id)->update(request()->all()); //ya hace findOrFail por detrás
 
     }
 

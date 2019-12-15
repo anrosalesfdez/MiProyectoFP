@@ -203,9 +203,13 @@ export default {
                 this.controlPassword0(this.passwordNew);
                 this.controlPassword1(this.usuario.passwordNew, this.usuario.passwordNew_confirmation);
             }
+            console.log(this.validado)
             //Si errores, muestra notificación conjunta
             if(this.validado !== ''){
-                this.$notification.error(this.validado, {  timer: 4, position:'topRigth' });
+                this.$notify({
+                            text: this.validado,
+                            type: 'error',
+                        });
                 return;
             }
             //si no hubo errores, envía AJAX
@@ -228,14 +232,24 @@ export default {
                 pais: this.usuario.pais
             }).then(response => {
                 console.log(response);
-                this.$notification.success("Usuario actualizado correctamente!", {  timer: 4, position:'topRigth' });
+                this.$notify({
+                            text: 'Usuario actualizado correctamente',
+                            type: 'success',
+                        });
             }).catch((error) => {
                 if(error.response.status == 422){
                     let validadoServer = this.validarServer(error.response.data.errors);
-                    if(validadoServer!=='')
-                        this.$notification.error(validadoServer, {  timer: 4, position:'topRigth' });
+                    if(validadoServer!==''){
+                        this.$notify({
+                            text: validadoServer,
+                            type: 'error',
+                        });
+                    }
                 }else{
-                    this.$notification.error(error.response.data.errors, {  timer: 4, position:'topRigth' });
+                    this.$notify({
+                            text: error.response.data.errors,
+                            type: 'error',
+                        });
                 }
                 
             });
