@@ -3171,6 +3171,11 @@ span.dcha{
   padding-right: 30px !important;
   font: 14px "Lato" sans-serif !important;
   }
+.dcha{
+  text-align: right;
+  /* padding-right: 5px !important; */
+  font: 14px "Lato" sans-serif !important;
+  }
 centro{
   text-align: left;
   padding-left:30px !important;
@@ -6385,28 +6390,12 @@ h3 {
   }
 }
 
-/* line 1, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
-.slider_bg_1 {
-  background-image: url(../img/banner/banner.png);
-}
-
-/* line 4, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
-.slider_bg_2 {
-  background-image: url(../img/banner/banner2.png);
-}
-
-/* line 7, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
-.poly_img {
-  position: absolute;
-  right: 15%;
-  top: 36%;
-}
 
 /* line 13, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
 .slider_area .single_slider {
   position: relative;
   z-index: 0;
-  height: 900px;
+  height: 150px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
@@ -6415,23 +6404,23 @@ h3 {
 @media (max-width: 767px) {
   /* line 13, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
   .slider_area .single_slider {
-    height: 500px;
+    height: 300px;
   }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
   /* line 13, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
   .slider_area .single_slider {
-    height: 620px;
+    height: 300px;
   }
 }
-
+/* 
 /* line 28, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
-.slider_area .single_slider .text {
+ .slider_area .single_slider .text {
   padding-top: 190px;
 }
 
-/* line 31, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
+/* line 31, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss*/
 .slider_area .single_slider .ilstrator_thumb {
   margin-top: 50px;
 }
@@ -6478,11 +6467,11 @@ h3 {
 /* line 56, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_slider.scss */
 .slider_area .single_slider .slider_text h3 {
   color: #001D38;
-  font-family: "Lato", sans-serif;
-  font-size: 50px;
+  font-family: "Lato", sans-serif !important;
+  font-size: 20px;
   text-transform: capitalize;
-  font-weight: 500;
-  line-height: 66px;
+  font-weight: 50px;
+  line-height: 20px;
   margin-bottom: 9px;
   margin-bottom: 40px;
 }
@@ -8071,7 +8060,7 @@ h3 {
 
 /* line 1, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_service.scss */
 .service_area {
-  padding-top: 200px;
+  padding-top: 30px;
   padding-bottom: 70px;
 }
 
@@ -8165,8 +8154,8 @@ h3 {
 
 /* line 59, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_service.scss */
 .compapy_info {
-  padding-bottom: 70px;
-  padding-top: 100px;
+  padding-bottom: 20px;
+  padding-top: 50px;
 }
 
 /* line 62, ../../Arafath/CL/CL October/219. SEO/HTML/scss/_service.scss */

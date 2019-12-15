@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterLineasToDecimal extends Migration
+class AlterLineasAddAnulada extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,8 @@ class AlterLineasToDecimal extends Migration
     public function up()
     {
         Schema::table('lineas', function (Blueprint $table) {
-            $table->decimal('producto_precio')->change();
-            $table->decimal('cantidad')->change();
+            $table->boolean('anulada')->default(false);
+            
         });
     }
 
@@ -27,8 +27,7 @@ class AlterLineasToDecimal extends Migration
     public function down()
     {
         Schema::table('lineas', function (Blueprint $table) {
-            $table->boolean('anulada')->default(false);
-            
+            //
         });
     }
 }

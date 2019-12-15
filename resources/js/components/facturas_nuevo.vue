@@ -167,8 +167,7 @@
                                     readonly
                                     tabindex="-1"
                                     currency="EUR"
-                                    locale="de"/>
-                    </td>
+                                    locale="de"/></td>
                 </tr>
                 <tr>
                     <td class="cabecera-title" style="width: 10%">4%</td>

@@ -26,6 +26,7 @@ class FacturaLinea extends Model
         'cantidad', 
         'impuesto', 
         'retencion', 
+        'anulada', 
     ];
     
     protected $dates = ['deleted_at'];

@@ -128,7 +128,7 @@
                             <input type="number" readonly class="dcha" style="width: 100%" v-model="linea.cantidad">
                         </td>
                         <td style="width: 15%">
-                            <input type="number" readonly class="dcha" style="width: 100%" tabindex="-1" v-model="subtotal">
+                            <input type="number" readonly class="dcha" style="width: 100%" tabindex="-1" :value="subtotal(linea.producto_precio, linea.cantidad)">
                         </td>
                     </tr>
                 </tbody>
@@ -140,82 +140,93 @@
                 <tr>
                     <td class="cabecera-title" style="width: 10%">21%</td>
                     <td class="cabecera-text" style="width: 10%">
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
                                     v-model="factura.base21"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                     <td style="width: 50%">
                     <td class="cabecera-title" style="width: 15%">Subtotal</td>
                     <td class="cabecera-text" style="width: 15%">
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
                                     v-model="factura.gransubtotal"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                 </tr>
                 <tr>
                     <td class="cabecera-title" style="width: 20%">10%</td>
                     <td class="cabecera-text" style="width: 20%">
-                        <input type="number" class="dcha"
-                                    v-html="factura.base10"
+                        <currency-input style="text-align: right"
+                                    v-model="factura.base10"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                     <td style="width: 50%">
                     <td class="cabecera-title">Impuestos</td>
                     <td class="cabecera-text">
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
                                     v-model="factura.impuesto"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                 </tr>
                 <tr>
                     <td class="cabecera-title" style="width: 20%">4%</td>
                     <td class="cabecera-text" style="width: 20%">
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
                                     v-model="factura.base04"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                     <td style="width: 50%">
                     <td class="cabecera-title">Retención</td>
                     <td class="cabecera-text">
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
                                     v-model="factura.retencion"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                 </tr>
                 <tr>
                     <td class="cabecera-title" style="width: 20%">0%</td>
                     <td class="cabecera-text" style="width: 20%">
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
                                     v-model="factura.base00"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                     <td style="width: 50%">
                     <td class="cabecera-title">Total Factura</td>
                     <td class="cabecera-text">
-                        <!-- <span>{{ formatPrice(nuevaFactura.total) € }}</span> -->
-                        <input type="number" class="dcha"
+                        <currency-input style="text-align: right"
                                     v-model="factura.total"
                                     readonly
-                                    tabindex="-1">
+                                    tabindex="-1"
+                                    currency="EUR"
+                                    locale="de"/>
                     </td>
                 </tr>
             </table>
-            <table>
-                <tr>
-                    <td style="width: 100%">
-                        <textarea class="form-control" name="observaciones" id="observaciones"
-                                placeholder="Observaciones"
+            <div class="form-group">
+                <textarea textarea style="margin-top:20px;" class="form-control" id="observaciones" rows="3" 
                                 v-model="factura.observaciones"></textarea>
-                    </td>
-                </tr>
-            </table>
+            </div>
+            
         </div>
 		
 		<div id="terms" class="espacios">
@@ -240,9 +251,7 @@ export default{
         'lineas'
     ],
     computed: {
-        subtotal: function() { //este dato no se almacena
-            return parseFloat(this.linea.producto_precio * this.linea.cantidad).toFixed(2);
-        },
+        
         emi_direccion1: function(){
             return this.factura.emi_direccion_fiscal + ' - ' + this.factura.emi_cp_fiscal;
         },
@@ -263,7 +272,9 @@ export default{
         }
     },
     methods: {
-        
+        subtotal(p, c) { //este dato no se almacena
+            return parseFloat(p * c).toFixed(2);
+        },
     }
 }
 </script>

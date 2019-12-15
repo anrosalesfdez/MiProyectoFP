@@ -14,19 +14,45 @@ class FacturaCabeceraController extends Controller
 
     //RECOGE TODAS LAS FACTURAS DEL EMISOR
     public function getFacturas(){
-
         $emisor = auth()->user()->emisor->first();
-        $facturas = $emisor->cabeceras()->withTrashed()->get();
-        // $facturas = $emisor->cabeceras;
-        // dd($facturas);
+        $facturas = $emisor->cabeceras()->get();
 
         return $facturas;
         
     }
-    
-    //RECOGE TODAS LAS FACTURAS DEL EMISOR
-    public function listarFacturas(){
 
+    //RECOGE CABECERA DETERMINADA
+    public function getFactura($id) {
+        $facturas = $this->getFacturas();
+        $factura = $facturas->find($id);
+        $lineas = FacturaLinea::where('factura_id', '=', $id)->get();
+        return array($factura, $lineas);
+    }
+
+    //RECOGE última factura de serie VEND
+    public function getLastVend(){
+        $emisor = auth()->user()->emisor->first();
+        $ultima = FacturaCabecera::latest('created_at')
+                                ->where('emisores_id', '=', $emisor->id)
+                                ->where('serie', '=', 'VEND')
+                                ->first();
+        return $ultima;
+        
+    }
+
+    //RECOGE última factura de serie RECTIFICATIVA
+    public function getLastRect(){
+        $emisor = auth()->user()->emisor->first();
+        $ultima = FacturaCabecera::latest('created_at')
+                                ->where('emisores_id', '=', $emisor->id)
+                                ->where('serie', '=', 'RECT')
+                                ->first();
+        return $ultima;
+    }
+    
+
+    //VISTA TODAS LAS FACTURAS DEL EMISOR
+    public function listarFacturas(){
         $facturas = $this->getFacturas();
         
         return view('facturas/listar', ['facturas'=> $facturas]); //el helper view() permite enviar variables a blade
@@ -42,10 +68,9 @@ class FacturaCabeceraController extends Controller
         $clientes = auth()->user()->clientes;
         $productos = auth()->user()->productos;
         // dd($productos);
-        $ultima = FacturaCabecera::latest('created_at')
-                                ->where('emisores_id', '=', $emisor->id)->first();
-        if($ultima == null)
-            $ultima = 0;
+        $ultima = $this->getLastVend();
+        // if($ultima['id'] == null)
+        //     $ultima = 0;
         
         $impuestosfacturacion = ImpuestoFacturacion::get();
         // dd($impuestosfacturacion);
@@ -68,18 +93,6 @@ class FacturaCabeceraController extends Controller
 
     }
 
-    
-    public function getFactura($id) {
-
-        $facturas = $this->getFacturas();
-        $factura = $facturas->find($id);
-
-        $lineas = FacturaLinea::where('factura_id', '=', $id)->get();
-
-        return array($factura, $lineas);
-
-    }
-
     /**
      * Muestra VISTA factura + lineas. El resultado ya viene filtrado por usuario.
      */
@@ -95,16 +108,65 @@ class FacturaCabeceraController extends Controller
      * Ejecuta transacción: marca "anulada" y NUNCA SE ELIMINA!
      */
     public function delete($id){
-        if($this->getFactura($id)[0]['anulada'] == 0){
         
-            DB::transaction(function() use ($id) {
-                    
-                $this->getFactura($id)[0]->update(['anulada' => true]);
-                
-                list($factura, $lineas) = $this->getFactura($id);
-                foreach ($lineas as $value) {
+        list($cabeceraVieja, $lineasViejas) = $this->getFactura($id);
+        $ultima = $this->getLastRect();
+        if($ultima == null)
+            $ultima = 0;
+
+        
+        //necesario que la factura no esté anulada ya
+        if($cabeceraVieja['anulada'] == 0){
+        
+            DB::transaction(function() use ($id, $cabeceraVieja, $lineasViejas, $ultima) {
+            //ponemos a anulada
+                $cabeceraVieja->update(['anulada' => true]);
+                foreach ($lineasViejas as $value) {
                     $value->update(['anulada' => true]);
                 }
+
+                //generamos clon en negativo
+                // Forzamos la copia de this->object, si no
+                // hará referencia al mismo objeto.
+                $cabeceraAnulacion = clone $cabeceraVieja;
+                //cambiamos datos necesarios en cabecera
+                $cabeceraAnulacion['id'] =  null;
+                $cabeceraAnulacion['serie'] = 'RECT';
+                $cabeceraAnulacion['numero'] = $ultima+1;
+                $cabeceraAnulacion['fecha'] = date("Y-m-d");
+                $cabeceraAnulacion['vencimiento'] = date("Y-m-d"); //revisar!
+                $cabeceraAnulacion['base00'] = $cabeceraVieja['base00']*(-1);
+                $cabeceraAnulacion['base04'] = $cabeceraVieja['base04']*(-1);
+                $cabeceraAnulacion['base10'] = $cabeceraVieja['base10']*(-1);
+                $cabeceraAnulacion['base21'] = $cabeceraVieja['base21']*(-1);
+                $cabeceraAnulacion['impuesto'] = $cabeceraVieja['impuesto']*(-1);
+                $cabeceraAnulacion['retencion'] = $cabeceraVieja['retencion']*(-1);
+                $cabeceraAnulacion['gransubtotal'] = $cabeceraVieja['gransubtotal']*(-1);
+                $cabeceraAnulacion['total'] = $cabeceraVieja['total']*(-1);
+                // dd($cabeceraAnulacion);
+
+                //clonamos líneas
+                $lineasAnulacion = clone $lineasViejas;
+                // dd($lineasAnulacion);
+                //cambiamos datos en el foreach linea
+                for($i=0; $i<count($lineasAnulacion); $i++){
+                    $lineasAnulacion[$i]['id'] = null;
+                    $lineasAnulacion[$i]['serie'] = 'RECT';
+                    $lineasAnulacion[$i]['numero_fra'] = $cabeceraAnulacion['numero'];
+                    $lineasAnulacion[$i]['producto_precio'] = $lineasViejas[$i]['producto_precio']*(-1);
+                }
+                // dd($lineasAnulacion);
+
+                //grabamos la rectificativa
+                $cabeceraAnulacion = (array) $cabeceraAnulacion;
+                // dd($cabeceraAnulacion);
+                $lineasAnulacion = (array) $lineasAnulacion;
+                FacturaCabecera::create($cabeceraAnulacion);
+                foreach ($lineasAnulacion as $value) {
+                    FacturaLinea::create($value);
+                }
+                
+                //enviamos datos
                 $facturas = $this->getFacturas();
                 return $facturas;
                 
@@ -137,7 +199,12 @@ class FacturaCabeceraController extends Controller
 
     public function imprimir($id){
         $factura = $this->getFactura($id);
+        // list($factura, $lineas) = $this->getFactura($id);
+        // dd($factura);
+
         $mpdf = new \Mpdf\Mpdf();
+        $mpdf->useSubstitutions = false;
+        $mpdf->simpleTables = true;
         $mpdf->WriteHTML(view('facturas/impresion', ['factura' => $factura])->render());
         // $mpdf->WriteHTML(var_dump($factura));
         return $mpdf->Output();

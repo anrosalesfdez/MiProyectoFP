@@ -3548,6 +3548,14 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     //datos del componente
@@ -3562,7 +3570,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         filterable: ['serie', 'numero', 'cliente_id'],
         headings: {
           serie: 'SERIE',
-          numero: 'NÚMERO',
+          numero: 'Nº',
           fecha: 'FECHA',
           cli_razon_social: 'CLIENTE',
           total: 'TOTAL',
@@ -3622,7 +3630,9 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       console.log(this.facturas);
       console.log(id);
       console.log(_typeof(this.facturas[id].anulada));
-      var anu = this.facturas[id].anulada;
+      var anu = this.facturas.find(function (f) {
+        return f.id == id;
+      });
 
       if (anu !== 1) {
         if (confirm("Estás seguro de querer anular la factura?")) {
@@ -3635,7 +3645,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
             _this.$notify({
               text: 'Factura anulada correctamente',
               type: 'success'
-            });
+            }); // location.reload();
+
           })["catch"](function (error) {
             console.log(error);
 
@@ -3926,16 +3937,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {};
   },
   props: ['factura', 'lineas'],
   computed: {
-    subtotal: function subtotal() {
-      //este dato no se almacena
-      return parseFloat(this.linea.producto_precio * this.linea.cantidad).toFixed(2);
-    },
     emi_direccion1: function emi_direccion1() {
       return this.factura.emi_direccion_fiscal + ' - ' + this.factura.emi_cp_fiscal;
     },
@@ -3955,7 +3973,12 @@ __webpack_require__.r(__webpack_exports__);
       return (this.factura.cli_email == null ? '' : this.factura.cli_email) + (this.factura.cli_telefono == null ? '' : ' - ' + this.factura.cli_telefono);
     }
   },
-  methods: {}
+  methods: {
+    subtotal: function subtotal(p, c) {
+      //este dato no se almacena
+      return parseFloat(p * c).toFixed(2);
+    }
+  }
 });
 
 /***/ }),
@@ -3970,7 +3993,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _item_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./item.vue */ "./resources/js/components/item.vue");
-//
 //
 //
 //
@@ -71032,69 +71054,101 @@ var render = function() {
           columns: _vm.columns,
           options: _vm.options
         },
-        scopedSlots: _vm._u([
-          {
-            key: "numero",
-            fn: function(props) {
-              return _c("div", { staticStyle: { display: "inline" } }, [
-                _c("a", { attrs: { href: "ver/" + props.row.id } }, [
-                  _vm._v(_vm._s(props.row.numero))
+        scopedSlots: _vm._u(
+          [
+            {
+              key: "numero",
+              fn: function(props) {
+                return _c("div", { staticStyle: { display: "inline" } }, [
+                  _c("a", { attrs: { href: "ver/" + props.row.id } }, [
+                    _vm._v(_vm._s(props.row.numero))
+                  ])
                 ])
-              ])
-            }
-          },
-          {
-            key: "anulada",
-            fn: function(props) {
-              return _c("div", { staticStyle: { display: "inline" } }, [
-                _c("input", {
-                  attrs: { type: "checkbox", name: "anulada" },
-                  domProps: { checked: props.row.anulada == 1 },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      return _vm.anular(props.row.id)
+              }
+            },
+            {
+              key: "total",
+              fn: function(props) {
+                return _c("div", { staticStyle: { display: "inline" } }, [
+                  _c(
+                    "span",
+                    {
+                      staticStyle: {
+                        "font-family": "Lato, sans-serif",
+                        "text-align": "right"
+                      }
+                    },
+                    [_vm._v(_vm._s(props.row.total + " €"))]
+                  )
+                ])
+              }
+            },
+            {
+              key: "anulada",
+              fn: function(props) {
+                return props.row.anulada == 0
+                  ? _c("div", { staticStyle: { display: "inline" } }, [
+                      _c("input", {
+                        attrs: { type: "checkbox", name: "anulada" },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.anular(props.row.id)
+                          }
+                        }
+                      })
+                    ])
+                  : _c("div", { staticStyle: { display: "inline" } }, [
+                      _c("input", {
+                        attrs: {
+                          type: "checkbox",
+                          name: "anulada",
+                          disabled: "",
+                          readonly: ""
+                        },
+                        domProps: { checked: props.row.anulada == 1 }
+                      })
+                    ])
+              }
+            },
+            {
+              key: "pagada",
+              fn: function(props) {
+                return _c("div", { staticStyle: { display: "inline" } }, [
+                  _c("input", {
+                    attrs: { type: "checkbox", name: "pagada" },
+                    domProps: { checked: props.row.pagada == 1 },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.pagar(props.row.id)
+                      }
                     }
-                  }
-                })
-              ])
-            }
-          },
-          {
-            key: "pagada",
-            fn: function(props) {
-              return _c("div", { staticStyle: { display: "inline" } }, [
-                _c("input", {
-                  attrs: { type: "checkbox", name: "pagada" },
-                  domProps: { checked: props.row.pagada == 1 },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      return _vm.pagar(props.row.id)
+                  })
+                ])
+              }
+            },
+            {
+              key: "presentada",
+              fn: function(props) {
+                return _c("div", { staticStyle: { display: "inline" } }, [
+                  _c("input", {
+                    attrs: { type: "checkbox", name: "presentada" },
+                    domProps: { checked: props.row.presentada == 1 },
+                    on: {
+                      click: function($event) {
+                        $event.preventDefault()
+                        return _vm.presentar(props.row.id)
+                      }
                     }
-                  }
-                })
-              ])
+                  })
+                ])
+              }
             }
-          },
-          {
-            key: "presentada",
-            fn: function(props) {
-              return _c("div", { staticStyle: { display: "inline" } }, [
-                _c("input", {
-                  attrs: { type: "checkbox", name: "presentada" },
-                  domProps: { checked: props.row.presentada == 1 },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      return _vm.presentar(props.row.id)
-                    }
-                  }
-                })
-              ])
-            }
-          }
-        ])
+          ],
+          null,
+          true
+        )
       })
     ],
     1
@@ -71759,25 +71813,14 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", { staticStyle: { width: "15%" } }, [
                       _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.subtotal,
-                            expression: "subtotal"
-                          }
-                        ],
                         staticClass: "dcha",
                         staticStyle: { width: "100%" },
                         attrs: { type: "number", readonly: "", tabindex: "-1" },
-                        domProps: { value: _vm.subtotal },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.subtotal = $event.target.value
-                          }
+                        domProps: {
+                          value: _vm.subtotal(
+                            linea.producto_precio,
+                            linea.cantidad
+                          )
                         }
                       })
                     ])
@@ -71811,28 +71854,24 @@ var render = function() {
                     staticStyle: { width: "10%" }
                   },
                   [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.factura.base21,
-                          expression: "factura.base21"
-                        }
-                      ],
-                      staticClass: "dcha",
-                      attrs: { type: "number", readonly: "", tabindex: "-1" },
-                      domProps: { value: _vm.factura.base21 },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(_vm.factura, "base21", $event.target.value)
-                        }
+                    _c("currency-input", {
+                      staticStyle: { "text-align": "right" },
+                      attrs: {
+                        readonly: "",
+                        tabindex: "-1",
+                        currency: "EUR",
+                        locale: "de"
+                      },
+                      model: {
+                        value: _vm.factura.base21,
+                        callback: function($$v) {
+                          _vm.$set(_vm.factura, "base21", $$v)
+                        },
+                        expression: "factura.base21"
                       }
                     })
-                  ]
+                  ],
+                  1
                 ),
                 _vm._v(" "),
                 _c("td", { staticStyle: { width: "50%" } }),
@@ -71852,32 +71891,24 @@ var render = function() {
                     staticStyle: { width: "15%" }
                   },
                   [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.factura.gransubtotal,
-                          expression: "factura.gransubtotal"
-                        }
-                      ],
-                      staticClass: "dcha",
-                      attrs: { type: "number", readonly: "", tabindex: "-1" },
-                      domProps: { value: _vm.factura.gransubtotal },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(
-                            _vm.factura,
-                            "gransubtotal",
-                            $event.target.value
-                          )
-                        }
+                    _c("currency-input", {
+                      staticStyle: { "text-align": "right" },
+                      attrs: {
+                        readonly: "",
+                        tabindex: "-1",
+                        currency: "EUR",
+                        locale: "de"
+                      },
+                      model: {
+                        value: _vm.factura.gransubtotal,
+                        callback: function($$v) {
+                          _vm.$set(_vm.factura, "gransubtotal", $$v)
+                        },
+                        expression: "factura.gransubtotal"
                       }
                     })
-                  ]
+                  ],
+                  1
                 )
               ]),
               _vm._v(" "),
@@ -71898,12 +71929,24 @@ var render = function() {
                     staticStyle: { width: "20%" }
                   },
                   [
-                    _c("input", {
-                      staticClass: "dcha",
-                      attrs: { type: "number", readonly: "", tabindex: "-1" },
-                      domProps: { innerHTML: _vm._s(_vm.factura.base10) }
+                    _c("currency-input", {
+                      staticStyle: { "text-align": "right" },
+                      attrs: {
+                        readonly: "",
+                        tabindex: "-1",
+                        currency: "EUR",
+                        locale: "de"
+                      },
+                      model: {
+                        value: _vm.factura.base10,
+                        callback: function($$v) {
+                          _vm.$set(_vm.factura, "base10", $$v)
+                        },
+                        expression: "factura.base10"
+                      }
                     })
-                  ]
+                  ],
+                  1
                 ),
                 _vm._v(" "),
                 _c("td", { staticStyle: { width: "50%" } }),
@@ -71911,29 +71954,29 @@ var render = function() {
                   _vm._v("Impuestos")
                 ]),
                 _vm._v(" "),
-                _c("td", { staticClass: "cabecera-text" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
+                _c(
+                  "td",
+                  { staticClass: "cabecera-text" },
+                  [
+                    _c("currency-input", {
+                      staticStyle: { "text-align": "right" },
+                      attrs: {
+                        readonly: "",
+                        tabindex: "-1",
+                        currency: "EUR",
+                        locale: "de"
+                      },
+                      model: {
                         value: _vm.factura.impuesto,
+                        callback: function($$v) {
+                          _vm.$set(_vm.factura, "impuesto", $$v)
+                        },
                         expression: "factura.impuesto"
                       }
-                    ],
-                    staticClass: "dcha",
-                    attrs: { type: "number", readonly: "", tabindex: "-1" },
-                    domProps: { value: _vm.factura.impuesto },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.factura, "impuesto", $event.target.value)
-                      }
-                    }
-                  })
-                ])
+                    })
+                  ],
+                  1
+                )
               ]),
               _vm._v(" "),
               _c("tr", [
@@ -71953,28 +71996,24 @@ var render = function() {
                     staticStyle: { width: "20%" }
                   },
                   [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.factura.base04,
-                          expression: "factura.base04"
-                        }
-                      ],
-                      staticClass: "dcha",
-                      attrs: { type: "number", readonly: "", tabindex: "-1" },
-                      domProps: { value: _vm.factura.base04 },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(_vm.factura, "base04", $event.target.value)
-                        }
+                    _c("currency-input", {
+                      staticStyle: { "text-align": "right" },
+                      attrs: {
+                        readonly: "",
+                        tabindex: "-1",
+                        currency: "EUR",
+                        locale: "de"
+                      },
+                      model: {
+                        value: _vm.factura.base04,
+                        callback: function($$v) {
+                          _vm.$set(_vm.factura, "base04", $$v)
+                        },
+                        expression: "factura.base04"
                       }
                     })
-                  ]
+                  ],
+                  1
                 ),
                 _vm._v(" "),
                 _c("td", { staticStyle: { width: "50%" } }),
@@ -71982,29 +72021,29 @@ var render = function() {
                   _vm._v("Retención")
                 ]),
                 _vm._v(" "),
-                _c("td", { staticClass: "cabecera-text" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
+                _c(
+                  "td",
+                  { staticClass: "cabecera-text" },
+                  [
+                    _c("currency-input", {
+                      staticStyle: { "text-align": "right" },
+                      attrs: {
+                        readonly: "",
+                        tabindex: "-1",
+                        currency: "EUR",
+                        locale: "de"
+                      },
+                      model: {
                         value: _vm.factura.retencion,
+                        callback: function($$v) {
+                          _vm.$set(_vm.factura, "retencion", $$v)
+                        },
                         expression: "factura.retencion"
                       }
-                    ],
-                    staticClass: "dcha",
-                    attrs: { type: "number", readonly: "", tabindex: "-1" },
-                    domProps: { value: _vm.factura.retencion },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.factura, "retencion", $event.target.value)
-                      }
-                    }
-                  })
-                ])
+                    })
+                  ],
+                  1
+                )
               ]),
               _vm._v(" "),
               _c("tr", [
@@ -72024,28 +72063,24 @@ var render = function() {
                     staticStyle: { width: "20%" }
                   },
                   [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.factura.base00,
-                          expression: "factura.base00"
-                        }
-                      ],
-                      staticClass: "dcha",
-                      attrs: { type: "number", readonly: "", tabindex: "-1" },
-                      domProps: { value: _vm.factura.base00 },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(_vm.factura, "base00", $event.target.value)
-                        }
+                    _c("currency-input", {
+                      staticStyle: { "text-align": "right" },
+                      attrs: {
+                        readonly: "",
+                        tabindex: "-1",
+                        currency: "EUR",
+                        locale: "de"
+                      },
+                      model: {
+                        value: _vm.factura.base00,
+                        callback: function($$v) {
+                          _vm.$set(_vm.factura, "base00", $$v)
+                        },
+                        expression: "factura.base00"
                       }
                     })
-                  ]
+                  ],
+                  1
                 ),
                 _vm._v(" "),
                 _c("td", { staticStyle: { width: "50%" } }),
@@ -72053,66 +72088,55 @@ var render = function() {
                   _vm._v("Total Factura")
                 ]),
                 _vm._v(" "),
-                _c("td", { staticClass: "cabecera-text" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
+                _c(
+                  "td",
+                  { staticClass: "cabecera-text" },
+                  [
+                    _c("currency-input", {
+                      staticStyle: { "text-align": "right" },
+                      attrs: {
+                        readonly: "",
+                        tabindex: "-1",
+                        currency: "EUR",
+                        locale: "de"
+                      },
+                      model: {
                         value: _vm.factura.total,
+                        callback: function($$v) {
+                          _vm.$set(_vm.factura, "total", $$v)
+                        },
                         expression: "factura.total"
                       }
-                    ],
-                    staticClass: "dcha",
-                    attrs: { type: "number", readonly: "", tabindex: "-1" },
-                    domProps: { value: _vm.factura.total },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(_vm.factura, "total", $event.target.value)
-                      }
-                    }
-                  })
-                ])
+                    })
+                  ],
+                  1
+                )
               ])
             ]),
             _vm._v(" "),
-            _c("table", [
-              _c("tr", [
-                _c("td", { staticStyle: { width: "100%" } }, [
-                  _c("textarea", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.factura.observaciones,
-                        expression: "factura.observaciones"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: {
-                      name: "observaciones",
-                      id: "observaciones",
-                      placeholder: "Observaciones"
-                    },
-                    domProps: { value: _vm.factura.observaciones },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.$set(
-                          _vm.factura,
-                          "observaciones",
-                          $event.target.value
-                        )
-                      }
+            _c("div", { staticClass: "form-group" }, [
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.factura.observaciones,
+                    expression: "factura.observaciones"
+                  }
+                ],
+                staticClass: "form-control",
+                staticStyle: { "margin-top": "20px" },
+                attrs: { textarea: "", id: "observaciones", rows: "3" },
+                domProps: { value: _vm.factura.observaciones },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
                     }
-                  })
-                ])
-              ])
+                    _vm.$set(_vm.factura, "observaciones", $event.target.value)
+                  }
+                }
+              })
             ])
           ]
         ),

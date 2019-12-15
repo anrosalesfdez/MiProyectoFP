@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <!-- Styles -->
+    {{-- <link rel="stylesheet" href="/css/app.css" type="text/css">
+    <link rel="stylesheet" href="/css/all.css" type="text/css"> --}}
 </head>
 <body>
 {{-- {{dd($factura)}} --}}
@@ -18,29 +21,29 @@
 		<div class="row espacios">
 
             <div id="logo" class="col-md-3">
-              <img id="image" src="/pictures/logo.png" alt="logo" width="200px" height="140px"/>
+              {{-- <img id="image" src="pictures/logo.png" alt="logo" width="200px" height="140px"/> --}}
             </div>
             
             <!-- DATOS EMISOR FACTURA -->
             <div id="emisor" class="col-md-6" style="float: left">
                 <input type="text" id="emi_nombre_fiscal" size="50" readonly
                                     tabindex="-1" 
-                                    value="{{ $factura[0]->emi_nombre_fiscal }}">
+                                    value="{{ $factura[0]->emi_nombre_fiscal.' '.$factura[0]->emi_niva }}">
                 <input type="text" id="emiNif" size="50" readonly
                                     tabindex="-1" 
                                     value="{{ $factura[0]->emi_nif}}">
                 <input type="text" id="emi_niva" size="50" readonly
                                     tabindex="-1" 
                                     value="{{ $factura[0]->emi_niva}}">
-                {{-- <input type="text" id="emi_direccion1" size="50" readonly
+                <input type="text" id="emi_direccion1" size="50" readonly
                                     tabindex="-1" 
-                                    value="factura.emi_direccion1">
+                                    value="{{ $factura[0]->emi_direccion_fiscal.' '.$factura[0]->emi_cp_fiscal}}">
                 <input type="text" id="emi_direccion2" size="50" readonly
                                     tabindex="-1" 
-                                    value="emi_direccion2">
+                                    value="{{ $factura[0]->emi_provincia_fiscal.' '.$factura[0]->emi_pais_fiscal}}">
                 <input type="text" id="emi_contacto" size="50" readonly
                                     tabindex="-1" 
-                                    value="emi_contacto"> --}}
+                                    value="{{ $factura[0]->emi_email.' '.$factura[0]->emi_telefono}}">
             </div>
         </div>
         <!-- DATOS CLIENTE FACTURA -->
@@ -51,16 +54,16 @@
                                     value="{{ $factura[0]->cli_razon_social}}">
                 <input type="text" id="cli_nif" size="50" readonly
                                     tabindex="-1" 
-                                    value="{{ $factura[0]->cli_nif}}">
-                {{-- <input type="text" id="cli_direccion1" size="50" readonly
+                                    value="{{ $factura[0]->cli_nif.' '.$factura[0]->cli_niva}}">
+                <input type="text" id="cli_direccion1" size="50" readonly
                                     tabindex="-1" 
-                                    value="cli_direccion1">
+                                    value="{{ $factura[0]->cli_direccion.' '.$factura[0]->cli_cp}}">
                 <input type="text" id="cli_direccion2" size="50" readonly
                                     tabindex="-1" 
-                                    value="cli_direccion2">
+                                    value="{{ $factura[0]->cli_provincia.' '.$factura[0]->cli_pais}}">
                 <input type="text" id="cli_contacto" size="50" readonly
                                     tabindex="-1" 
-                                    value="cli_contacto"> --}}
+                                    value="{{ $factura[0]->cli_email.' '.$factura[0]->cli_telefono}}">
             </div>
 
     		<div id="idFra" class="col-md-5 espacios">
@@ -108,19 +111,19 @@
                 </thead>
 
                 <tbody>
-                    {{-- @foreach ($lineas as $linea)
+                    @foreach ($factura[1] as $linea)
                         <tr>
                             <td style="width: 20%">
-                                <input type="text" readonly maxlength="50" size="16" value="{{ $linea->producto_nombre}}">
+                                <input type="text" readonly size="16" value="{{ $linea->producto_nombre}}">
                             </td>
                             <td style="width: 20%">
-                                <input type="text" readonly maxlength="50" size="16" value="{{ $linea->producto_descripcion}}">
+                                <input type="text" readonly size="16" value="{{ $linea->producto_descripcion}}">
                             </td>
                             <td style="width: 15%">
                                 <input type="number" readonly class="dcha" style="width: 100%" step="0.01" value="{{ $linea->producto_precio}}">
                             </td>
                             <td style="width: 15%">
-                                <input type="text" readonly maxlength="18" size="11" tabindex="-1" value="{{ $linea->producto_unidad}}">
+                                <input type="text" readonly size="11" tabindex="-1" value="{{ $linea->producto_unidad}}">
                             </td>
                             <td style="width: 15%">
                                 <input type="number" readonly class="dcha" style="width: 100%" value="{{ $linea->cantidad}}">
@@ -129,7 +132,7 @@
                                 <input type="number" readonly class="dcha" style="width: 100%" tabindex="-1" value="{{ $linea->producto_precio * $linea->cantidad}}">
                             </td>
                         </tr>
-                    @endforeach --}}
+                    @endforeach
                 </tbody>
             </table>
         </div>

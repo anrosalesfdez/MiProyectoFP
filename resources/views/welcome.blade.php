@@ -54,7 +54,7 @@
                 <div class="row align-items-center">
                     <div class="col-xl-10 offset-xl-1">
                         <div class="slider_text text-center">
-                            <div class="text">
+                            <div class="text" >
                                 <h3>
                                 ÁNGELES ROSALES
                                 </h3>

@@ -16,8 +16,16 @@
                 <a :href="'ver/'+props.row.id" >{{props.row.numero}}</a>
             </div>
 
-            <div slot="anulada" slot-scope="props" style="display: inline">
-                <input type="checkbox" :checked="props.row.anulada == 1" name="anulada" @click.prevent="anular(props.row.id)">
+            <div slot="total" slot-scope="props" style="display: inline">
+                <span style="font-family: Lato, sans-serif; text-align: right;">{{ props.row.total +' €'}}</span>
+                <!-- <input type="number" v-model="props.row.total" name="total" disabled readonly/> -->
+            </div>
+
+            <div v-if="props.row.anulada == 0"slot="anulada" slot-scope="props" style="display: inline">
+                <input type="checkbox" name="anulada" @click.prevent="anular(props.row.id)">
+            </div>
+            <div v-else slot="anulada" slot-scope="props" style="display: inline">
+                <input type="checkbox" :checked="props.row.anulada == 1" name="anulada" disabled readonly>
             </div>
 
             <div slot="pagada" slot-scope="props" style="display: inline">
@@ -52,7 +60,7 @@ export default{
                 filterable: ['serie', 'numero', 'cliente_id'],
                 headings: {
                         serie: 'SERIE',
-                        numero: 'NÚMERO',
+                        numero: 'Nº',
                         fecha: 'FECHA',
                         cli_razon_social: 'CLIENTE',
                         total: 'TOTAL',
@@ -116,10 +124,10 @@ export default{
             console.log(this.facturas);
             console.log(id)
             console.log(typeof(this.facturas[id].anulada))
-            let anu = this.facturas[id].anulada
+            let anu = this.facturas.find(f => f.id == id);
             if( anu !== 1){
                 if(confirm("Estás seguro de querer anular la factura?")){
-                    let url='/facturas/delete/' + id;
+                    let url='/facturas/delete/'+id;
                     console.log('eliminando: '+id)
                     axios.delete(url)
                     .then(response => {
@@ -129,6 +137,7 @@ export default{
                             text: 'Factura anulada correctamente',
                             type: 'success',
                         });
+                        // location.reload();
                     }).catch((error) => {
                         console.log(error);
                         this.$notify({
