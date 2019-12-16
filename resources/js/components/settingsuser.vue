@@ -170,8 +170,8 @@ export default {
     methods:{
         //COMPRUEBA QUE LA NUEVA CONTRASEÑA CUMPLE PATRÓN: MIN 8 + caracter especial + número
         controlPassword0(passwordNew){
-            var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/;
-            // var regularExpression = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
+            // var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/;
+            var regularExpression = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
             if(!regularExpression.test(passwordNew))
                 this.validado += "La contraseña no cumple patrón\n";
         },

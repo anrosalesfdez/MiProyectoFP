@@ -49,6 +49,17 @@ class FacturaCabeceraController extends Controller
                                 ->first();
         return $ultima;
     }
+
+
+    //RECOGE última factura de serie RECTIFICATIVA
+    public function getLast(){
+        $emisor = auth()->user()->emisor->first();
+        $ultima = FacturaCabecera::latest('created_at')
+                                ->where('emisores_id', '=', $emisor->id)
+                                ->first();
+        return $ultima;
+    }
+    
     
 
     //VISTA TODAS LAS FACTURAS DEL EMISOR
@@ -114,11 +125,12 @@ class FacturaCabeceraController extends Controller
         if($ultima == null)
             $ultima = 0;
 
+        $ultimaGeneral = $this->getLast();
         
         //necesario que la factura no esté anulada ya
         if($cabeceraVieja['anulada'] == 0){
         
-            DB::transaction(function() use ($id, $cabeceraVieja, $lineasViejas, $ultima) {
+            DB::transaction(function() use ($id, $cabeceraVieja, $lineasViejas, $ultima, $ultimaGeneral) {
             //ponemos a anulada
                 $cabeceraVieja->update(['anulada' => true]);
                 foreach ($lineasViejas as $value) {
@@ -130,7 +142,9 @@ class FacturaCabeceraController extends Controller
                 // hará referencia al mismo objeto.
                 $cabeceraAnulacion = clone $cabeceraVieja;
                 //cambiamos datos necesarios en cabecera
-                $cabeceraAnulacion['id'] =  null;
+                $cabeceraAnulacion['id'] =  $ultimaGeneral;
+                $cabeceraAnulacion['created_at'] =  null;
+                $cabeceraAnulacion['updated_at'] =  null;
                 $cabeceraAnulacion['serie'] = 'RECT';
                 $cabeceraAnulacion['numero'] = $ultima+1;
                 $cabeceraAnulacion['fecha'] = date("Y-m-d");
@@ -158,10 +172,11 @@ class FacturaCabeceraController extends Controller
                 // dd($lineasAnulacion);
 
                 //grabamos la rectificativa
-                $cabeceraAnulacion = (array) $cabeceraAnulacion;
+                $cabeceraAnulacion->save();
+                // $cabeceraAnulacion = (array) $cabeceraAnulacion;
                 // dd($cabeceraAnulacion);
                 $lineasAnulacion = (array) $lineasAnulacion;
-                FacturaCabecera::create($cabeceraAnulacion);
+                // FacturaCabecera::create($cabeceraAnulacion);
                 foreach ($lineasAnulacion as $value) {
                     FacturaLinea::create($value);
                 }
@@ -219,13 +234,14 @@ class FacturaCabeceraController extends Controller
     public function graficoFras(){
         
         $data = [];
-        $data[] = ['Ingresos', 'Cobros'];
+        $data[] = ['Fecha', 'Ingresos', 'Cobros'];
 
         $facturas = $this->getFacturas();
         foreach ($facturas as $key => $value) {
             $data[] = [
-                        $value->total,
-                        $value->total
+                        date("Y", strtotime($value->fecha)),
+                        floatval($value->total),
+                        floatval($value->total)
                     ];
         }
 

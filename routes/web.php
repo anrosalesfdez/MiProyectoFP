@@ -80,7 +80,7 @@ Route::prefix('/facturas')->group(function () {
     Route::post('/store', 'FacturaCabeceraController@store');
     Route::post('/lineas', 'FacturaLineaController@store')->name('lineas');
     
-    Route::delete('/delete/{id}', 'FacturaCabeceraController@delete');
+    Route::post('/delete/{id}', 'FacturaCabeceraController@delete');
     Route::post('/pagar/{id}', 'FacturaCabeceraController@pagar');
     Route::post('/presentar/{id}', 'FacturaCabeceraController@presentar');
 

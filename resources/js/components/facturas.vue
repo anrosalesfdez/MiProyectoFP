@@ -129,7 +129,7 @@ export default{
                 if(confirm("Estás seguro de querer anular la factura?")){
                     let url='/facturas/delete/'+id;
                     console.log('eliminando: '+id)
-                    axios.delete(url)
+                    axios.post(url)
                     .then(response => {
                         console.log(response);
                         this.misFacturas = response.data;

@@ -42,8 +42,8 @@ export default {
             //     ['2016', 660, 1120, 300],
             //     ['2017', 1030, 540, 350]
             //   ],
-            chartData: [],
-            chartOptions: {
+            chartData1: [],
+            chartOptions1: {
                 chart: {
                     title: 'VENTAS E INGRESOS',
                     subtitle: '',
@@ -59,7 +59,7 @@ export default {
     methods:{
         getGrafs(){
                 axios.get("facturas/grafs").then((response)=>{
-                this.chartData = response.data;
+                this.chartData1 = response.data;
             });
         }
     }

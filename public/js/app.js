@@ -3638,7 +3638,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         if (confirm("Estás seguro de querer anular la factura?")) {
           var url = '/facturas/delete/' + id;
           console.log('eliminando: ' + id);
-          axios["delete"](url).then(function (response) {
+          axios.post(url).then(function (response) {
             console.log(response);
             _this.misFacturas = response.data;
 
@@ -4759,8 +4759,8 @@ __webpack_require__.r(__webpack_exports__);
       //     ['2016', 660, 1120, 300],
       //     ['2017', 1030, 540, 350]
       //   ],
-      chartData: [],
-      chartOptions: {
+      chartData1: [],
+      chartOptions1: {
         chart: {
           title: 'VENTAS E INGRESOS',
           subtitle: ''
@@ -4777,7 +4777,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get("facturas/grafs").then(function (response) {
-        _this.chartData = response.data;
+        _this.chartData1 = response.data;
       });
     }
   }
@@ -5531,8 +5531,8 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     //COMPRUEBA QUE LA NUEVA CONTRASEÑA CUMPLE PATRÓN: MIN 8 + caracter especial + número
     controlPassword0: function controlPassword0(passwordNew) {
-      var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/; // var regularExpression = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
-
+      // var regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$/;
+      var regularExpression = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
       if (!regularExpression.test(passwordNew)) this.validado += "La contraseña no cumple patrón\n";
     },
     //COMPRUEBA QUE NUEVA Y CONFIRMACIÓN, COINCIDAN
