@@ -39,6 +39,7 @@
     <!--DEFER When present, it specifies that the script is executed when the page has finished parsing.-->
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/vue-currency-input"></script>
+    <script src="vue-google-charts/dist/vue-google-charts.browser.js"></script>
 
 </body>
 

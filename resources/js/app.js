@@ -35,6 +35,13 @@ Vue.use(VueCurrencyInput, pluginOptions);
 
 
 
+// import Vue from 'vue'
+// import VueGoogleCharts from 'vue-google-charts'
+ 
+// Vue.use(VueGoogleCharts)
+
+
+
 import {ServerTable, ClientTable, Event} from 'vue-tables-2';
 let options = {};
 let useVuex = false;
@@ -69,6 +76,7 @@ Vue.component('emisor', require('./components/emisor.vue').default);
 Vue.component('facturas', require('./components/facturas.vue').default);
 Vue.component('facturas_nuevo', require('./components/facturas_nuevo.vue').default);
 Vue.component('facturas_detalle', require('./components/facturas_detalle.vue').default);
+Vue.component('grafs', require('./components/grafs.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

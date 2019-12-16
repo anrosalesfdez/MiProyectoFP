@@ -215,4 +215,40 @@ class FacturaCabeceraController extends Controller
         return view('facturas/impresion2', ['factura' => $factura]);
 
     }
+
+    public function graficoFras(){
+        
+        $data = [];
+        $data[] = ['Ingresos', 'Cobros'];
+
+        $facturas = $this->getFacturas();
+        foreach ($facturas as $key => $value) {
+            $data[] = [
+                        $value->total,
+                        $value->total
+                    ];
+        }
+
+        return response($data);
+
+    }
+
+    public function topClientesChart(Request $request){
+        $clientes = Auth::user()->emisores->facturas->clientes->get()->sortByDesc("total")->values()->all();
+        $response = [["Cliente", "ingresos"]];
+        $resto = ["Resto de clientes", 0];
+        foreach ($clientes as $key => $s) {
+            if($key < 5){
+                $response[] = [
+                    $s->razon_social,
+                    $s->ingresos
+                ];
+            }else{
+                $resto[1] += $s->ingresos;
+            }
+            
+        }
+        $response[] = $resto;
+        return response($response);
+    }
 }

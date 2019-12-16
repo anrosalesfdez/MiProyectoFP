@@ -87,6 +87,8 @@ Route::prefix('/facturas')->group(function () {
     Route::get('imprimir/{id}', 'FacturaCabeceraController@imprimir');
     Route::get('imprimir2/{id}', 'FacturaCabeceraController@imprimir2');
 
+    Route::get('/grafs', 'FacturaCabeceraController@graficoFras')->name('grafs');
+
 });
 
 
