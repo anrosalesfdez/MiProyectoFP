@@ -19,7 +19,7 @@
 		<div class="row espacios">
 
             <div id="logo" class="col-md-3">
-              <img id="image" src="/pictures/logo.png" alt="logo" width="200px" height="140px"/>
+              <img id="image" src="/pictures/logo.PNG" alt="logo" width="200px" height="140px"/>
             </div>
             <!-- DATOS EMISOR FACTURA -->
             <div id="emisor" class="col-md-6" style="float: left">
