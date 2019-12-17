@@ -31,32 +31,52 @@ class FacturaCabeceraController extends Controller
 
     //RECOGE última factura de serie VEND
     public function getLastVend(){
-        $emisor = auth()->user()->emisor->first();
-        $ultima = FacturaCabecera::latest('created_at')
-                                ->where('emisores_id', '=', $emisor->id)
+        $emisor = auth()->user()->emisor;
+        // $ultima = FacturaCabecera::latest('created_at')
+        //                         ->where('emisores_id', '=', $emisor->id)
+        //                         ->where('serie', '=', 'VEND')
+        //                         ->first();
+        $ultima = FacturaCabecera::where('emisores_id', '=', $emisor->id)
                                 ->where('serie', '=', 'VEND')
+                                ->orderBy('created_at', 'desc')
                                 ->first();
+                                if($ultima == null)
+        $ultima = 0;
+        // dd($ultima);                     
+        // dd($ultima);
         return $ultima;
         
     }
 
     //RECOGE última factura de serie RECTIFICATIVA
     public function getLastRect(){
-        $emisor = auth()->user()->emisor->first();
-        $ultima = FacturaCabecera::latest('created_at')
-                                ->where('emisores_id', '=', $emisor->id)
+        $emisor = auth()->user()->emisor;
+        // $ultima = FacturaCabecera::latest('created_at')
+        //                         ->where('emisores_id', '=', $emisor->id)
+        //                         ->where('serie', '=', 'RECT')
+        //                         ->first();
+        $ultima = FacturaCabecera::where('emisores_id', '=', $emisor->id)
                                 ->where('serie', '=', 'RECT')
+                                ->orderBy('created_at', 'desc')
                                 ->first();
+        if($ultima == null)
+            $ultima = 0;
+        // dd($ultima);
         return $ultima;
     }
 
 
     //RECOGE última factura de serie RECTIFICATIVA
     public function getLast(){
-        $emisor = auth()->user()->emisor->first();
-        $ultima = FacturaCabecera::latest('created_at')
-                                ->where('emisores_id', '=', $emisor->id)
+        $emisor = auth()->user()->emisor;
+        // $ultima = FacturaCabecera::latest('created_at')
+        //                         ->where('emisores_id', '=', $emisor->id)
+        //                         ->first();
+                            
+        $ultima = FacturaCabecera::where('emisores_id', '=', $emisor->id)
+                                ->orderBy('created_at', 'desc')
                                 ->first();
+        // dd($ultima);
         return $ultima;
     }
     
@@ -122,9 +142,7 @@ class FacturaCabeceraController extends Controller
         
         list($cabeceraVieja, $lineasViejas) = $this->getFactura($id);
         $ultima = $this->getLastRect();
-        if($ultima == null)
-            $ultima = 0;
-        $ultimaGeneral = $this->getLast();
+        $ultimaGeneral = FacturaCabecera::orderBy('created_at', 'desc')->first()->id;
         
         //necesario que la factura no esté anulada ya
         if($cabeceraVieja['anulada'] == 0){
@@ -140,9 +158,9 @@ class FacturaCabeceraController extends Controller
                 // hará referencia al mismo objeto.
                 $cabeceraAnulacion = clone $cabeceraVieja;
                 //cambiamos datos necesarios en cabecera
-                $cabeceraAnulacion['id'] =  $ultimaGeneral;
-                $cabeceraAnulacion['created_at'] =  null;
-                $cabeceraAnulacion['updated_at'] =  null;
+                $cabeceraAnulacion['id'] =  $ultimaGeneral+1;
+                $cabeceraAnulacion['created_at'] =  date("Y-m-d");
+                $cabeceraAnulacion['updated_at'] =  date("Y-m-d");
                 $cabeceraAnulacion['serie'] = 'RECT';
                 $cabeceraAnulacion['numero'] = $ultima+1;
                 $cabeceraAnulacion['fecha'] = date("Y-m-d");
@@ -156,25 +174,31 @@ class FacturaCabeceraController extends Controller
                 $cabeceraAnulacion['gransubtotal'] = $cabeceraVieja['gransubtotal']*(-1);
                 $cabeceraAnulacion['total'] = $cabeceraVieja['total']*(-1);
                 // dd($cabeceraAnulacion);
+                //grabamos la rectificativa cabecera
+                $cabeceraAnulacion = (array) $cabeceraAnulacion;
+                FacturaLinea::create($cabeceraAnulacion);
+
                 //clonamos líneas
                 $lineasAnulacion = clone $lineasViejas;
                 // dd($lineasAnulacion);
                 //cambiamos datos en el foreach linea
                 for($i=0; $i<count($lineasAnulacion); $i++){
-                    $lineasAnulacion[$i]['id'] = null;
+                    $ultimaLinea = FacturaLinea::orderBy('created_at', 'desc')
+                                                ->first()->id;
+                    $lineasAnulacion[$i]['id'] = $ultimaLinea+1;
                     $lineasAnulacion[$i]['serie'] = 'RECT';
+                    $lineasAnulacion[$i]['factura_id'] = $cabeceraAnulacion['id'];
                     $lineasAnulacion[$i]['numero_fra'] = $cabeceraAnulacion['numero'];
                     $lineasAnulacion[$i]['producto_precio'] = $lineasViejas[$i]['producto_precio']*(-1);
+                    $lineasAnulacion[$i]['created_at'] =  date("Y-m-d");
+                    $lineasAnulacion[$i]['updated_at'] =  date("Y-m-d");
                 }
                 // dd($lineasAnulacion);
-                //grabamos la rectificativa
-                $cabeceraAnulacion->save();
-                // $cabeceraAnulacion = (array) $cabeceraAnulacion;
-                // dd($cabeceraAnulacion);
                 $lineasAnulacion = (array) $lineasAnulacion;
                 // FacturaCabecera::create($cabeceraAnulacion);
                 foreach ($lineasAnulacion as $value) {
                     FacturaLinea::create($value);
+                    // $value->save();
                 }
                 
                 //enviamos datos

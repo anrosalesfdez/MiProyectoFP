@@ -42,7 +42,7 @@ class FacturaLinea extends Model
      * Relación de factura_lineas con actividad. 
      */
      public function cabecera(){
-        return $this->hasOne('App\FacturaCabecera', 'id');
+        return $this->hasOne('App\FacturaCabecera', 'factura_id');
     }
 
 }
