@@ -45,7 +45,14 @@ export default {
             chartData1: [],
             chartOptions1: {
                 chart: {
-                    title: 'VENTAS E INGRESOS',
+                    title: 'CLIENTES E INGRESOS',
+                    subtitle: '',
+                }
+            },
+            chartData2: [],
+            chartOptions2: {
+                chart: {
+                    title: 'CLIENTES Y COBROS',
                     subtitle: '',
                 }
             },
@@ -54,12 +61,18 @@ export default {
     props:[
     ],
     created() {
-        this.getGrafs();
+        this.getGrafs1();
+        this.getGrafs2();
     },
     methods:{
-        getGrafs(){
-                axios.get("facturas/grafs").then((response)=>{
+        getGrafs1(){
+                axios.get("facturas/grafs1").then((response)=>{
                 this.chartData1 = response.data;
+            });
+        },
+        getGrafs2(){
+                axios.get("facturas/grafs2").then((response)=>{
+                this.chartData2 = response.data;
             });
         }
     }

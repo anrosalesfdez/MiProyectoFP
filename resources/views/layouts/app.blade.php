@@ -12,7 +12,8 @@
     <!-- Styles -->
     <link rel="stylesheet" href="/css/app.css" type="text/css">
     <link rel="stylesheet" href="/css/all.css" type="text/css">
-
+    {{-- icono pestaña --}}
+    <link rel="shortcut icon" href="/pictures/self_icono" sizes="40x40"/>
     <!-- open-material icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     

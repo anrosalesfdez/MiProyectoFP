@@ -1,4 +1,4 @@
-<div class="copy-right_text">
+<div class="copy-right_text" style="bottom=0; position= fixed;">
     <div class="container">
         <div class="footer_border"></div>
             <div class="row">

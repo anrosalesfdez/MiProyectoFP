@@ -14,7 +14,7 @@ class FacturaCabeceraController extends Controller
 
     //RECOGE TODAS LAS FACTURAS DEL EMISOR
     public function getFacturas(){
-        $emisor = auth()->user()->emisor->first();
+        $emisor = auth()->user()->emisor; //->first();
         $facturas = $emisor->cabeceras()->get();
 
         return $facturas;
@@ -115,7 +115,7 @@ class FacturaCabeceraController extends Controller
     }
 
 
-    /**
+      /**
      * Ejecuta transacción: marca "anulada" y NUNCA SE ELIMINA!
      */
     public function delete($id){
@@ -124,7 +124,6 @@ class FacturaCabeceraController extends Controller
         $ultima = $this->getLastRect();
         if($ultima == null)
             $ultima = 0;
-
         $ultimaGeneral = $this->getLast();
         
         //necesario que la factura no esté anulada ya
@@ -136,7 +135,6 @@ class FacturaCabeceraController extends Controller
                 foreach ($lineasViejas as $value) {
                     $value->update(['anulada' => true]);
                 }
-
                 //generamos clon en negativo
                 // Forzamos la copia de this->object, si no
                 // hará referencia al mismo objeto.
@@ -158,7 +156,6 @@ class FacturaCabeceraController extends Controller
                 $cabeceraAnulacion['gransubtotal'] = $cabeceraVieja['gransubtotal']*(-1);
                 $cabeceraAnulacion['total'] = $cabeceraVieja['total']*(-1);
                 // dd($cabeceraAnulacion);
-
                 //clonamos líneas
                 $lineasAnulacion = clone $lineasViejas;
                 // dd($lineasAnulacion);
@@ -170,7 +167,6 @@ class FacturaCabeceraController extends Controller
                     $lineasAnulacion[$i]['producto_precio'] = $lineasViejas[$i]['producto_precio']*(-1);
                 }
                 // dd($lineasAnulacion);
-
                 //grabamos la rectificativa
                 $cabeceraAnulacion->save();
                 // $cabeceraAnulacion = (array) $cabeceraAnulacion;
@@ -231,17 +227,18 @@ class FacturaCabeceraController extends Controller
 
     }
 
-    public function graficoFras(){
+    public function graficoFras1(){
         
         $data = [];
-        $data[] = ['Fecha', 'Ingresos', 'Cobros'];
+        $data[] = ['Cliente', 'Ingresos', ''];
 
         $facturas = $this->getFacturas();
         foreach ($facturas as $key => $value) {
             $data[] = [
-                        date("Y", strtotime($value->fecha)),
+                        //date("Y", strtotime($value->fecha))
+                        $value->cli_nif,
                         floatval($value->total),
-                        floatval($value->total)
+                        0,
                     ];
         }
 
@@ -249,22 +246,17 @@ class FacturaCabeceraController extends Controller
 
     }
 
-    public function topClientesChart(Request $request){
-        $clientes = Auth::user()->emisores->facturas->clientes->get()->sortByDesc("total")->values()->all();
-        $response = [["Cliente", "ingresos"]];
-        $resto = ["Resto de clientes", 0];
-        foreach ($clientes as $key => $s) {
-            if($key < 5){
-                $response[] = [
-                    $s->razon_social,
-                    $s->ingresos
-                ];
-            }else{
-                $resto[1] += $s->ingresos;
-            }
-            
+    public function graficoFras2(){
+        $data[] = ['Cliente', 'Ingresos', ''];
+        $facturas = $this->getFacturas();
+        foreach ($facturas as $key => $value) {
+            $data[] = [
+                        //date("Y", strtotime($value->fecha))
+                        $value->cli_razon_social,
+                        floatval($value->total),
+                        0,
+                    ];
         }
-        $response[] = $resto;
-        return response($response);
+        return response($data);
     }
 }

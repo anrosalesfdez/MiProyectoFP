@@ -11,7 +11,7 @@
                         <div class="col-xl-3 col-lg-2">
                             <div class="logo" style="padding-left:20px;">
                                 <a href="{{ asset('/')}}">
-                                    <img src="{{ asset('../pictures/otro1.png') }}" alt="" style="heigth:50px; width:100px;">
+                                    <img src="{{ asset('../pictures/self_logo_sin_margen') }}" alt="" style="heigth:75px; width:175px;">
                                 </a>
                             </div>
                         </div>

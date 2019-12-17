@@ -3339,6 +3339,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -4762,7 +4772,14 @@ __webpack_require__.r(__webpack_exports__);
       chartData1: [],
       chartOptions1: {
         chart: {
-          title: 'VENTAS E INGRESOS',
+          title: 'CLIENTES E INGRESOS',
+          subtitle: ''
+        }
+      },
+      chartData2: [],
+      chartOptions2: {
+        chart: {
+          title: 'CLIENTES Y COBROS',
           subtitle: ''
         }
       }
@@ -4770,14 +4787,22 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: [],
   created: function created() {
-    this.getGrafs();
+    this.getGrafs1();
+    this.getGrafs2();
   },
   methods: {
-    getGrafs: function getGrafs() {
+    getGrafs1: function getGrafs1() {
       var _this = this;
 
-      axios.get("facturas/grafs").then(function (response) {
+      axios.get("facturas/grafs1").then(function (response) {
         _this.chartData1 = response.data;
+      });
+    },
+    getGrafs2: function getGrafs2() {
+      var _this2 = this;
+
+      axios.get("facturas/grafs2").then(function (response) {
+        _this2.chartData2 = response.data;
       });
     }
   }
@@ -4994,7 +5019,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//TODO:salto de línea en errores servidorbundleRenderer.renderToStream
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -5108,18 +5132,18 @@ __webpack_require__.r(__webpack_exports__);
     //VALIDA EN CLIENTE. Se ejecutan todas de golpe al click en crear/actualizar
     //si se superan (this.validado =''), se envía la petición AJAX
     controlNombre: function controlNombre(nombre) {
-      if (!nombre) this.validado = "NOMBRE: Campo obligatorio<br>";
-      if (nombre.length > 20) this.validado += "NOMBRE: Máximo 20 caracteres<br>";
+      if (!nombre) this.validado = "NOMBRE: Campo obligatorio<br>"; // if(nombre.length > 20)
+      //     this.validado += "NOMBRE: Máximo 20 caracteres<br>";
     },
-    controlDescripcion: function controlDescripcion(descripcion) {
-      if (descripcion.length > 50) this.validado += "DESCRIPCION: Máximo 50 caracteres<br>";
+    controlDescripcion: function controlDescripcion(descripcion) {// if(descripcion.length > 50)
+      //     this.validado += "DESCRIPCION: Máximo 50 caracteres<br>";
     },
     controlPrecio: function controlPrecio(precio) {
       if (!precio) this.validado += "PRECIO: Campo obligatorio<br>";
     },
     controlUnidad: function controlUnidad(unidad) {
-      if (!unidad) this.validado += "UNIDAD: Campo obligatorio<br>";
-      if (unidad.length > 10) this.validado += "UNIDAD: Máximo 10 caracteres<br>";
+      if (!unidad) this.validado += "UNIDAD: Campo obligatorio<br>"; // if(unidad.length > 10)
+      //     this.validado += "UNIDAD: Máximo 10 caracteres<br>";
     },
     controlActividad: function controlActividad(actividades_id) {
       if (!actividades_id) this.validado += "ACTIVIDAD CNAE: Campo obligatorio<br>";
@@ -70565,32 +70589,61 @@ var render = function() {
                 [_vm._v("NIF: ")]
               ),
               _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.usuariofactura.nif,
-                    expression: "usuariofactura.nif"
-                  }
-                ],
-                staticClass: "form-control",
-                attrs: {
-                  type: "text",
-                  name: "nif",
-                  id: "nif",
-                  value: "usuariofactura.nif"
-                },
-                domProps: { value: _vm.usuariofactura.nif },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+              _vm.usuariofactura.nif
+                ? _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.usuariofactura.nif,
+                        expression: "usuariofactura.nif"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      name: "nif",
+                      id: "nif",
+                      readonly: "",
+                      disabled: "",
+                      value: "usuariofactura.nif"
+                    },
+                    domProps: { value: _vm.usuariofactura.nif },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.usuariofactura, "nif", $event.target.value)
+                      }
                     }
-                    _vm.$set(_vm.usuariofactura, "nif", $event.target.value)
-                  }
-                }
-              })
+                  })
+                : _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.usuariofactura.nif,
+                        expression: "usuariofactura.nif"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      name: "nif",
+                      id: "nif",
+                      value: "usuariofactura.nif"
+                    },
+                    domProps: { value: _vm.usuariofactura.nif },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.usuariofactura, "nif", $event.target.value)
+                      }
+                    }
+                  })
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "form-group col-md-3" }, [
@@ -70600,32 +70653,69 @@ var render = function() {
                 [_vm._v("NIVA: ")]
               ),
               _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.usuariofactura.niva,
-                    expression: "usuariofactura.niva"
-                  }
-                ],
-                staticClass: "form-control",
-                attrs: {
-                  type: "text",
-                  name: "apellido1",
-                  id: "niva",
-                  value: "usuariofactura.niva"
-                },
-                domProps: { value: _vm.usuariofactura.niva },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+              _vm.usuariofactura.nif
+                ? _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.usuariofactura.niva,
+                        expression: "usuariofactura.niva"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      name: "niva",
+                      id: "niva",
+                      readonly: "",
+                      disabled: "",
+                      value: "usuariofactura.niva"
+                    },
+                    domProps: { value: _vm.usuariofactura.niva },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.usuariofactura,
+                          "niva",
+                          $event.target.value
+                        )
+                      }
                     }
-                    _vm.$set(_vm.usuariofactura, "niva", $event.target.value)
-                  }
-                }
-              })
+                  })
+                : _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.usuariofactura.niva,
+                        expression: "usuariofactura.niva"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      name: "niva",
+                      id: "niva",
+                      value: "usuariofactura.niva"
+                    },
+                    domProps: { value: _vm.usuariofactura.niva },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(
+                          _vm.usuariofactura,
+                          "niva",
+                          $event.target.value
+                        )
+                      }
+                    }
+                  })
             ])
           ]),
           _vm._v(" "),
@@ -72322,12 +72412,13 @@ var render = function() {
       _vm._v(" "),
       _c("div", { staticClass: "modal-footer" }, [
         _c(
-          "a",
+          "button",
           {
             staticClass: "crearButton",
-            attrs: {
-              target: "_blank",
-              href: "/facturas/imprimir/" + _vm.factura.id
+            on: {
+              click: function($event) {
+                return _vm.imprimir(_vm.factura.id)
+              }
             }
           },
           [_vm._v("Imprimir")]

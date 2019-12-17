@@ -12,8 +12,8 @@ class EmisorController extends Controller
      * Recoge datos de emisor en BD
      */
      public function getEmisor(){
-        $emisor = Emisor::where('users_id', "=", auth()->user()->id)->first();
-        // $emisor = auth()->user()->emisor;
+        // $emisor = Emisor::where('users_id', "=", auth()->user()->id)->get();
+        $emisor = auth()->user()->emisor;
         return $emisor;
     }
 

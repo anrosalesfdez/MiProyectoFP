@@ -131,7 +131,7 @@
 </template>
 
 <script>
-//TODO:salto de línea en errores servidorbundleRenderer.renderToStream
+
 export default {
     data(){
         return{
@@ -238,12 +238,12 @@ export default {
         controlNombre(nombre){
             if(!nombre)
                 this.validado = "NOMBRE: Campo obligatorio<br>";
-            if(nombre.length > 20)
-                this.validado += "NOMBRE: Máximo 20 caracteres<br>";
+            // if(nombre.length > 20)
+            //     this.validado += "NOMBRE: Máximo 20 caracteres<br>";
         },
         controlDescripcion(descripcion){
-            if(descripcion.length > 50)
-                this.validado += "DESCRIPCION: Máximo 50 caracteres<br>";
+            // if(descripcion.length > 50)
+            //     this.validado += "DESCRIPCION: Máximo 50 caracteres<br>";
         },
         controlPrecio(precio){
             if(!precio)
@@ -252,8 +252,8 @@ export default {
         controlUnidad(unidad){
             if(!unidad)
                 this.validado += "UNIDAD: Campo obligatorio<br>";
-            if(unidad.length > 10)
-                this.validado += "UNIDAD: Máximo 10 caracteres<br>";
+            // if(unidad.length > 10)
+            //     this.validado += "UNIDAD: Máximo 10 caracteres<br>";
         },
         controlActividad(actividades_id){
             if(!actividades_id)

@@ -237,7 +237,7 @@
 	
 	</div>
     <div class="modal-footer">
-        <a target="_blank" :href="'/facturas/imprimir/'+factura.id" class="crearButton">Imprimir</a>
+        <button class="crearButton" @click="imprimir(factura.id)">Imprimir</button>
         <a href="/facturas/listar" class="cancelarButton">Cancelar</a>
     </div>
 </div>

@@ -20,13 +20,23 @@
                     <div class="form-row">
                         <div class="form-group col-md-3">
                             <label for="nif" class="col-form-label">NIF: </label>
-                            <input type="text" name="nif" id="nif"  class="form-control" 
+                            <input v-if="usuariofactura.nif" type="text" name="nif" id="nif"  class="form-control" 
+                                                readonly
+                                                disabled
+                                                v-model="usuariofactura.nif"
+                                                value="usuariofactura.nif">
+                            <input v-else type="text" name="nif" id="nif"  class="form-control" 
                                                 v-model="usuariofactura.nif"
                                                 value="usuariofactura.nif">
                         </div>
                         <div class="form-group col-md-3">
                             <label for="niva" class="col-form-label">NIVA: </label>
-                            <input type="text" name="apellido1" id="niva"  class="form-control" 
+                            <input v-if="usuariofactura.nif" type="text" name="niva" id="niva"  class="form-control" 
+                                                readonly
+                                                disabled
+                                                v-model="usuariofactura.niva"
+                                                value="usuariofactura.niva">
+                            <input v-else type="text" name="niva" id="niva"  class="form-control" 
                                                 v-model="usuariofactura.niva"
                                                 value="usuariofactura.niva">
                         </div>
